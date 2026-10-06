@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Masuk - Sistem Bersepadu SK Mantin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --neon-green: #10b981;
+      --neon-green-glow: rgba(16, 185, 129, 0.45);
+      --neon-accent: #059669;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-soft: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    body {
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.05), 0 0 25px rgba(16, 185, 129, 0.15);
+      padding: 40px 32px;
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      position: relative;
+    }
+
+    .logo-container {
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .logo-img {
+      width: 95px;
+      height: 95px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(16, 185, 129, 0.75)) drop-shadow(0 0 25px rgba(16, 185, 129, 0.35));
+    }
+
+    .login-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: -0.5px;
+      text-transform: uppercase;
+    }
+
+    .login-subtitle {
+      color: var(--neon-accent);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 4px;
+      margin-bottom: 28px;
+    }
+
+    .form-group {
+      text-align: left;
+      margin-bottom: 18px;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper i {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 14px 12px 42px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border-soft);
+      font-size: 0.9rem;
+      outline: none;
+      transition: all 0.25s ease;
+      background: #f8fafc;
+    }
+
+    .form-control:focus {
+      background: #ffffff;
+      border-color: var(--neon-green);
+      box-shadow: 0 0 12px var(--neon-green-glow);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 12px;
+      background: var(--neon-green);
+      color: #ffffff;
+      border: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 0 15px var(--neon-green-glow);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-login:hover {
+      background: var(--neon-accent);
+      box-shadow: 0 0 25px var(--neon-green);
+      transform: translateY(-2px);
+    }
+
+    .btn-login:disabled {
+      background: #94a3b8;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .alert-box {
+      margin-top: 18px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      display: none;
+    }
+
+    .alert-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+    }
+
+    .alert-success {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #15803d;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <div class="logo-container">
+      <!-- Masukkan link logo telus SK Mantin bila sedia -->
+      <img src="https://drive.google.com/thumbnail?id=1RS_uTMj2Bn7BKnj5U2MLGrcYTwJiQOGj&sz=w2000" id="schoolLogo" alt="Logo SK Mantin" class="logo-img">
+    </div>
+
+    <h1 class="login-title">SK Mantin</h1>
+    <p class="login-subtitle">Log Masuk Sistem Bersepadu</p>
+
+    <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+      <div class="form-group">
+        <label class="form-label">Username</label>
+        <div class="input-wrapper">
+          <i class="fas fa-user"></i>
+          <input type="text" id="usernameInput" class="form-control" placeholder="Masukkan ID anda" required autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <div class="input-wrapper">
+          <i class="fas fa-lock"></i>
+          <input type="password" id="passwordInput" class="form-control" placeholder="Masukkan kata laluan" required autocomplete="current-password">
+        </div>
+      </div>
+
+      <button type="submit" id="btnLogin" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i> Log Masuk
+      </button>
+
+      <div id="alertBox" class="alert-box alert-error"></div>
+    </form>
+  </div>
+
+  <script>
+    // MASUKKAN URL APPS SCRIPT ANDA DI SINI
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
+
+    // Jika guru sudah log masuk sebelum ini, bawa terus ke index.html
+    if (sessionStorage.getItem("semanes_user")) {
+      window.location.href = "./index.html";
+    }
+
+    async function handleLoginSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnLogin");
+      const alertBox = document.getElementById("alertBox");
+
+      const u = document.getElementById("usernameInput").value.trim();
+      const p = document.getElementById("passwordInput").value.trim();
+
+      alertBox.style.display = "none";
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengesahkan...';
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "login",
+            username: u,
+            password: p
+          })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alertBox.className = "alert-box alert-success";
+          alertBox.innerText = "Log masuk berjaya! Membuka portal...";
+          alertBox.style.display = "block";
+
+          // Simpan maklumat sesi guru dalam pelayar
+          sessionStorage.setItem("semanes_user", JSON.stringify(result.user));
+
+          setTimeout(() => {
+            window.location.href = "./index.html";
+          }, 800);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log Masuk';
+          alertBox.className = "alert-box alert-error";
+          alertBox.innerText = result.message || "Username atau Password salah.";
+          alertBox.style.display = "block";
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log Masuk';
+        alertBox.className = "alert-box alert-error";
+        alertBox.innerText = "Ralat sambungan ke pelayan pangkalan data.";
+        alertBox.style.display = "block";
+      }
+    }
+  </script>
+</body>
+</html>
