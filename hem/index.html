@@ -955,18 +955,37 @@
 
     window.addEventListener('load', fetchHemData);
 
+   const CACHE_KEY_LOCAL = "semanes_hem_cache";
+
     async function fetchHemData() {
+      // 1. Muat data cache peranti serta-merta
+      const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
+      if (localSaved) {
+        try {
+          const cachedJSON = JSON.parse(localSaved);
+          globalHemData = cachedJSON;
+          renderUI(cachedJSON);
+        } catch (e) {}
+      }
+
+      // 2. Ambil data terbaharu dari Apps Script
       try {
-        const response = await fetch(APPS_SCRIPT_URL);
-        const data = await response.json();
-        if (data.success) {
-          globalHemData = data;
-          renderUI(data);
-        } else {
-          showToast("Ralat data: " + data.error, true);
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'follow'
+        });
+        const freshData = await response.json();
+        if (freshData.success) {
+          globalHemData = freshData;
+          localStorage.setItem(CACHE_KEY_LOCAL, JSON.stringify(freshData));
+          renderUI(freshData);
         }
       } catch (err) {
-        showToast("Ralat menyambung ke pelayan.", true);
+        console.warn("Rangkaian lambat, memaparkan data cache:", err);
+        if (!localSaved) {
+          showToast("Ralat menyambung ke pangkalan data.", true);
+        }
       }
     }
 
