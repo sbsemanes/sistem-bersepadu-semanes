@@ -421,22 +421,26 @@
         dContainer.innerHTML = '<p style="color:#94a3b8;">Tiada dashboard tersedia.</p>';
       } else {
         data.dashboards.forEach(modul => {
-          const a = document.createElement('a');
-          a.className = 'dash-card';
-          a.href = (modul.link && modul.link !== '') ? modul.link : '#';
-          
-          let iconHtml = modul.icon.startsWith('http') 
-            ? `<img src="${modul.icon}" alt="Icon" />` 
-            : `<i class="${modul.icon}"></i>`;
+        const a = document.createElement('a');
+        a.className = 'dash-card';
+        a.href = (modul.link && modul.link !== '') ? modul.link : '#';
+        a.target = '_top';
 
-          a.innerHTML = `
-            <div class="icon-wrapper">${iconHtml}</div>
-            <div class="dash-card-title">${modul.title}</div>
-            <div class="dash-card-desc">${modul.desc}</div>
-          `;
-          dContainer.appendChild(a);
-        });
-      }
+        let iconHtml = '';
+        if (modul.icon && (modul.icon.startsWith('http') || modul.icon.includes('/'))) {
+          const optimizedUrl = formatIconUrl(modul.icon);
+          iconHtml = `<img src="${optimizedUrl}" alt="${modul.title}" loading="lazy">`;
+        } else {
+          iconHtml = `<i class="${modul.icon || 'fas fa-th-large'}"></i>`;
+        }
+
+        a.innerHTML = `
+          <div class="icon-wrapper">${iconHtml}</div>
+          <div class="dash-card-title">${modul.title}</div>
+          <div class="dash-card-desc">${modul.desc}</div>
+        `;
+        dContainer.appendChild(a);
+      });
 
       // Dropdowns Borang
       if (data.dropdown) {
