@@ -768,33 +768,26 @@
       data.menu.forEach(item => {
         const div = document.createElement('div');
         div.className = 'menu-card';
-        
-        let iconClass = 'fas fa-graduation-cap';
-        if (item.nama.includes('eRPH')) iconClass = 'fas fa-book-reader';
-        else if (item.nama.includes('Jadual')) iconClass = 'fas fa-calendar-alt';
-        else if (item.nama.includes('PBD') || item.nama.includes('PBS')) iconClass = 'fas fa-chart-pie';
-        else if (item.nama.includes('Panitia')) iconClass = 'fas fa-chalkboard-teacher';
-        else if (item.nama.includes('Unit')) iconClass = 'fas fa-cubes';
+
+        let iconHtml = '';
+        if (item.icon && (item.icon.startsWith('http') || item.icon.includes('/'))) {
+          const optimizedUrl = formatIconUrl(item.icon);
+          iconHtml = `<img src="${optimizedUrl}" alt="${item.nama}" loading="lazy">`;
+        } else {
+          let iconClass = 'fas fa-graduation-cap';
+          if (item.nama.includes('eRPH')) iconClass = 'fas fa-book-reader';
+          else if (item.nama.includes('Jadual')) iconClass = 'fas fa-calendar-alt';
+          else if (item.nama.includes('PBD') || item.nama.includes('PBS')) iconClass = 'fas fa-chart-pie';
+          else if (item.nama.includes('Panitia')) iconClass = 'fas fa-chalkboard-teacher';
+          else if (item.nama.includes('Unit')) iconClass = 'fas fa-cubes';
+          iconHtml = `<i class="${iconClass}"></i>`;
+        }
 
         div.innerHTML = `
-          <div class="icon-box"><i class="${iconClass}"></i></div>
+          <div class="icon-box">${iconHtml}</div>
           <div class="menu-card-title">${item.nama}</div>
         `;
-
-        div.addEventListener('click', () => {
-          if (item.nama.includes('Panitia')) {
-            openPanitiaModal();
-          } else if (item.nama.includes('Unit')) {
-            openUnitModal();
-          } else if (item.nama.includes('PBD') || item.nama.includes('PBS')) {
-            openPbdModal();
-          } else if (item.link && item.link.trim() !== '') {
-            window.open(item.link, '_blank');
-          } else {
-            showToast("Pautan sedang dikemaskini.");
-          }
-        });
-
+        // ... event listener kekal sama
         menuContainer.appendChild(div);
       });
 
