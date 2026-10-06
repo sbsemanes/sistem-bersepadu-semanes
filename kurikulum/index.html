@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengurusan Kurikulum - SK Mantin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --neon-blue: #06b6d4;
+      --neon-blue-glow: rgba(6, 182, 212, 0.45);
+      --neon-accent: #0284c7;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-soft: #e2e8f0;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-page); color: var(--text-main); padding: 24px 16px; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    /* TOP BAR NAV */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      color: var(--neon-accent);
+      border: 1.5px solid var(--neon-blue);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .btn-back-home:hover {
+      background: var(--neon-blue);
+      color: #ffffff;
+      box-shadow: 0 0 18px var(--neon-blue-glow);
+      transform: translateY(-2px);
+    }
+
+    .user-pill {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* HEADER */
+    .header-section {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      background: #cffafe;
+      color: #0891b2;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .header-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #0f172a;
+      text-transform: uppercase;
+      letter-spacing: -0.5px;
+    }
+
+    .header-subtext {
+      color: var(--text-muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      margin-top: 4px;
+    }
+
+    /* SECTIONS & TITLES */
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: '';
+      width: 5px;
+      height: 22px;
+      background: var(--neon-blue);
+      border-radius: 4px;
+      box-shadow: 0 0 8px var(--neon-blue);
+    }
+
+    /* MENU CARDS */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 18px;
+      margin-bottom: 40px;
+    }
+
+    .menu-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 24px 16px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--neon-blue);
+      box-shadow: 0 10px 25px -4px rgba(6, 182, 212, 0.25), 0 0 15px rgba(6, 182, 212, 0.15);
+    }
+
+    .icon-box {
+      width: 65px;
+      height: 65px;
+      border-radius: 16px;
+      background: #ecfeff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 1.7rem;
+      color: var(--neon-accent);
+      border: 1px solid rgba(6, 182, 212, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .menu-card:hover .icon-box {
+      transform: scale(1.2) rotate(4deg);
+      background: #cffafe;
+      box-shadow: 0 0 15px var(--neon-blue-glow);
+    }
+
+    .menu-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    /* TABS UNTUK DOKUMEN & LAPORAN */
+    .nav-tabs {
+      display: flex;
+      gap: 10px;
+      border-bottom: 2px solid var(--border-soft);
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--neon-accent);
+      border-bottom: 3px solid var(--neon-blue);
+      background: #ecfeff;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD JADUAL & BORANG */
+    .table-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 24px;
+      margin-bottom: 30px;
+    }
+
+    .table-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .btn-action-blue {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--neon-blue);
+      color: #ffffff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--neon-blue-glow);
+      transition: all 0.2s ease;
+    }
+
+    .btn-action-blue:hover {
+      background: var(--neon-accent);
+      transform: translateY(-2px);
+    }
+
+    /* CUSTOM TABLE */
+    .custom-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    .custom-table th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 2px solid var(--border-soft);
+    }
+
+    .custom-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .custom-table tr:hover {
+      background: #f0fdfa;
+    }
+
+    .btn-link-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 6px;
+      background: #ecfeff;
+      color: #0891b2;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.8rem;
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .btn-link-file:hover {
+      background: var(--neon-blue);
+      color: #ffffff;
+    }
+
+    /* MODAL UMUM */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 850px;
+      border: 1px solid var(--neon-blue);
+      box-shadow: 0 0 30px var(--neon-blue-glow);
+      padding: 26px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalFade 0.25s ease-out;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* GRID SUB-KAD PANITIA / UNIT DI DALAM MODAL */
+    .submodal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px;
+    }
+
+    .sub-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .sub-card:hover {
+      background: #ffffff;
+      border-color: var(--neon-blue);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(6, 182, 212, 0.2);
+    }
+
+    .sub-card-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 10px;
+      background: #cffafe;
+      color: #0891b2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .sub-card-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    /* FORM STYLES */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-group.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .form-control {
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-soft);
+      font-size: 0.88rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 8px var(--neon-blue-glow);
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-secondary {
+      padding: 9px 16px;
+      border-radius: 10px;
+      background: #f1f5f9;
+      color: var(--text-muted);
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* PRINT ONE-PAGE REPORT TEMPLATE */
+    .printable-report {
+      border: 2px solid #0f172a;
+      padding: 24px;
+      color: #000000;
+      background: #ffffff;
+      line-height: 1.5;
+    }
+
+    .report-header {
+      text-align: center;
+      border-bottom: 2px solid #000;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+
+    .report-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 14px;
+    }
+
+    .report-table td, .report-table th {
+      border: 1px solid #000;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+    }
+
+    .report-table th {
+      background: #f1f5f9;
+      width: 25%;
+      text-align: left;
+    }
+
+    .report-images {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .report-images img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+    }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px var(--neon-blue-glow);
+      border-left: 4px solid var(--neon-blue);
+      display: none;
+      z-index: 2000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- TOP NAVIGATION -->
+    <div class="top-nav">
+      <a href="../index.html" class="btn-back-home">
+        <i class="fas fa-arrow-left"></i> Kembali ke Homepage
+      </a>
+      <div class="user-pill">
+        <i class="fas fa-user-circle" style="color:var(--neon-blue); font-size:1rem;"></i>
+        <span id="navUserNama">Guru SK Mantin</span>
+      </div>
+    </div>
+
+    <!-- HEADER KURIKULUM -->
+    <header class="header-section">
+      <span class="header-badge"><i class="fas fa-graduation-cap"></i> SEKTOR KURIKULUM</span>
+      <h1 class="header-title">Sistem Pengurusan Kurikulum</h1>
+      <p class="header-subtext">Sekolah Kebangsaan Mantin — Kecemerlangan Akademik</p>
+    </header>
+
+    <!-- 1. MENU UTAMA KAD -->
+    <section>
+      <h2 class="section-title">Modul & Pautan Pantas</h2>
+      <div class="menu-grid" id="menuGridContainer">
+        <div style="color:#94a3b8; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Memuatkan menu kurikulum...</div>
+      </div>
+    </section>
+
+    <!-- 2. TABS: DOKUMEN & LAPORAN PROGRAM -->
+    <section>
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tabLaporan')"><i class="fas fa-file-alt"></i> Laporan Program</button>
+        <button class="tab-btn" onclick="switchTab('tabPelan')"><i class="fas fa-chart-line"></i> Pelan Strategik</button>
+        <button class="tab-btn" onclick="switchTab('tabCarta')"><i class="fas fa-sitemap"></i> Carta Organisasi</button>
+        <button class="tab-btn" onclick="switchTab('tabMinit')"><i class="fas fa-comments"></i> Minit Mesyuarat</button>
+      </div>
+
+      <!-- TAB 1: LAPORAN PROGRAM -->
+      <div id="tabLaporan" class="tab-content active">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Program Kurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Lihat semula laporan yang dihantar, cetak atau simpan ke peranti anda.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openLaporanModal()">
+              <i class="fas fa-plus-circle"></i> Tambah Laporan Program
+            </button>
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Tarikh</th>
+                  <th>Unit</th>
+                  <th>Tajuk Aktiviti</th>
+                  <th>Peringkat</th>
+                  <th>Disediakan Oleh</th>
+                  <th style="text-align:center;">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody id="laporanTableBody">
+                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: PELAN STRATEGIK -->
+      <div id="tabPelan" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pelan Strategik Kurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Senarai arkib fail Pelan Strategik mengikut tahun.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openUploadModal('Pelan Strategik')">
+              <i class="fas fa-upload"></i> Muat Naik Fail
+            </button>
+          </div>
+          <table class="custom-table">
+            <thead><tr><th>No</th><th>Tahun</th><th>Pautan / Fail</th></tr></thead>
+            <tbody id="pelanTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 3: CARTA ORGANISASI -->
+      <div id="tabCarta" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Carta Organisasi Kurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Carta susunan organisasi dan panitia SK Mantin.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openUploadModal('Carta Organisasi')">
+              <i class="fas fa-upload"></i> Muat Naik Fail
+            </button>
+          </div>
+          <table class="custom-table">
+            <thead><tr><th>No</th><th>Tahun</th><th>Pautan / Fail</th></tr></thead>
+            <tbody id="cartaTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TAB 4: MINIT MESYUARAT -->
+      <div id="tabMinit" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Minit Mesyuarat Kurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Rekod minit mesyuarat induk dan ketetapan kurikulum.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openUploadModal('Minit Mesyuarat')">
+              <i class="fas fa-upload"></i> Muat Naik Fail
+            </button>
+          </div>
+          <table class="custom-table">
+            <thead><tr><th>Bilangan</th><th>Tahun</th><th>Perkara</th><th>Pautan / Fail</th></tr></thead>
+            <tbody id="minitTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- MODAL 1: KAD SUB-PANITIA -->
+  <div class="modal-overlay" id="panitiaModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-book-open" style="color:var(--neon-blue); margin-right:8px;"></i>Senarai Panitia Mata Pelajaran</div>
+        <button class="close-modal-btn" onclick="closeModal('panitiaModal')">&times;</button>
+      </div>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana panitia untuk membuka Google Drive fail panitia berkenaan.</p>
+      <div class="submodal-grid" id="panitiaCardsContainer"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: KAD SUB-UNIT KURIKULUM -->
+  <div class="modal-overlay" id="unitModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-layer-group" style="color:var(--neon-blue); margin-right:8px;"></i>Senarai Unit Kurikulum</div>
+        <button class="close-modal-btn" onclick="closeModal('unitModal')">&times;</button>
+      </div>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana unit untuk membuka arkib dokumen sokongan kurikulum.</p>
+      <div class="submodal-grid" id="unitCardsContainer"></div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: BORANG LAPORAN PROGRAM -->
+  <div class="modal-overlay" id="laporanModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-edit" style="color:var(--neon-blue); margin-right:8px;"></i>Borang Laporan Program Kurikulum</div>
+        <button class="close-modal-btn" onclick="closeModal('laporanModal')">&times;</button>
+      </div>
+      <form id="formLaporan" onsubmit="handleLaporanSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="formSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit Kurikulum *</label>
+            <select id="formUnit" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Tajuk Aktiviti / Program *</label>
+            <input type="text" id="formTajuk" class="form-control" placeholder="Contoh: Minggu Bahasa Melayu & Pelancaran NILAM" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tarikh Program *</label>
+            <input type="date" id="formTarikh" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Masa</label>
+            <input type="time" id="formMasa" class="form-control">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tempat *</label>
+            <input type="text" id="formTempat" class="form-control" placeholder="Contoh: Dewan Terbuka / Bilik Sains" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Peringkat *</label>
+            <select id="formPeringkat" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Objektif *</label>
+            <textarea id="formObjektif" class="form-control" rows="2" placeholder="Nyatakan objektif program" required></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Penerangan Aktiviti *</label>
+            <textarea id="formAktiviti" class="form-control" rows="3" placeholder="Penerangan ringkas perjalanan program" required></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Isu / Masalah / Cadangan Penambahbaikan</label>
+            <textarea id="formIsu" class="form-control" rows="2" placeholder="Kekangan yang dihadapi dan cadangan masa hadapan"></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bil. Murid Terlibat</label>
+            <input type="number" id="formBilMurid" class="form-control" placeholder="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Bil. Guru Terlibat</label>
+            <input type="number" id="formBilGuru" class="form-control" placeholder="0">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pautan Bahan Berkaitan (Google Drive / Nota)</label>
+            <input type="url" id="formBahan" class="form-control" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pautan Gambar 1</label>
+            <input type="url" id="formG1" class="form-control" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pautan Gambar 2</label>
+            <input type="url" id="formG2" class="form-control" placeholder="https://...">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pautan Gambar 3</label>
+            <input type="url" id="formG3" class="form-control" placeholder="https://...">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Laporan Disediakan Oleh *</label>
+            <select id="formPelapor" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('laporanModal')">Batal</button>
+          <button type="submit" id="btnSubmitLaporan" class="btn-action-blue">
+            <i class="fas fa-save"></i> Simpan Laporan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 4: MUAT NAIK FAIL (Pelan Strategik / Carta Organisasi / Minit) -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal-box" style="max-width:500px;">
+      <div class="modal-header">
+        <div class="modal-title" id="uploadModalTitle">Muat Naik Rekod Fail</div>
+        <button class="close-modal-btn" onclick="closeModal('uploadModal')">&times;</button>
+      </div>
+      <form id="formUpload" onsubmit="handleUploadSubmit(event)">
+        <input type="hidden" id="uploadTargetSheet">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Tahun / Sesi *</label>
+          <input type="text" id="uploadTahun" class="form-control" placeholder="Contoh: 2026" required>
+        </div>
+        <div class="form-group" id="groupPerkaraMinit" style="margin-bottom:12px; display:none;">
+          <label class="form-label">Perkara / Tajuk Mesyuarat *</label>
+          <input type="text" id="uploadPerkara" class="form-control" placeholder="Contoh: Mesyuarat Kurikulum Bil 1/2026">
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Pautan Fail (Google Drive / URL Dokumen) *</label>
+          <input type="url" id="uploadUrl" class="form-control" placeholder="https://drive.google.com/..." required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('uploadModal')">Batal</button>
+          <button type="submit" id="btnSubmitUpload" class="btn-action-blue">
+            <i class="fas fa-check"></i> Simpan Rekod
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 5: PAPARAN CETAK / SIMPAN LAPORAN (ONE PAGE REPORT) -->
+  <div class="modal-overlay" id="viewReportModal">
+    <div class="modal-box" style="max-width:850px;">
+      <div class="modal-header no-print">
+        <div class="modal-title"><i class="fas fa-file-invoice"></i> Paparan Laporan Program</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-action-blue" onclick="window.print()"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
+          <button class="close-modal-btn" onclick="closeModal('viewReportModal')">&times;</button>
+        </div>
+      </div>
+      
+      <div id="printableArea" class="printable-report">
+        <div class="report-header">
+          <h2 style="font-size:1.2rem; text-transform:uppercase;">SEKOLAH KEBANGSAAN MANTIN</h2>
+          <h3 style="font-size:1rem; font-weight:700;">LAPORAN PROGRAM KURIKULUM</h3>
+          <p style="font-size:0.85rem;" id="rptHeaderSub">Sesi Persekolahan</p>
+        </div>
+
+        <table class="report-table">
+          <tr><th>UNIT</th><td id="rptUnit">-</td></tr>
+          <tr><th>TAJUK PROGRAM</th><td id="rptTajuk" style="font-weight:700;">-</td></tr>
+          <tr><th>TARIKH & MASA</th><td id="rptTarikhMasa">-</td></tr>
+          <tr><th>TEMPAT</th><td id="rptTempat">-</td></tr>
+          <tr><th>PERINGKAT</th><td id="rptPeringkat">-</td></tr>
+          <tr><th>PENGLIBATAN</th><td id="rptPenglibatan">-</td></tr>
+          <tr><th>OBJEKTIF</th><td id="rptObjektif" style="white-space:pre-wrap;">-</td></tr>
+          <tr><th>RINGKASAN AKTIVITI</th><td id="rptAktiviti" style="white-space:pre-wrap;">-</td></tr>
+          <tr><th>ISU & CADANGAN</th><td id="rptIsu" style="white-space:pre-wrap;">-</td></tr>
+          <tr><th>PAUTAN BAHAN</th><td id="rptBahan">-</td></tr>
+        </table>
+
+        <div>
+          <div style="font-weight:700; font-size:0.85rem; margin-bottom:6px;">RAKAMAN GAMBAR AKTIVITI:</div>
+          <div class="report-images" id="rptImagesContainer"></div>
+        </div>
+
+        <div style="margin-top:30px; display:flex; justify-content:space-between;">
+          <div style="font-size:0.85rem;">
+            <p>Disediakan Oleh:</p>
+            <br><br>
+            <p style="font-weight:700; text-decoration:underline;" id="rptDisediakan">-</p>
+            <p>Guru SK Mantin</p>
+          </div>
+          <div style="font-size:0.85rem; text-align:right;">
+            <p>Disahkan Oleh:</p>
+            <br><br>
+            <p style="font-weight:700; text-decoration:underline;">..............................................</p>
+            <p>Guru Besar / GPK Kurikulum</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastNotification" class="toast-msg"></div>
+
+  <script>
+    // MASUKKAN URL APPS SCRIPT EXEC ANDA DI SINI
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzZz-yj9IwC_urpjcvGEPn2dC3cNuQCGiPBY29uKDlwKSrZMLrXPILrKR1-kVhYXVvNbA/exec";
+
+    // Semak Sesi Log Masuk Guru
+    const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
+    if (!activeUser) {
+      window.location.href = "../login.html";
+    } else {
+      document.getElementById("navUserNama").innerText = activeUser.nama || "Guru SK Mantin";
+    }
+
+    let globalKurikulumData = null;
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toastNotification');
+      t.innerText = msg;
+      t.style.borderLeftColor = isError ? '#ef4444' : '#06b6d4';
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 4000);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+    window.addEventListener('load', fetchKurikulumData);
+
+    async function fetchKurikulumData() {
+      try {
+        const response = await fetch(APPS_SCRIPT_URL);
+        const data = await response.json();
+        if (data.success) {
+          globalKurikulumData = data;
+          renderUI(data);
+        } else {
+          showToast("Ralat memuatkan: " + data.error, true);
+        }
+      } catch (err) {
+        showToast("Ralat sambungan pelayan.", true);
+      }
+    }
+
+    function renderUI(data) {
+      // 1. Menu Utama
+      const menuContainer = document.getElementById('menuGridContainer');
+      menuContainer.innerHTML = '';
+      data.menu.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'menu-card';
+        
+        let iconClass = 'fas fa-graduation-cap';
+        if (item.nama.includes('eRPH')) iconClass = 'fas fa-book-reader';
+        else if (item.nama.includes('Jadual')) iconClass = 'fas fa-calendar-alt';
+        else if (item.nama.includes('PBD')) iconClass = 'fas fa-chart-pie';
+        else if (item.nama.includes('Panitia')) iconClass = 'fas fa-chalkboard-teacher';
+        else if (item.nama.includes('Unit')) iconClass = 'fas fa-cubes';
+
+        div.innerHTML = `
+          <div class="icon-box"><i class="${iconClass}"></i></div>
+          <div class="menu-card-title">${item.nama}</div>
+        `;
+
+        div.addEventListener('click', () => {
+          if (item.nama.includes('Panitia')) {
+            openPanitiaModal();
+          } else if (item.nama.includes('Unit')) {
+            openUnitModal();
+          } else if (item.link && item.link.trim() !== '') {
+            window.open(item.link, '_blank');
+          } else {
+            showToast("Pautan sedang dikemaskini.");
+          }
+        });
+
+        menuContainer.appendChild(div);
+      });
+
+      // 2. Render Sub-Modal Panitia
+      const panitiaBox = document.getElementById('panitiaCardsContainer');
+      panitiaBox.innerHTML = '';
+      data.panitia.forEach(p => {
+        const a = document.createElement('a');
+        a.className = 'sub-card';
+        a.href = p.link || '#';
+        a.target = '_blank';
+        a.innerHTML = `
+          <div class="sub-card-icon"><i class="fas fa-folder-open"></i></div>
+          <div class="sub-card-title">${p.nama}</div>
+        `;
+        panitiaBox.appendChild(a);
+      });
+
+      // 3. Render Sub-Modal Unit
+      const unitBox = document.getElementById('unitCardsContainer');
+      unitBox.innerHTML = '';
+      data.unitKurikulum.forEach(u => {
+        const a = document.createElement('a');
+        a.className = 'sub-card';
+        a.href = u.link || '#';
+        a.target = '_blank';
+        a.innerHTML = `
+          <div class="sub-card-icon"><i class="fas fa-folder"></i></div>
+          <div class="sub-card-title">${u.nama}</div>
+        `;
+        unitBox.appendChild(a);
+      });
+
+      // 4. Render Jadual Fail
+      renderTable('pelanTableBody', data.pelanStrategik, ['no', 'tahun', 'url']);
+      renderTable('cartaTableBody', data.cartaOrganisasi, ['no', 'tahun', 'url']);
+      renderTable('minitTableBody', data.minitMesyuarat, ['bil', 'tahun', 'perkara', 'url']);
+
+      // 5. Render Jadual Laporan Program
+      renderLaporanTable(data.laporan);
+
+      // 6. Muatkan Pilihan Borang Laporan
+      populateSelect('formSesi', data.options.sesi);
+      populateSelect('formUnit', data.options.unitNames);
+      populateSelect('formPeringkat', data.options.peringkat);
+      populateSelect('formPelapor', data.options.guru);
+
+      if (activeUser && activeUser.nama) {
+        document.getElementById('formPelapor').value = activeUser.nama;
+      }
+    }
+
+    function renderTable(containerId, list, keys) {
+      const tb = document.getElementById(containerId);
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="${keys.length}" style="text-align:center; color:#94a3b8;">Tiada rekod fail.</td></tr>`;
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        keys.forEach(k => {
+          const td = document.createElement('td');
+          if (k === 'url') {
+            td.innerHTML = r[k] ? `<a href="${r[k]}" target="_blank" class="btn-link-file"><i class="fas fa-external-link-alt"></i> Buka Fail</a>` : '<span style="color:#94a3b8;">-</span>';
+          } else {
+            td.innerText = r[k] || '-';
+          }
+          tr.appendChild(td);
+        });
+        tb.appendChild(tr);
+      });
+    }
+
+    function renderLaporanTable(list) {
+      const tb = document.getElementById('laporanTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada laporan program didaftarkan lagi.</td></tr>`;
+        return;
+      }
+      list.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.tarikh || '-'}</td>
+          <td><span style="font-weight:700; color:var(--neon-accent);">${item.unit}</span></td>
+          <td style="font-weight:600;">${item.tajuk}</td>
+          <td>${item.peringkat || '-'}</td>
+          <td>${item.disediakanOleh || '-'}</td>
+          <td style="text-align:center;">
+            <button class="btn-link-file" onclick="viewReportDetails(${item.id})">
+              <i class="fas fa-eye"></i> Buka / Print
+            </button>
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function populateSelect(id, items) {
+      const el = document.getElementById(id);
+      if (!el || !items) return;
+      el.innerHTML = '<option value="">-- Pilih --</option>';
+      items.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v; opt.innerText = v;
+        el.appendChild(opt);
+      });
+    }
+
+    function openPanitiaModal() { openModal('panitiaModal'); }
+    function openUnitModal() { openModal('unitModal'); }
+    function openLaporanModal() { openModal('laporanModal'); }
+
+    // Hantar Laporan Program ke Apps Script
+    async function handleLaporanSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitLaporan');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      const formData = {
+        sesi: document.getElementById('formSesi').value,
+        unit: document.getElementById('formUnit').value,
+        tajuk: document.getElementById('formTajuk').value,
+        tarikh: document.getElementById('formTarikh').value,
+        masa: document.getElementById('formMasa').value,
+        tempat: document.getElementById('formTempat').value,
+        peringkat: document.getElementById('formPeringkat').value,
+        objektif: document.getElementById('formObjektif').value,
+        aktiviti: document.getElementById('formAktiviti').value,
+        isu: document.getElementById('formIsu').value,
+        bilMurid: document.getElementById('formBilMurid').value,
+        bilGuru: document.getElementById('formBilGuru').value,
+        bahanPautan: document.getElementById('formBahan').value,
+        gambar1: document.getElementById('formG1').value,
+        gambar2: document.getElementById('formG2').value,
+        gambar3: document.getElementById('formG3').value,
+        disediakanOleh: document.getElementById('formPelapor').value
+      };
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'simpan_laporan_kurikulum',
+            formData: formData
+          })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Laporan';
+
+        if (result.success) {
+          showToast('Laporan Program berjaya disimpan!');
+          closeModal('laporanModal');
+          document.getElementById('formLaporan').reset();
+          fetchKurikulumData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Laporan';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    // Modal Muat Naik Fail
+    function openUploadModal(sheetName) {
+      document.getElementById('uploadTargetSheet').value = sheetName;
+      document.getElementById('uploadModalTitle').innerText = `Muat Naik Fail: ${sheetName}`;
+      document.getElementById('groupPerkaraMinit').style.display = (sheetName === 'Minit Mesyuarat') ? 'block' : 'none';
+      openModal('uploadModal');
+    }
+
+    async function handleUploadSubmit(e) {
+      e.preventDefault();
+      const sheetName = document.getElementById('uploadTargetSheet').value;
+      const tahun = document.getElementById('uploadTahun').value;
+      const url = document.getElementById('uploadUrl').value;
+      const perkara = document.getElementById('uploadPerkara').value;
+
+      let rowData = [];
+      if (sheetName === 'Minit Mesyuarat') {
+        const bilCount = (globalKurikulumData && globalKurikulumData.minitMesyuarat) ? globalKurikulumData.minitMesyuarat.length + 1 : 1;
+        rowData = [bilCount, tahun, perkara, url];
+      } else {
+        const count = (sheetName === 'Pelan Strategik') ? globalKurikulumData.pelanStrategik.length + 1 : globalKurikulumData.cartaOrganisasi.length + 1;
+        rowData = [count, tahun, url];
+      }
+
+      const btn = document.getElementById('btnSubmitUpload');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'simpan_fail_kurikulum',
+            sheetName: sheetName,
+            rowData: rowData
+          })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Simpan Rekod';
+
+        if (result.success) {
+          showToast('Rekod fail berjaya disimpan!');
+          closeModal('uploadModal');
+          document.getElementById('formUpload').reset();
+          fetchKurikulumData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Simpan Rekod';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    // Buka Paparan Cetak One-Page Report
+    function viewReportDetails(id) {
+      const item = globalKurikulumData.laporan.find(l => l.id === id);
+      if (!item) return;
+
+      document.getElementById('rptHeaderSub').innerText = `Sesi Persekolahan: ${item.sesi || 'Semasa'}`;
+      document.getElementById('rptUnit').innerText = item.unit || '-';
+      document.getElementById('rptTajuk').innerText = item.tajuk || '-';
+      document.getElementById('rptTarikhMasa').innerText = `${item.tarikh} ${item.masa ? `(${item.masa})` : ''}`;
+      document.getElementById('rptTempat').innerText = item.tempat || '-';
+      document.getElementById('rptPeringkat').innerText = item.peringkat || '-';
+      document.getElementById('rptPenglibatan').innerText = `Murid: ${item.bilMurid || '0'} orang | Guru: ${item.bilGuru || '0'} orang`;
+      document.getElementById('rptObjektif').innerText = item.objektif || '-';
+      document.getElementById('rptAktiviti').innerText = item.aktiviti || '-';
+      document.getElementById('rptIsu').innerText = item.isu || 'Tiada';
+      document.getElementById('rptBahan').innerHTML = item.bahanPautan ? `<a href="${item.bahanPautan}" target="_blank">${item.bahanPautan}</a>` : 'Tiada';
+      document.getElementById('rptDisediakan').innerText = item.disediakanOleh || 'Guru SK Mantin';
+
+      const imgBox = document.getElementById('rptImagesContainer');
+      imgBox.innerHTML = '';
+      const imgs = [item.gambar1, item.gambar2, item.gambar3].filter(g => g && g.startsWith('http'));
+      if (imgs.length === 0) {
+        imgBox.innerHTML = '<p style="font-size:0.8rem; color:#666;">Tiada rakaman gambar dilampirkan.</p>';
+      } else {
+        imgs.forEach(url => {
+          const im = document.createElement('img');
+          im.src = url;
+          imgBox.appendChild(im);
+        });
+      }
+
+      openModal('viewReportModal');
+    }
+  </script>
+</body>
+</html>
