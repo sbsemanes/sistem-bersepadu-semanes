@@ -326,15 +326,36 @@
 
     window.addEventListener('load', fetchAllData);
 
-    // Panggilan API Asynchronous menggunakan fetch() standard
+   const CACHE_KEY_LOCAL = "semanes_home_cache";
+
     async function fetchAllData() {
+      // 1. Muatkan serta-merta dari peranti pengguna jika ada
+      const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
+      if (localSaved) {
+        try {
+          const cachedJSON = JSON.parse(localSaved);
+          renderHomepage(cachedJSON);
+        } catch (e) {}
+      }
+
+      // 2. Tarik data terkini di latar belakang
       try {
-        const response = await fetch(APPS_SCRIPT_URL);
-        const data = await response.json();
-        renderHomepage(data);
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'follow'
+        });
+        const freshData = await response.json();
+
+        if (freshData.success || !freshData.error) {
+          localStorage.setItem(CACHE_KEY_LOCAL, JSON.stringify(freshData));
+          renderHomepage(freshData);
+        }
       } catch (err) {
-        console.error("Ralat memuatkan:", err);
-        showToast("Gagal memuatkan data dari pangkalan data.", true);
+        console.warn("Rangkaian lambat, memaparkan data cache peranti:", err);
+        if (!localSaved) {
+          showToast("Gagal memuatkan data dari pelayan.", true);
+        }
       }
     }
 
