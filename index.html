@@ -128,6 +128,16 @@
 <body>
 
   <div class="container">
+    <!-- BAR STATUS GURU LOG MASUK -->
+    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-bottom: 15px;">
+      <div style="font-size: 0.85rem; font-weight: 600; color: #475569;">
+        <i class="fas fa-user-circle" style="color: #10b981; font-size: 1rem; margin-right: 4px;"></i>
+        <span id="userNameLabel">Guru</span>
+      </div>
+      <button onclick="handleLogout()" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #ef4444; cursor: pointer; transition: all 0.2s;">
+        <i class="fas fa-sign-out-alt"></i> Log Keluar
+      </button>
+    </div>
     <!-- 1. LOGO SEKOLAH -->
     <header class="header-section">
       <div class="logo-container">
@@ -264,8 +274,25 @@
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
+
+    // Sekat pengguna yang belum log masuk
+    const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
+    if (!activeUser) {
+      window.location.href = "./login.html";
+    }
+
+    // Paparkan nama guru yang sedang log masuk
+    if (activeUser && activeUser.nama) {
+      document.getElementById("userNameLabel").innerText = activeUser.nama;
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem("semanes_user");
+      window.location.href = "./login.html";
+    }
+    
     // MASUKKAN WEB APP URL DARI APPS SCRIPT DI SINI:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2qq9vW6TufGg0-uOQyB_I-qh-nos4y4IdVL9y5QhH9jtR2Z1yaMVRsW_TJi--t6yUdQ/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
     let allTempahanData = [];
     let currentCalDate = new Date();
@@ -414,7 +441,11 @@
       try {
         const res = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
-          body: JSON.stringify(formData)
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "tempahan",
+            formData: formData
+          })
         });
         const result = await res.json();
         
