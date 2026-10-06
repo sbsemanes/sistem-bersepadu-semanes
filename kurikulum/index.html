@@ -727,18 +727,37 @@
 
     window.addEventListener('load', fetchKurikulumData);
 
+    const CACHE_KEY_LOCAL = "semanes_kurikulum_cache";
+
     async function fetchKurikulumData() {
+      // 1. Muat serta-merta dari simpanan setempat
+      const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
+      if (localSaved) {
+        try {
+          const cachedJSON = JSON.parse(localSaved);
+          globalKurikulumData = cachedJSON;
+          renderUI(cachedJSON);
+        } catch (e) {}
+      }
+
+      // 2. Tarik data baharu dari Apps Script
       try {
-        const response = await fetch(APPS_SCRIPT_URL);
-        const data = await response.json();
-        if (data.success) {
-          globalKurikulumData = data;
-          renderUI(data);
-        } else {
-          showToast("Ralat memuatkan: " + data.error, true);
+        const response = await fetch(APPS_SCRIPT_URL, {
+          method: 'GET',
+          mode: 'cors',
+          redirect: 'follow'
+        });
+        const freshData = await response.json();
+        if (freshData.success) {
+          globalKurikulumData = freshData;
+          localStorage.setItem(CACHE_KEY_LOCAL, JSON.stringify(freshData));
+          renderUI(freshData);
         }
       } catch (err) {
-        showToast("Ralat sambungan pelayan.", true);
+        console.warn("Rangkaian lambat, memaparkan data cache:", err);
+        if (!localSaved) {
+          showToast("Ralat menyambung ke pangkalan data.", true);
+        }
       }
     }
 
