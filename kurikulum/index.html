@@ -128,10 +128,11 @@
       box-shadow: 0 10px 25px -4px rgba(6, 182, 212, 0.25), 0 0 15px rgba(6, 182, 212, 0.15);
     }
 
+    /* KOTAK IKON TETAP & KAWALAN SAIZ GAMBAR */
     .icon-box {
-      width: 65px;
-      height: 65px;
-      border-radius: 16px;
+      width: 70px;
+      height: 70px;
+      border-radius: 18px;
       background: #ecfeff;
       display: flex;
       align-items: center;
@@ -140,13 +141,30 @@
       font-size: 1.7rem;
       color: var(--neon-accent);
       border: 1px solid rgba(6, 182, 212, 0.2);
-      transition: all 0.3s ease;
+      overflow: hidden;
+      padding: 8px;
+      flex-shrink: 0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .icon-box img {
+      width: 100%;
+      height: 100%;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+      transition: transform 0.3s ease;
     }
 
     .menu-card:hover .icon-box {
-      transform: scale(1.2) rotate(4deg);
+      transform: scale(1.15) rotate(4deg);
       background: #cffafe;
       box-shadow: 0 0 15px var(--neon-blue-glow);
+    }
+
+    .menu-card:hover .icon-box img {
+      transform: scale(1.1);
     }
 
     .menu-card-title { font-size: 1rem; font-weight: 700; color: var(--text-main); }
@@ -689,6 +707,15 @@
 
     let globalKurikulumData = null;
 
+    // FUNGSI PENGOPTIMUMAN GAMBAR GOOGLE DRIVE
+    function formatIconUrl(url) {
+      if (!url) return '';
+      if (url.includes('drive.google.com')) {
+        return url.replace(/sz=w\d+/, 'sz=w200');
+      }
+      return url;
+    }
+
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
       t.innerText = msg;
@@ -787,7 +814,22 @@
           <div class="icon-box">${iconHtml}</div>
           <div class="menu-card-title">${item.nama}</div>
         `;
-        // ... event listener kekal sama
+
+        // EVENT LISTENER KLIK KAD MENU
+        div.addEventListener('click', () => {
+          if (item.nama.includes('Panitia')) {
+            openPanitiaModal();
+          } else if (item.nama.includes('Unit')) {
+            openUnitModal();
+          } else if (item.nama.includes('PBD') || item.nama.includes('PBS')) {
+            openPbdModal();
+          } else if (item.link && item.link.trim() !== '') {
+            window.open(item.link, '_blank');
+          } else {
+            showToast("Pautan sedang dikemaskini.");
+          }
+        });
+
         menuContainer.appendChild(div);
       });
 
