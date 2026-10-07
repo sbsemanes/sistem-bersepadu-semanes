@@ -210,7 +210,7 @@
       flex-wrap: wrap;
     }
 
-    .filter-select {
+    .filter-select, .filter-input {
       padding: 8px 12px;
       border-radius: 10px;
       border: 1.5px solid var(--border-soft);
@@ -218,7 +218,7 @@
       outline: none;
       background: #f8fafc;
     }
-    .filter-select:focus { border-color: var(--neon-red); }
+    .filter-select:focus, .filter-input:focus { border-color: var(--neon-red); }
 
     .btn-action-red {
       display: inline-flex;
@@ -237,9 +237,8 @@
     }
     .btn-action-red:hover { background: var(--neon-accent); transform: translateY(-2px); }
 
-    /* KAWALAN MAKSIMUM 5 BARIS DENGAN SCROLL */
     .table-scroll-container {
-      max-height: 290px;
+      max-height: 380px;
       overflow-y: auto;
       border: 1px solid #f1f5f9;
       border-radius: 10px;
@@ -274,6 +273,17 @@
       cursor: pointer;
     }
     .btn-link-file:hover { background: var(--neon-red); color: #ffffff; }
+
+    .badge-no-fail {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border: 1px solid #cbd5e1;
+    }
 
     /* MODAL */
     .modal-overlay {
@@ -401,14 +411,104 @@
     <!-- TABS PENGURUSAN LAPORAN -->
     <section>
       <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('tabBertugas')"><i class="fas fa-clipboard-check"></i> Laporan Guru Bertugas</button>
+        <button class="tab-btn active" onclick="switchTab('tabFailHEM')"><i class="fas fa-folder"></i> Fail HEM</button>
+        <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
+        <button class="tab-btn" onclick="switchTab('tabBertugas')"><i class="fas fa-clipboard-check"></i> Laporan Guru Bertugas</button>
         <button class="tab-btn" onclick="switchTab('tabUnit')"><i class="fas fa-file-alt"></i> Laporan Unit HEM</button>
-        <button class="tab-btn" onclick="switchTab('tabJadual')"><i class="fas fa-calendar-alt"></i> Jadual Bertugas Mingguan</button>
+        <button class="tab-btn" onclick="switchTab('tabJadual')"><i class="fas fa-calendar-alt"></i> Jadual Bertugas</button>
         <button class="tab-btn" onclick="switchTab('tabSalahLaku')"><i class="fas fa-user-slash"></i> Laporan Salah Laku</button>
       </div>
 
-      <!-- TAB 1: LAPORAN GURU BERTUGAS (HARIAN) -->
-      <div id="tabBertugas" class="tab-content active">
+      <!-- TAB 1: FAIL HEM (PARTITION) -->
+      <div id="tabFailHEM" class="tab-content active">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Fail Unit HEM (Partition)</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Simpanan fail dokumen mengikut unit HEM dan partition fail.</p>
+            </div>
+            <button class="btn-action-red" onclick="openModal('modalFailHEM')">
+              <i class="fas fa-upload"></i> Muat Naik Fail HEM
+            </button>
+          </div>
+
+          <!-- FILTERS DINAMIK -->
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterFailHemSesi" class="filter-select" onchange="filterFailHEMTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterFailHemUnit" class="filter-select" onchange="filterFailHEMTable()">
+              <option value="">Semua Unit HEM</option>
+            </select>
+            <input type="text" id="searchFailHEM" class="filter-input" placeholder="Cari tajuk fail / dokumen..." oninput="filterFailHEMTable()">
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi</th>
+                  <th>Unit HEM</th>
+                  <th>No Fail</th>
+                  <th>Nama Fail / Dokumen</th>
+                  <th>Kategori</th>
+                  <th>Dimuat Naik Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
+                </tr>
+              </thead>
+              <tbody id="failHemTableBody">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan fail HEM...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: FAIL OPR HEM -->
+      <div id="tabOPR" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Fail OPR (One Page Report) HEM</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Arkib laporan ringkas satu muka surat bagi aktiviti-aktiviti HEM.</p>
+            </div>
+            <button class="btn-action-red" onclick="openModal('modalOPR')">
+              <i class="fas fa-file-upload"></i> Muat Naik Fail OPR
+            </button>
+          </div>
+
+          <!-- FILTERS DINAMIK -->
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterOprSesi" class="filter-select" onchange="filterOPRTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterOprUnit" class="filter-select" onchange="filterOPRTable()">
+              <option value="">Semua Unit HEM</option>
+            </select>
+            <input type="text" id="searchOPR" class="filter-input" placeholder="Cari tajuk program..." oninput="filterOPRTable()">
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi Persekolahan</th>
+                  <th>Unit HEM</th>
+                  <th>Tajuk / Program</th>
+                  <th>Disediakan Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
+                </tr>
+              </thead>
+              <tbody id="oprTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod OPR...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: LAPORAN GURU BERTUGAS (HARIAN) -->
+      <div id="tabBertugas" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
@@ -420,10 +520,10 @@
             </button>
           </div>
 
-          <!-- FILTERS -->
+          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterBertugasSesi" class="filter-select" onchange="filterBertugasTable()">
-              <option value="">Semua Sesi Persekolahan</option>
+              <option value="">Semua Sesi</option>
             </select>
             <select id="filterBertugasMinggu" class="filter-select" onchange="filterBertugasTable()">
               <option value="">Semua Minggu</option>
@@ -450,7 +550,7 @@
         </div>
       </div>
 
-      <!-- TAB 2: LAPORAN UNIT HEM -->
+      <!-- TAB 4: LAPORAN UNIT HEM -->
       <div id="tabUnit" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -463,6 +563,7 @@
             </button>
           </div>
 
+          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterUnitSelect" class="filter-select" onchange="filterUnitTable()">
               <option value="">Semua Unit HEM</option>
@@ -489,7 +590,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: JADUAL BERTUGAS MINGGUAN -->
+      <!-- TAB 5: JADUAL BERTUGAS MINGGUAN -->
       <div id="tabJadual" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -502,6 +603,7 @@
             </button>
           </div>
 
+          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterJadualMinggu" class="filter-select" onchange="filterJadualTable()">
               <option value="">Semua Minggu</option>
@@ -527,7 +629,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: LAPORAN SALAH LAKU -->
+      <!-- TAB 6: LAPORAN SALAH LAKU -->
       <div id="tabSalahLaku" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -575,6 +677,103 @@
     </div>
   </div>
 
+  <!-- MODAL BORANG: MUAT NAIK FAIL HEM (PARTITION) -->
+  <div class="modal-overlay" id="modalFailHEM">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-folder-plus" style="color:var(--neon-red); margin-right:8px;"></i>Muat Naik Dokumen Fail HEM</div>
+        <button class="close-modal-btn" onclick="closeModal('modalFailHEM')">&times;</button>
+      </div>
+      <form id="formFailHEM" onsubmit="handleFailHEMSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="hemSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit HEM *</label>
+            <select id="hemUnit" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">No Fail (Partition) *</label>
+            <input type="text" id="hemNoFail" class="form-control" list="listNoFailHEM" placeholder="Pilih atau taip" required>
+            <datalist id="listNoFailHEM"></datalist>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori / Keterangan</label>
+            <input type="text" id="hemKategori" class="form-control" list="listKategoriHEM" placeholder="INDUK / UNIT / dll">
+            <datalist id="listKategoriHEM"></datalist>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Nama Fail / Dokumen *</label>
+            <input type="text" id="hemNamaDokumen" class="form-control" list="listNamaDokumenHEM" placeholder="Tajuk dokumen" required>
+            <datalist id="listNamaDokumenHEM"></datalist>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Dokumen (PDF / Word / Imej)</label>
+            <input type="file" id="hemFile" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Fail akan automatik disimpan ke Google Drive HEM.</small>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Atau Masukkan Pautan Google Drive Sedia Ada</label>
+            <input type="url" id="hemUrlManual" class="form-control" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Dimuat Naik Oleh *</label>
+            <select id="hemPelapor" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalFailHEM')">Batal</button>
+          <button type="submit" id="btnSubmitFailHEM" class="btn-action-red"><i class="fas fa-save"></i> Simpan Dokumen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: MUAT NAIK OPR HEM -->
+  <div class="modal-overlay" id="modalOPR">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-file-invoice" style="color:var(--neon-red); margin-right:8px;"></i>Muat Naik Fail OPR HEM</div>
+        <button class="close-modal-btn" onclick="closeModal('modalOPR')">&times;</button>
+      </div>
+      <form id="formOPRHEM" onsubmit="handleOPRHEMSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="oprSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit HEM *</label>
+            <select id="oprUnit" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Tajuk / Program *</label>
+            <input type="text" id="oprTajuk" class="form-control" placeholder="Contoh: OPR - Program Jom Ke Sekolah" required>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Dokumen OPR (PDF / Word / Imej)</label>
+            <input type="file" id="oprFile" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Fail disimpan secara berpusat dalam Google Drive HEM.</small>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Atau Pautan Google Drive Sedia Ada</label>
+            <input type="url" id="oprUrlManual" class="form-control" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Disediakan Oleh *</label>
+            <select id="oprPelapor" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalOPR')">Batal</button>
+          <button type="submit" id="btnSubmitOPR" class="btn-action-red"><i class="fas fa-save"></i> Simpan OPR</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL BORANG: LAPORAN GURU BERTUGAS -->
   <div class="modal-overlay" id="modalBertugas">
     <div class="modal-box" style="max-width:900px;">
@@ -617,7 +816,6 @@
             <textarea id="bLepasRehat" class="form-control" rows="2" placeholder="Catatan hebahan selepas rehat"></textarea>
           </div>
 
-          <!-- KOLUM J-Q (KEBERSIHAN DROPDOWN KPI) -->
           <div class="form-group full-width" style="margin-top:6px;">
             <p style="font-weight:800; font-size:0.9rem; color:var(--neon-accent);"><i class="fas fa-broom"></i> Pemantauan Kebersihan & Kawasan (Pilihan KPI)</p>
           </div>
@@ -903,9 +1101,6 @@
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // =========================================================================
-    // MASUKKAN URL APPS SCRIPT EXEC STANDALONE HEM ANDA DI SINI
-    // =========================================================================
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTE9UTsdG9r3rVshi-RCKNgWstlN6q1FYxjtIRGWod3eiQodExwLcehFArCT_ZJcGY5w/exec";
 
     const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
@@ -928,7 +1123,9 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
       document.getElementById(tabId).classList.add('active');
     }
 
@@ -955,10 +1152,9 @@
 
     window.addEventListener('load', fetchHemData);
 
-   const CACHE_KEY_LOCAL = "semanes_hem_cache";
+    const CACHE_KEY_LOCAL = "semanes_hem_cache";
 
     async function fetchHemData() {
-      // 1. Muat data cache peranti serta-merta
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
       if (localSaved) {
         try {
@@ -968,7 +1164,6 @@
         } catch (e) {}
       }
 
-      // 2. Ambil data terbaharu dari Apps Script
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'GET',
@@ -989,6 +1184,33 @@
       }
     }
 
+    // Helper: Isi dropdown dinamik hanya jika ada nilai sebenar dalam data
+    function updateDynamicDropdown(elementId, dataset, propertyKey, defaultLabel) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+
+      const uniqueValues = [...new Set(
+        (dataset || [])
+          .map(item => item[propertyKey])
+          .filter(val => val !== undefined && val !== null && String(val).trim() !== '')
+      )].sort();
+
+      if (uniqueValues.length === 0) {
+        el.innerHTML = `<option value="">${defaultLabel} (Tiada Data)</option>`;
+        el.disabled = true;
+        return;
+      }
+
+      el.disabled = false;
+      el.innerHTML = `<option value="">${defaultLabel}</option>`;
+      uniqueValues.forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.innerText = val;
+        el.appendChild(opt);
+      });
+    }
+
     function renderUI(data) {
       // 1. Render eFail HEM Grid
       const efailBox = document.getElementById('efailCardsContainer');
@@ -1005,37 +1227,60 @@
         efailBox.appendChild(a);
       });
 
-      // 2. Render Filters & Form Dropdowns
-      populateSelect('filterBertugasSesi', data.options.sesiPersekolahan, "Semua Sesi");
-      populateSelect('filterBertugasMinggu', data.options.minggu, "Semua Minggu");
-      populateSelect('filterUnitSelect', data.options.unitHEM, "Semua Unit HEM");
-      populateSelect('filterJadualMinggu', data.options.minggu, "Semua Minggu");
+      // 2. Render Jadual Fail HEM & OPR
+      renderFailHEMTable(data.failHEM || []);
+      renderOPRTable(data.opr || []);
 
-      // Dropdowns Borang Laporan Bertugas
+      // 3. Kemaskini Dropdown Filter Jadual Secara Dinamik (Hanya yang ada data)
+      updateDynamicDropdown('filterFailHemSesi', data.failHEM, 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterFailHemUnit', data.failHEM, 'unit', 'Semua Unit HEM');
+
+      updateDynamicDropdown('filterOprSesi', data.opr, 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterOprUnit', data.opr, 'unit', 'Semua Unit HEM');
+
+      updateDynamicDropdown('filterBertugasSesi', data.laporanBertugas, 'sesiPersekolahan', 'Semua Sesi');
+      updateDynamicDropdown('filterBertugasMinggu', data.laporanBertugas, 'minggu', 'Semua Minggu');
+
+      updateDynamicDropdown('filterUnitSelect', data.laporanUnit, 'unit', 'Semua Unit HEM');
+      updateDynamicDropdown('filterJadualMinggu', data.jadualBertugas, 'minggu', 'Semua Minggu');
+
+      // 4. Dropdowns Borang (Berdasarkan senarai rujukan / options)
+      populateSelect('hemSesi', data.options.sesiPersekolahan);
+      populateSelect('hemUnit', data.options.unitHEM);
+      populateSelect('hemPelapor', data.options.guru);
+
+      populateSelect('oprSesi', data.options.sesiPersekolahan);
+      populateSelect('oprUnit', data.options.unitHEM);
+      populateSelect('oprPelapor', data.options.guru);
+
+      populateDatalist('listNoFailHEM', data.options.noFailList || []);
+      populateDatalist('listNamaDokumenHEM', data.options.namaDokumenList || []);
+      populateDatalist('listKategoriHEM', data.options.kategoriList || []);
+
+      // Dropdown Laporan Bertugas
       populateSelect('bSesiPersekolahan', data.options.sesiPersekolahan);
       populateSelect('bSesi', data.options.sesi);
       populateSelect('bMinggu', data.options.minggu);
       populateSelect('bKumpulan', data.options.kumpulan);
       populateSelect('bPelapor', data.options.guru);
 
-      // Isi Dropdown KPI Kebersihan
       document.querySelectorAll('.kpi-drop').forEach(drop => {
         populateSelect(drop.id, data.options.kpi);
       });
 
-      // Dropdowns Borang Unit
+      // Dropdown Borang Unit
       populateSelect('uSesi', data.options.sesiPersekolahan);
       populateSelect('uUnit', data.options.unitHEM);
       populateSelect('uPeringkat', data.options.peringkat);
       populateSelect('uPelapor', data.options.guru);
 
-      // Dropdowns Borang Jadual
+      // Dropdown Borang Jadual
       populateSelect('jSesiPersekolahan', data.options.sesiPersekolahan);
       populateSelect('jSesi', data.options.sesi);
       populateSelect('jMinggu', data.options.minggu);
       populateSelect('jKumpulan', data.options.kumpulan);
 
-      // Dropdowns Salah Laku Murid
+      // Dropdown Salah Laku Murid
       const muridSelect = document.getElementById('slMuridSelect');
       muridSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
       data.options.murid.forEach((m, idx) => {
@@ -1050,9 +1295,11 @@
         document.getElementById('bPelapor').value = activeUser.nama;
         document.getElementById('uPelapor').value = activeUser.nama;
         document.getElementById('slPelapor').value = activeUser.nama;
+        document.getElementById('hemPelapor').value = activeUser.nama;
+        document.getElementById('oprPelapor').value = activeUser.nama;
       }
 
-      // 3. Render Jadual-Jadual
+      // 5. Render Jadual-Jadual Lain
       renderBertugasTable(data.laporanBertugas);
       renderUnitTable(data.laporanUnit);
       renderJadualTable(data.jadualBertugas);
@@ -1070,6 +1317,17 @@
       });
     }
 
+    function populateDatalist(id, items) {
+      const el = document.getElementById(id);
+      if (!el || !items) return;
+      el.innerHTML = '';
+      items.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
+        el.appendChild(opt);
+      });
+    }
+
     function autoFillMurid() {
       const idx = document.getElementById('slMuridSelect').value;
       if (idx !== "" && globalHemData && globalHemData.options.murid[idx]) {
@@ -1082,7 +1340,87 @@
       }
     }
 
-    // --- RENDERING TABLES & FILTERS ---
+    // --- RENDERING & FILTERS JADUAL FAIL HEM & OPR ---
+    function renderFailHEMTable(list) {
+      const tb = document.getElementById('failHemTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod fail HEM disimpan.</td></tr>`;
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.sesi || '-'}</td>
+          <td><strong>${r.unit || '-'}</strong></td>
+          <td><span class="badge-no-fail">${r.noFail || '-'}</span></td>
+          <td>${r.namaDokumen || '-'}</td>
+          <td>${r.kategori ? `<span style="font-size:0.8rem; color:var(--text-muted);">${r.kategori}</span>` : '-'}</td>
+          <td>${r.dimuatNaikOleh || '-'}</td>
+          <td style="text-align:center;">
+            ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-external-link-alt"></i> Buka Fail</a>` : '<span style="color:#94a3b8;">-</span>'}
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterFailHEMTable() {
+      if (!globalHemData || !globalHemData.failHEM) return;
+      const sSesi = document.getElementById('filterFailHemSesi').value;
+      const sUnit = document.getElementById('filterFailHemUnit').value;
+      const searchTxt = document.getElementById('searchFailHEM').value.toLowerCase();
+
+      const filtered = globalHemData.failHEM.filter(r => {
+        const matchSesi = !sSesi || r.sesi === sSesi;
+        const matchUnit = !sUnit || r.unit === sUnit;
+        const matchSearch = !searchTxt ||
+          (r.namaDokumen && r.namaDokumen.toLowerCase().includes(searchTxt)) ||
+          (r.noFail && r.noFail.toLowerCase().includes(searchTxt)) ||
+          (r.kategori && r.kategori.toLowerCase().includes(searchTxt));
+        return matchSesi && matchUnit && matchSearch;
+      });
+      renderFailHEMTable(filtered);
+    }
+
+    function renderOPRTable(list) {
+      const tb = document.getElementById('oprTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod fail OPR dimuat naik.</td></tr>`;
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.sesi || '-'}</td>
+          <td><strong style="color:var(--neon-accent);">${r.unit || '-'}</strong></td>
+          <td style="font-weight:600;">${r.tajuk || '-'}</td>
+          <td>${r.disediakanOleh || '-'}</td>
+          <td style="text-align:center;">
+            ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-file-pdf"></i> Buka OPR</a>` : '<span style="color:#94a3b8;">-</span>'}
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterOPRTable() {
+      if (!globalHemData || !globalHemData.opr) return;
+      const sSesi = document.getElementById('filterOprSesi').value;
+      const sUnit = document.getElementById('filterOprUnit').value;
+      const searchTxt = document.getElementById('searchOPR').value.toLowerCase();
+
+      const filtered = globalHemData.opr.filter(r => {
+        const matchSesi = !sSesi || r.sesi === sSesi;
+        const matchUnit = !sUnit || r.unit === sUnit;
+        const matchSearch = !searchTxt || (r.tajuk && r.tajuk.toLowerCase().includes(searchTxt));
+        return matchSesi && matchUnit && matchSearch;
+      });
+      renderOPRTable(filtered);
+    }
+
+    // --- RENDERING JADUAL-JADUAL LAIN ---
     function renderBertugasTable(list) {
       const tb = document.getElementById('bertugasTableBody');
       tb.innerHTML = '';
@@ -1199,7 +1537,117 @@
       });
     }
 
-    // --- FORM SUBMISSIONS ---
+    // --- PENGHANTARAN BORANG (FORM SUBMISSIONS) ---
+    async function handleFailHEMSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitFailHEM');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan ke Drive...';
+
+      const fileInput = document.getElementById('hemFile').files[0];
+      const urlManual = document.getElementById('hemUrlManual').value.trim();
+
+      if (!fileInput && !urlManual) {
+        showToast("Sila pilih fail atau masukkan pautan Drive.", true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Dokumen';
+        return;
+      }
+
+      try {
+        let fileData = fileInput ? await fileToBase64(fileInput) : null;
+        const payload = {
+          action: 'simpan_fail_hem',
+          data: {
+            sesi: document.getElementById('hemSesi').value,
+            unit: document.getElementById('hemUnit').value,
+            noFail: document.getElementById('hemNoFail').value,
+            namaDokumen: document.getElementById('hemNamaDokumen').value,
+            kategori: document.getElementById('hemKategori').value,
+            file: fileData,
+            urlManual: urlManual,
+            dimuatNaikOleh: document.getElementById('hemPelapor').value
+          }
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Dokumen';
+
+        if (result.success) {
+          showToast('Fail HEM berjaya dimuat naik & direkodkan!');
+          closeModal('modalFailHEM');
+          document.getElementById('formFailHEM').reset();
+          fetchHemData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Dokumen';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    async function handleOPRHEMSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitOPR');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan OPR...';
+
+      const fileInput = document.getElementById('oprFile').files[0];
+      const urlManual = document.getElementById('oprUrlManual').value.trim();
+
+      if (!fileInput && !urlManual) {
+        showToast("Sila pilih fail atau masukkan pautan Drive.", true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan OPR';
+        return;
+      }
+
+      try {
+        let fileData = fileInput ? await fileToBase64(fileInput) : null;
+        const payload = {
+          action: 'simpan_opr_hem',
+          data: {
+            sesi: document.getElementById('oprSesi').value,
+            unit: document.getElementById('oprUnit').value,
+            tajuk: document.getElementById('oprTajuk').value,
+            file: fileData,
+            urlManual: urlManual,
+            disediakanOleh: document.getElementById('oprPelapor').value
+          }
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan OPR';
+
+        if (result.success) {
+          showToast('Fail OPR HEM berjaya dimuat naik!');
+          closeModal('modalOPR');
+          document.getElementById('formOPRHEM').reset();
+          fetchHemData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan OPR';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
     async function handleBertugasSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitBertugas');
@@ -1343,7 +1791,7 @@
       } catch (err) {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-upload"></i> Muat Naik & Simpan';
-        showToast('Ralat: ' + err.toString(), true);
+        showToast('Ralat sambungan: ' + err.toString(), true);
       }
     }
 
