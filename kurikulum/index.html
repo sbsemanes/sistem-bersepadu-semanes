@@ -128,7 +128,6 @@
       box-shadow: 0 10px 25px -4px rgba(6, 182, 212, 0.25), 0 0 15px rgba(6, 182, 212, 0.15);
     }
 
-    /* KOTAK IKON TETAP & KAWALAN SAIZ GAMBAR */
     .icon-box {
       width: 70px;
       height: 70px;
@@ -161,10 +160,6 @@
       transform: scale(1.15) rotate(4deg);
       background: #cffafe;
       box-shadow: 0 0 15px var(--neon-blue-glow);
-    }
-
-    .menu-card:hover .icon-box img {
-      transform: scale(1.1);
     }
 
     .menu-card-title { font-size: 1rem; font-weight: 700; color: var(--text-main); }
@@ -219,6 +214,26 @@
       margin-bottom: 18px;
     }
 
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+      align-items: center;
+    }
+
+    .filter-bar select, .filter-bar input {
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .filter-bar select:focus, .filter-bar input:focus {
+      border-color: var(--neon-blue);
+    }
+
     .btn-action-blue {
       display: inline-flex;
       align-items: center;
@@ -257,6 +272,17 @@
       cursor: pointer;
     }
     .btn-link-file:hover { background: var(--neon-blue); color: #ffffff; }
+
+    .badge-no-fail {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border: 1px solid #cbd5e1;
+    }
 
     .modal-overlay {
       position: fixed;
@@ -376,14 +402,104 @@
 
     <section>
       <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('tabLaporan')"><i class="fas fa-file-alt"></i> Laporan Program</button>
+        <button class="tab-btn active" onclick="switchTab('tabFailPanitia')"><i class="fas fa-folder-open"></i> Fail Panitia</button>
+        <button class="tab-btn" onclick="switchTab('tabFailUnit')"><i class="fas fa-cubes"></i> Fail Unit Kurikulum</button>
+        <button class="tab-btn" onclick="switchTab('tabLaporan')"><i class="fas fa-file-alt"></i> Laporan Program</button>
         <button class="tab-btn" onclick="switchTab('tabPelan')"><i class="fas fa-chart-line"></i> Pelan Strategik</button>
         <button class="tab-btn" onclick="switchTab('tabCarta')"><i class="fas fa-sitemap"></i> Carta Organisasi</button>
         <button class="tab-btn" onclick="switchTab('tabMinit')"><i class="fas fa-comments"></i> Minit Mesyuarat</button>
       </div>
 
-      <!-- TAB 1: LAPORAN PROGRAM -->
-      <div id="tabLaporan" class="tab-content active">
+      <!-- TAB 1: FAIL PANITIA -->
+      <div id="tabFailPanitia" class="tab-content active">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Fail Panitia (Partition)</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Simpanan dokumen mengikut panitia & partition fail.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openFailPartitionModal('panitia')">
+              <i class="fas fa-upload"></i> Muat Naik Fail Panitia
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <select id="filterSesiPanitia" onchange="filterFailTable('panitia')">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterNamaPanitia" onchange="filterFailTable('panitia')">
+              <option value="">Semua Panitia</option>
+            </select>
+            <input type="text" id="searchFailPanitia" placeholder="Cari dokumen..." oninput="filterFailTable('panitia')">
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi</th>
+                  <th>Panitia</th>
+                  <th>No Fail</th>
+                  <th>Nama Fail / Dokumen</th>
+                  <th>Kategori</th>
+                  <th>Dimuat Naik Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
+                </tr>
+              </thead>
+              <tbody id="failPanitiaTableBody">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan fail panitia...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: FAIL UNIT KURIKULUM -->
+      <div id="tabFailUnit" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Fail Unit Kurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Simpanan dokumen mengikut unit kurikulum & partition fail.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openFailPartitionModal('unit')">
+              <i class="fas fa-upload"></i> Muat Naik Fail Unit
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <select id="filterSesiUnit" onchange="filterFailTable('unit')">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterNamaUnit" onchange="filterFailTable('unit')">
+              <option value="">Semua Unit</option>
+            </select>
+            <input type="text" id="searchFailUnit" placeholder="Cari dokumen..." oninput="filterFailTable('unit')">
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi</th>
+                  <th>Unit Kurikulum</th>
+                  <th>No Fail</th>
+                  <th>Nama Fail / Dokumen</th>
+                  <th>Kategori</th>
+                  <th>Dimuat Naik Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
+                </tr>
+              </thead>
+              <tbody id="failUnitTableBody">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan fail unit kurikulum...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: LAPORAN PROGRAM -->
+      <div id="tabLaporan" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
@@ -415,7 +531,7 @@
         </div>
       </div>
 
-      <!-- TAB 2: PELAN STRATEGIK -->
+      <!-- TAB 4: PELAN STRATEGIK -->
       <div id="tabPelan" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -434,7 +550,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: CARTA ORGANISASI -->
+      <!-- TAB 5: CARTA ORGANISASI -->
       <div id="tabCarta" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -453,7 +569,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: MINIT MESYUARAT -->
+      <!-- TAB 6: MINIT MESYUARAT -->
       <div id="tabMinit" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -474,6 +590,72 @@
     </section>
   </div>
 
+  <!-- MODAL MUAT NAIK FAIL PARTITION (PANITIA & UNIT KURIKULUM) -->
+  <div class="modal-overlay" id="failPartitionModal">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <div class="modal-title" id="failPartitionModalTitle"><i class="fas fa-folder-plus" style="color:var(--neon-blue); margin-right:8px;"></i>Muat Naik Dokumen Fail</div>
+        <button class="close-modal-btn" onclick="closeModal('failPartitionModal')">&times;</button>
+      </div>
+      <form id="formFailPartition" onsubmit="handleFailPartitionSubmit(event)">
+        <input type="hidden" id="partTargetType" value="panitia">
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="partSesi" class="form-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="partEntityLabel">Nama Panitia *</label>
+            <select id="partEntityName" class="form-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">No Fail (Partition) *</label>
+            <input type="text" id="partNoFail" class="form-control" list="listNoFail" placeholder="Pilih atau taip (cth: Fail 01)" required>
+            <datalist id="listNoFail"></datalist>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Kategori / Keterangan</label>
+            <input type="text" id="partKategori" class="form-control" list="listKategori" placeholder="cth: DSKP, Takwim, Minit">
+            <datalist id="listKategori"></datalist>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Nama Fail / Dokumen *</label>
+            <input type="text" id="partNamaDokumen" class="form-control" list="listNamaDokumen" placeholder="Contoh: DSKP Sains Tahun 4 2026" required>
+            <datalist id="listNamaDokumen"></datalist>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Dokumen (PDF / Word / Imej)</label>
+            <input type="file" id="partFile" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Fail akan automatik disimpan ke dalam Folder Drive Kurikulum.</small>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Atau Masukkan Pautan Google Drive Sedia Ada</label>
+            <input type="url" id="partUrlManual" class="form-control" placeholder="https://drive.google.com/file/d/...">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Dimuat Naik Oleh *</label>
+            <select id="partPelapor" class="form-control" required></select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('failPartitionModal')">Batal</button>
+          <button type="submit" id="btnSubmitPartition" class="btn-action-blue">
+            <i class="fas fa-save"></i> Muat Naik & Simpan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL PANITIA -->
   <div class="modal-overlay" id="panitiaModal">
     <div class="modal-box">
@@ -481,7 +663,7 @@
         <div class="modal-title"><i class="fas fa-book-open" style="color:var(--neon-blue); margin-right:8px;"></i>Senarai Panitia Mata Pelajaran</div>
         <button class="close-modal-btn" onclick="closeModal('panitiaModal')">&times;</button>
       </div>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana panitia untuk membuka fail panitia berkenaan.</p>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana panitia untuk membuka folder Google Drive panitia berkenaan.</p>
       <div class="submodal-grid" id="panitiaCardsContainer"></div>
     </div>
   </div>
@@ -493,7 +675,7 @@
         <div class="modal-title"><i class="fas fa-layer-group" style="color:var(--neon-blue); margin-right:8px;"></i>Senarai Unit Kurikulum</div>
         <button class="close-modal-btn" onclick="closeModal('unitModal')">&times;</button>
       </div>
-      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana unit untuk membuka fail unit kurikulum.</p>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana unit untuk membuka folder Google Drive unit kurikulum.</p>
       <div class="submodal-grid" id="unitCardsContainer"></div>
     </div>
   </div>
@@ -576,7 +758,6 @@
             <input type="url" id="formBahan" class="form-control" placeholder="https://drive.google.com/...">
           </div>
 
-          <!-- MUAT NAIK GAMBAR 1, 2, 3 KE DRIVE -->
           <div class="form-group">
             <label class="form-label">Muat Naik Gambar 1</label>
             <input type="file" id="fileGambar1" class="form-control" accept="image/*">
@@ -693,9 +874,6 @@
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // =========================================================================
-    // PERHATIAN: Masukkan Web App Exec URL dari Apps Script Kurikulum di sini
-    // =========================================================================
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyZLqcWHJ1aWf8AKH7_6qLbiJcsWu3aZYuQqb5NZlONVKRsMBLkr-slOhgpSxkLU001QA/exec";
 
     const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
@@ -707,7 +885,6 @@
 
     let globalKurikulumData = null;
 
-    // FUNGSI PENGOPTIMUMAN GAMBAR GOOGLE DRIVE
     function formatIconUrl(url) {
       if (!url) return '';
       if (url.includes('drive.google.com')) {
@@ -727,7 +904,9 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
       document.getElementById(tabId).classList.add('active');
     }
 
@@ -757,7 +936,6 @@
     const CACHE_KEY_LOCAL = "semanes_kurikulum_cache";
 
     async function fetchKurikulumData() {
-      // 1. Muat serta-merta dari simpanan setempat
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
       if (localSaved) {
         try {
@@ -767,7 +945,6 @@
         } catch (e) {}
       }
 
-      // 2. Tarik data baharu dari Apps Script
       try {
         const response = await fetch(APPS_SCRIPT_URL, {
           method: 'GET',
@@ -815,7 +992,6 @@
           <div class="menu-card-title">${item.nama}</div>
         `;
 
-        // EVENT LISTENER KLIK KAD MENU
         div.addEventListener('click', () => {
           if (item.nama.includes('Panitia')) {
             openPanitiaModal();
@@ -833,7 +1009,7 @@
         menuContainer.appendChild(div);
       });
 
-      // 2. Sub-Modal Panitia
+      // 2. Sub-Modal Panitia & Unit Cards
       const panitiaBox = document.getElementById('panitiaCardsContainer');
       panitiaBox.innerHTML = '';
       data.panitia.forEach(p => {
@@ -845,7 +1021,6 @@
         panitiaBox.appendChild(a);
       });
 
-      // 3. Sub-Modal Unit
       const unitBox = document.getElementById('unitCardsContainer');
       unitBox.innerHTML = '';
       data.unitKurikulum.forEach(u => {
@@ -857,7 +1032,7 @@
         unitBox.appendChild(a);
       });
 
-      // 4. Sub-Modal PBD / PBS
+      // 3. Sub-Modal PBD / PBS
       const pbdBox = document.getElementById('pbdCardsContainer');
       pbdBox.innerHTML = '';
       if (data.pbdPbs && data.pbdPbs.length > 0) {
@@ -873,7 +1048,22 @@
         pbdBox.innerHTML = '<p style="color:#94a3b8; font-size:0.85rem;">Tiada data dalam helaian PBD PBS.</p>';
       }
 
-      // 5. Jadual Dokumen PDF
+      // 4. Fail Panitia & Fail Unit Kurikulum
+      renderFailPartitionTable('panitia', data.failPanitia || []);
+      renderFailPartitionTable('unit', data.failUnitKurikulum || []);
+
+      // Filter Options
+      populateSelect('filterSesiPanitia', data.options.sesi, 'Semua Sesi');
+      populateSelect('filterSesiUnit', data.options.sesi, 'Semua Sesi');
+      populateSelect('filterNamaPanitia', data.options.panitiaNames, 'Semua Panitia');
+      populateSelect('filterNamaUnit', data.options.unitNames, 'Semua Unit');
+
+      // Datalists untuk modal muat naik fail
+      populateDatalist('listNoFail', data.options.noFailList || []);
+      populateDatalist('listNamaDokumen', data.options.namaDokumenList || []);
+      populateDatalist('listKategori', data.options.kategoriList || []);
+
+      // 5. Jadual Dokumen PDF Asas
       renderTable('pelanTableBody', data.pelanStrategik, ['no', 'tahun', 'url']);
       renderTable('cartaTableBody', data.cartaOrganisasi, ['no', 'tahun', 'url']);
       renderTable('minitTableBody', data.minitMesyuarat, ['bil', 'tahun', 'perkara', 'url']);
@@ -881,10 +1071,12 @@
       // 6. Jadual Laporan Program
       renderLaporanTable(data.laporan);
 
-      // 7. Muatkan Pilihan Borang Laporan (Unit & Panitia)
+      // 7. Muatkan Pilihan Borang Laporan
       populateSelect('formSesi', data.options.sesi);
       populateSelect('formPeringkat', data.options.peringkat);
       populateSelect('formPelapor', data.options.guru);
+      populateSelect('partPelapor', data.options.guru);
+      populateSelect('partSesi', data.options.sesi);
 
       const optUnit = document.getElementById('optUnitGroup');
       optUnit.innerHTML = '';
@@ -904,6 +1096,148 @@
 
       if (activeUser && activeUser.nama) {
         document.getElementById('formPelapor').value = activeUser.nama;
+        document.getElementById('partPelapor').value = activeUser.nama;
+      }
+    }
+
+    // Paparan Jadual Fail Partition (Panitia & Unit)
+    function renderFailPartitionTable(type, list) {
+      const containerId = type === 'panitia' ? 'failPanitiaTableBody' : 'failUnitTableBody';
+      const tb = document.getElementById(containerId);
+      tb.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod fail disimpan lagi.</td></tr>`;
+        return;
+      }
+
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        const entityVal = type === 'panitia' ? (r.panitia || '-') : (r.unit || '-');
+        tr.innerHTML = `
+          <td>${r.sesi || '-'}</td>
+          <td><strong>${entityVal}</strong></td>
+          <td><span class="badge-no-fail">${r.noFail || '-'}</span></td>
+          <td>${r.namaDokumen || '-'}</td>
+          <td>${r.kategori ? `<span style="font-size:0.8rem; color:var(--text-muted);">${r.kategori}</span>` : '-'}</td>
+          <td>${r.dimuatNaikOleh || '-'}</td>
+          <td style="text-align:center;">
+            ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-external-link-alt"></i> Buka Fail</a>` : '<span style="color:#94a3b8;">-</span>'}
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    // Fungsi Penapis Fail Panitia / Unit
+    function filterFailTable(type) {
+      if (!globalKurikulumData) return;
+      const isPanitia = type === 'panitia';
+      const rawList = isPanitia ? globalKurikulumData.failPanitia : globalKurikulumData.failUnitKurikulum;
+      if (!rawList) return;
+
+      const sesiFilter = document.getElementById(isPanitia ? 'filterSesiPanitia' : 'filterSesiUnit').value;
+      const entityFilter = document.getElementById(isPanitia ? 'filterNamaPanitia' : 'filterNamaUnit').value;
+      const searchTxt = document.getElementById(isPanitia ? 'searchFailPanitia' : 'searchFailUnit').value.toLowerCase();
+
+      const filtered = rawList.filter(item => {
+        const itemEntity = isPanitia ? item.panitia : item.unit;
+        const matchSesi = !sesiFilter || item.sesi === sesiFilter;
+        const matchEntity = !entityFilter || itemEntity === entityFilter;
+        const matchSearch = !searchTxt || 
+          (item.namaDokumen && item.namaDokumen.toLowerCase().includes(searchTxt)) ||
+          (item.noFail && item.noFail.toLowerCase().includes(searchTxt)) ||
+          (item.kategori && item.kategori.toLowerCase().includes(searchTxt));
+
+        return matchSesi && matchEntity && matchSearch;
+      });
+
+      renderFailPartitionTable(type, filtered);
+    }
+
+    // Modal Muat Naik Dokumen Partition
+    function openFailPartitionModal(type) {
+      document.getElementById('partTargetType').value = type;
+      const isPanitia = type === 'panitia';
+      
+      document.getElementById('failPartitionModalTitle').innerHTML = isPanitia 
+        ? '<i class="fas fa-folder-plus" style="color:var(--neon-blue); margin-right:8px;"></i>Muat Naik Fail Panitia'
+        : '<i class="fas fa-folder-plus" style="color:var(--neon-blue); margin-right:8px;"></i>Muat Naik Fail Unit Kurikulum';
+
+      document.getElementById('partEntityLabel').innerText = isPanitia ? 'Nama Panitia *' : 'Nama Unit Kurikulum *';
+
+      const entitySelect = document.getElementById('partEntityName');
+      entitySelect.innerHTML = '<option value="">-- Pilih --</option>';
+      const list = isPanitia ? (globalKurikulumData.options.panitiaNames || []) : (globalKurikulumData.options.unitNames || []);
+      list.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item; opt.innerText = item;
+        entitySelect.appendChild(opt);
+      });
+
+      openModal('failPartitionModal');
+    }
+
+    async function handleFailPartitionSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitPartition');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat naik ke Drive...';
+
+      const targetType = document.getElementById('partTargetType').value;
+      const fileInput = document.getElementById('partFile').files[0];
+      const urlManual = document.getElementById('partUrlManual').value.trim();
+
+      if (!fileInput && !urlManual) {
+        showToast("Sila pilih fail untuk dimuat naik atau masukkan pautan Google Drive.", true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Muat Naik & Simpan';
+        return;
+      }
+
+      try {
+        let fileData = null;
+        if (fileInput) {
+          fileData = await fileToBase64(fileInput);
+        }
+
+        const payload = {
+          action: 'simpan_fail_partition',
+          targetType: targetType,
+          data: {
+            sesi: document.getElementById('partSesi').value,
+            entityName: document.getElementById('partEntityName').value,
+            noFail: document.getElementById('partNoFail').value,
+            namaDokumen: document.getElementById('partNamaDokumen').value,
+            kategori: document.getElementById('partKategori').value,
+            file: fileData,
+            urlManual: urlManual,
+            dimuatNaikOleh: document.getElementById('partPelapor').value
+          }
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Muat Naik & Simpan';
+
+        if (result.success) {
+          showToast('Dokumen fail berjaya dimuat naik & direkodkan!');
+          closeModal('failPartitionModal');
+          document.getElementById('formFailPartition').reset();
+          fetchKurikulumData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Muat Naik & Simpan';
+        showToast('Ralat sambungan: ' + err.toString(), true);
       }
     }
 
@@ -954,13 +1288,24 @@
       });
     }
 
-    function populateSelect(id, items) {
+    function populateSelect(id, items, defaultLabel = '-- Pilih --') {
       const el = document.getElementById(id);
       if (!el || !items) return;
-      el.innerHTML = '<option value="">-- Pilih --</option>';
+      el.innerHTML = `<option value="">${defaultLabel}</option>`;
       items.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v; opt.innerText = v;
+        el.appendChild(opt);
+      });
+    }
+
+    function populateDatalist(id, items) {
+      const el = document.getElementById(id);
+      if (!el || !items) return;
+      el.innerHTML = '';
+      items.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
         el.appendChild(opt);
       });
     }
@@ -970,7 +1315,7 @@
     function openPbdModal() { openModal('pbdModal'); }
     function openLaporanModal() { openModal('laporanModal'); }
 
-    // Hantar Laporan Program dengan Gambar Base64
+    // Hantar Laporan Program
     async function handleLaporanSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitLaporan');
@@ -1036,7 +1381,7 @@
       }
     }
 
-    // Modal Muat Naik Dokumen PDF ke Drive
+    // Modal Muat Naik Dokumen PDF Asas
     function openUploadModal(sheetName) {
       document.getElementById('uploadTargetSheet').value = sheetName;
       document.getElementById('uploadModalTitle').innerText = `Muat Naik PDF: ${sheetName}`;
