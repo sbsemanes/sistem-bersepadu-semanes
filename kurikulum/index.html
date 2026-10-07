@@ -404,6 +404,7 @@
       <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tabFailPanitia')"><i class="fas fa-folder-open"></i> Fail Panitia</button>
         <button class="tab-btn" onclick="switchTab('tabFailUnit')"><i class="fas fa-cubes"></i> Fail Unit Kurikulum</button>
+        <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
         <button class="tab-btn" onclick="switchTab('tabLaporan')"><i class="fas fa-file-alt"></i> Laporan Program</button>
         <button class="tab-btn" onclick="switchTab('tabPelan')"><i class="fas fa-chart-line"></i> Pelan Strategik</button>
         <button class="tab-btn" onclick="switchTab('tabCarta')"><i class="fas fa-sitemap"></i> Carta Organisasi</button>
@@ -498,7 +499,49 @@
         </div>
       </div>
 
-      <!-- TAB 3: LAPORAN PROGRAM -->
+      <!-- TAB 3: FAIL OPR (ONE PAGE REPORT) -->
+      <div id="tabOPR" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Fail OPR (One Page Report)</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Muat naik dan arkib laporan ringkas satu muka surat bagi program sekolah.</p>
+            </div>
+            <button class="btn-action-blue" onclick="openOPRModal()">
+              <i class="fas fa-file-upload"></i> Muat Naik Fail OPR
+            </button>
+          </div>
+
+          <div class="filter-bar">
+            <select id="filterSesiOPR" onchange="filterOPRTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterUnitOPR" onchange="filterOPRTable()">
+              <option value="">Semua Panitia / Unit</option>
+            </select>
+            <input type="text" id="searchOPR" placeholder="Cari tajuk program..." oninput="filterOPRTable()">
+          </div>
+
+          <div style="overflow-x:auto;">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi Persekolahan</th>
+                  <th>Panitia / Unit</th>
+                  <th>Tajuk / Program</th>
+                  <th>Disediakan Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
+                </tr>
+              </thead>
+              <tbody id="oprTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod OPR...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: LAPORAN PROGRAM -->
       <div id="tabLaporan" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -531,7 +574,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: PELAN STRATEGIK -->
+      <!-- TAB 5: PELAN STRATEGIK -->
       <div id="tabPelan" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -550,7 +593,7 @@
         </div>
       </div>
 
-      <!-- TAB 5: CARTA ORGANISASI -->
+      <!-- TAB 6: CARTA ORGANISASI -->
       <div id="tabCarta" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -569,7 +612,7 @@
         </div>
       </div>
 
-      <!-- TAB 6: MINIT MESYUARAT -->
+      <!-- TAB 7: MINIT MESYUARAT -->
       <div id="tabMinit" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -588,6 +631,61 @@
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- MODAL MUAT NAIK FAIL OPR -->
+  <div class="modal-overlay" id="oprModal">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-file-invoice" style="color:var(--neon-blue); margin-right:8px;"></i>Muat Naik Fail OPR</div>
+        <button class="close-modal-btn" onclick="closeModal('oprModal')">&times;</button>
+      </div>
+      <form id="formOPR" onsubmit="handleOPRSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="oprSesi" class="form-control" required></select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Panitia / Unit *</label>
+            <select id="oprPanitiaUnit" class="form-control" required>
+              <option value="">-- Pilih --</option>
+              <optgroup label="Unit Kurikulum" id="oprOptUnit"></optgroup>
+              <optgroup label="Panitia Mata Pelajaran" id="oprOptPanitia"></optgroup>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Tajuk / Program *</label>
+            <input type="text" id="oprTajuk" class="form-control" placeholder="Contoh: OPR - Bulan Bahasa Melayu 2026" required>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Fail Dokumen OPR (PDF / Word / Imej)</label>
+            <input type="file" id="oprFile" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Fail akan disimpan secara automatik ke dalam Google Drive Kurikulum.</small>
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Atau Masukkan Pautan Google Drive Sedia Ada</label>
+            <input type="url" id="oprUrlManual" class="form-control" placeholder="https://drive.google.com/file/d/...">
+          </div>
+
+          <div class="form-group full-width">
+            <label class="form-label">Disediakan Oleh *</label>
+            <select id="oprPelapor" class="form-control" required></select>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('oprModal')">Batal</button>
+          <button type="submit" id="btnSubmitOPR" class="btn-action-blue">
+            <i class="fas fa-save"></i> Muat Naik & Simpan OPR
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- MODAL MUAT NAIK FAIL PARTITION (PANITIA & UNIT KURIKULUM) -->
@@ -1052,51 +1150,178 @@
       renderFailPartitionTable('panitia', data.failPanitia || []);
       renderFailPartitionTable('unit', data.failUnitKurikulum || []);
 
+      // 5. Fail OPR Table
+      renderOPRTable(data.opr || []);
+
       // Filter Options
       populateSelect('filterSesiPanitia', data.options.sesi, 'Semua Sesi');
       populateSelect('filterSesiUnit', data.options.sesi, 'Semua Sesi');
       populateSelect('filterNamaPanitia', data.options.panitiaNames, 'Semua Panitia');
       populateSelect('filterNamaUnit', data.options.unitNames, 'Semua Unit');
 
+      populateSelect('filterSesiOPR', data.options.sesi, 'Semua Sesi');
+      const allPanitiaUnit = [...(data.options.unitNames || []), ...(data.options.panitiaNames || [])];
+      populateSelect('filterUnitOPR', [...new Set(allPanitiaUnit)], 'Semua Panitia / Unit');
+
       // Datalists untuk modal muat naik fail
       populateDatalist('listNoFail', data.options.noFailList || []);
       populateDatalist('listNamaDokumen', data.options.namaDokumenList || []);
       populateDatalist('listKategori', data.options.kategoriList || []);
 
-      // 5. Jadual Dokumen PDF Asas
+      // 6. Jadual Dokumen PDF Asas
       renderTable('pelanTableBody', data.pelanStrategik, ['no', 'tahun', 'url']);
       renderTable('cartaTableBody', data.cartaOrganisasi, ['no', 'tahun', 'url']);
       renderTable('minitTableBody', data.minitMesyuarat, ['bil', 'tahun', 'perkara', 'url']);
 
-      // 6. Jadual Laporan Program
+      // 7. Jadual Laporan Program
       renderLaporanTable(data.laporan);
 
-      // 7. Muatkan Pilihan Borang Laporan
+      // 8. Muatkan Pilihan Borang Laporan & OPR
       populateSelect('formSesi', data.options.sesi);
       populateSelect('formPeringkat', data.options.peringkat);
       populateSelect('formPelapor', data.options.guru);
       populateSelect('partPelapor', data.options.guru);
       populateSelect('partSesi', data.options.sesi);
 
+      populateSelect('oprSesi', data.options.sesi);
+      populateSelect('oprPelapor', data.options.guru);
+
       const optUnit = document.getElementById('optUnitGroup');
+      const oprOptUnit = document.getElementById('oprOptUnit');
       optUnit.innerHTML = '';
+      oprOptUnit.innerHTML = '';
       data.options.unitNames.forEach(u => {
-        const opt = document.createElement('option');
-        opt.value = u; opt.innerText = u;
-        optUnit.appendChild(opt);
+        const opt1 = document.createElement('option');
+        opt1.value = u; opt1.innerText = u;
+        optUnit.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = u; opt2.innerText = u;
+        oprOptUnit.appendChild(opt2);
       });
 
       const optPanitia = document.getElementById('optPanitiaGroup');
+      const oprOptPanitia = document.getElementById('oprOptPanitia');
       optPanitia.innerHTML = '';
+      oprOptPanitia.innerHTML = '';
       data.options.panitiaNames.forEach(p => {
-        const opt = document.createElement('option');
-        opt.value = p; opt.innerText = p;
-        optPanitia.appendChild(opt);
+        const opt1 = document.createElement('option');
+        opt1.value = p; opt1.innerText = p;
+        optPanitia.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = p; opt2.innerText = p;
+        oprOptPanitia.appendChild(opt2);
       });
 
       if (activeUser && activeUser.nama) {
         document.getElementById('formPelapor').value = activeUser.nama;
         document.getElementById('partPelapor').value = activeUser.nama;
+        document.getElementById('oprPelapor').value = activeUser.nama;
+      }
+    }
+
+    // Paparan Jadual OPR
+    function renderOPRTable(list) {
+      const tb = document.getElementById('oprTableBody');
+      tb.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod fail OPR dimuat naik lagi.</td></tr>`;
+        return;
+      }
+
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.sesi || '-'}</td>
+          <td><strong style="color:var(--neon-accent);">${r.panitiaUnit || '-'}</strong></td>
+          <td style="font-weight:600;">${r.tajuk || '-'}</td>
+          <td>${r.disediakanOleh || '-'}</td>
+          <td style="text-align:center;">
+            ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-file-pdf"></i> Buka OPR</a>` : '<span style="color:#94a3b8;">-</span>'}
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterOPRTable() {
+      if (!globalKurikulumData || !globalKurikulumData.opr) return;
+      const sesiFilter = document.getElementById('filterSesiOPR').value;
+      const unitFilter = document.getElementById('filterUnitOPR').value;
+      const searchTxt = document.getElementById('searchOPR').value.toLowerCase();
+
+      const filtered = globalKurikulumData.opr.filter(item => {
+        const matchSesi = !sesiFilter || item.sesi === sesiFilter;
+        const matchUnit = !unitFilter || item.panitiaUnit === unitFilter;
+        const matchSearch = !searchTxt || (item.tajuk && item.tajuk.toLowerCase().includes(searchTxt));
+        return matchSesi && matchUnit && matchSearch;
+      });
+
+      renderOPRTable(filtered);
+    }
+
+    function openOPRModal() {
+      openModal('oprModal');
+    }
+
+    async function handleOPRSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitOPR');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memuat naik OPR ke Drive...';
+
+      const fileInput = document.getElementById('oprFile').files[0];
+      const urlManual = document.getElementById('oprUrlManual').value.trim();
+
+      if (!fileInput && !urlManual) {
+        showToast("Sila pilih fail dokumen OPR atau masukkan pautan Google Drive.", true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Muat Naik & Simpan OPR';
+        return;
+      }
+
+      try {
+        let fileData = null;
+        if (fileInput) {
+          fileData = await fileToBase64(fileInput);
+        }
+
+        const payload = {
+          action: 'simpan_opr',
+          data: {
+            sesi: document.getElementById('oprSesi').value,
+            panitiaUnit: document.getElementById('oprPanitiaUnit').value,
+            tajuk: document.getElementById('oprTajuk').value,
+            file: fileData,
+            urlManual: urlManual,
+            disediakanOleh: document.getElementById('oprPelapor').value
+          }
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Muat Naik & Simpan OPR';
+
+        if (result.success) {
+          showToast('Fail OPR berjaya dimuat naik & direkodkan!');
+          closeModal('oprModal');
+          document.getElementById('formOPR').reset();
+          fetchKurikulumData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Muat Naik & Simpan OPR';
+        showToast('Ralat sambungan: ' + err.toString(), true);
       }
     }
 
