@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengurusan Kokurikulum - SK Mantin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --neon-purple: #a855f7;
+      --neon-purple-glow: rgba(168, 85, 247, 0.45);
+      --neon-accent: #9333ea;
+      --neon-dark: #7e22ce;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-soft: #e2e8f0;
+      --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+    body { background-color: var(--bg-page); color: var(--text-main); padding: 20px 14px; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; }
+
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .btn-back-home {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ffffff;
+      color: var(--neon-accent);
+      border: 1.5px solid var(--neon-purple);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+      transition: all 0.2s ease;
+    }
+
+    .btn-back-home:hover {
+      background: var(--neon-purple);
+      color: #ffffff;
+      box-shadow: 0 0 18px var(--neon-purple-glow);
+      transform: translateY(-2px);
+    }
+
+    .user-pill {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-section { text-align: center; margin-bottom: 28px; }
+    .header-badge {
+      display: inline-block;
+      padding: 4px 14px;
+      background: #f3e8ff;
+      color: var(--neon-dark);
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+    .header-title { font-size: 1.95rem; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: -0.5px; }
+    .header-subtext { color: var(--text-muted); font-weight: 500; font-size: 0.92rem; margin-top: 4px; }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-title::before {
+      content: '';
+      width: 5px;
+      height: 22px;
+      background: var(--neon-purple);
+      border-radius: 4px;
+      box-shadow: 0 0 8px var(--neon-purple);
+    }
+
+    /* KAD MENU UTAMA: eFail Koko & Kehadiran */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 16px;
+      margin-bottom: 35px;
+    }
+
+    .menu-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      padding: 22px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--neon-purple);
+      box-shadow: 0 10px 25px -4px rgba(168, 85, 247, 0.25), 0 0 15px rgba(168, 85, 247, 0.15);
+    }
+
+    .icon-box {
+      width: 65px;
+      height: 65px;
+      border-radius: 16px;
+      background: #faf5ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      font-size: 1.7rem;
+      color: var(--neon-accent);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+      transition: all 0.3s ease;
+      overflow: hidden;
+      padding: 8px;
+    }
+
+    .menu-card:hover .icon-box {
+      transform: scale(1.15) rotate(4deg);
+      background: #f3e8ff;
+      box-shadow: 0 0 15px var(--neon-purple-glow);
+    }
+
+    .menu-card-title { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+    .menu-card-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+
+    /* TABS */
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 2px solid var(--border-soft);
+      margin-bottom: 18px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      background: none;
+      border: none;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      color: var(--neon-accent);
+      border-bottom: 3px solid var(--neon-purple);
+      background: #faf5ff;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARD JADUAL */
+    .table-card {
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .table-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .filter-wrapper {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filter-select, .search-input {
+      padding: 8px 12px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-soft);
+      font-size: 0.85rem;
+      outline: none;
+      background: #f8fafc;
+    }
+    .filter-select:focus, .search-input:focus { border-color: var(--neon-purple); }
+
+    .btn-action-purple {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--neon-purple);
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 0 12px var(--neon-purple-glow);
+      transition: all 0.2s ease;
+    }
+    .btn-action-purple:hover { background: var(--neon-accent); transform: translateY(-2px); }
+
+    .btn-download-csv {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      color: var(--neon-dark);
+      border: 1.5px solid var(--neon-purple);
+      padding: 7px 14px;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-download-csv:hover { background: #faf5ff; }
+
+    .table-scroll-container {
+      max-height: 290px;
+      overflow-y: auto;
+      border: 1px solid #f1f5f9;
+      border-radius: 10px;
+    }
+
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .custom-table th {
+      position: sticky; top: 0;
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-weight: 700;
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 2px solid var(--border-soft);
+      z-index: 2;
+    }
+    .custom-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); }
+    .custom-table tr:hover { background: #faf5ff; }
+
+    .btn-link-file {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: #faf5ff;
+      color: var(--neon-dark);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.78rem;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+      cursor: pointer;
+    }
+    .btn-link-file:hover { background: var(--neon-purple); color: #ffffff; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 16px;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 850px;
+      border: 1px solid var(--neon-purple);
+      box-shadow: 0 0 30px var(--neon-purple-glow);
+      padding: 24px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalFade 0.25s ease-out;
+    }
+
+    @keyframes modalFade { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; margin-bottom: 16px; border-bottom: 1px solid #f1f5f9; }
+    .modal-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
+    .close-modal-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
+
+    .submodal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    .sub-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .sub-card:hover { background: #ffffff; border-color: var(--neon-purple); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(168, 85, 247, 0.2); }
+    .sub-card-icon { width: 42px; height: 42px; border-radius: 10px; background: #f3e8ff; color: var(--neon-dark); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 8px; }
+    .sub-card-title { font-size: 0.8rem; font-weight: 700; line-height: 1.3; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.full-width { grid-column: 1 / -1; }
+    .form-label { font-size: 0.8rem; font-weight: 700; color: var(--text-main); }
+    .form-control { padding: 8px 12px; border-radius: 10px; border: 1.5px solid var(--border-soft); font-size: 0.86rem; outline: none; transition: all 0.2s; }
+    .form-control:focus { border-color: var(--neon-purple); box-shadow: 0 0 8px var(--neon-purple-glow); }
+    .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .btn-secondary { padding: 8px 16px; border-radius: 10px; background: #f1f5f9; color: var(--text-muted); border: none; font-weight: 600; cursor: pointer; }
+
+    /* CHECKLIST KEHADIRAN MURID */
+    .att-list-container {
+      max-height: 280px;
+      overflow-y: auto;
+      border: 1px solid var(--border-soft);
+      border-radius: 10px;
+      padding: 10px;
+      background: #f8fafc;
+      margin-top: 10px;
+    }
+    .att-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+      margin-bottom: 6px;
+    }
+    .att-item label { font-size: 0.82rem; font-weight: 600; cursor: pointer; flex: 1; }
+
+    .att-stat-box {
+      background: #f3e8ff;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-around;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--neon-dark);
+      text-align: center;
+    }
+
+    /* CETAKAN LAPORAN */
+    .printable-report { border: 2px solid #0f172a; padding: 20px; color: #000000; background: #ffffff; line-height: 1.5; }
+    .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
+    .report-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+    .report-table td, .report-table th { border: 1px solid #000; padding: 6px 8px; font-size: 0.82rem; }
+    .report-table th { background: #f1f5f9; width: 26%; text-align: left; }
+    .report-images { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+    .report-images img { width: 100%; height: 130px; object-fit: cover; border: 1px solid #ccc; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+    }
+
+    .toast-msg {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      padding: 12px 20px;
+      border-radius: 10px;
+      background: #0f172a;
+      color: #ffffff;
+      font-size: 0.9rem;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px var(--neon-purple-glow);
+      border-left: 4px solid var(--neon-purple);
+      display: none;
+      z-index: 2000;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="top-nav">
+      <a href="../index.html" class="btn-back-home">
+        <i class="fas fa-arrow-left"></i> Kembali ke Homepage
+      </a>
+      <div class="user-pill">
+        <i class="fas fa-user-circle" style="color:var(--neon-purple); font-size:1rem;"></i>
+        <span id="navUserNama">Guru SK Mantin</span>
+      </div>
+    </div>
+
+    <header class="header-section">
+      <span class="header-badge"><i class="fas fa-medal"></i> SEKTOR KOKURIKULUM</span>
+      <h1 class="header-title">Sistem Pengurusan Kokurikulum</h1>
+      <p class="header-subtext">Sekolah Kebangsaan Mantin — Membina Potensi, Mengukir Prestasi</p>
+    </header>
+
+    <!-- KAD MENU UTAMA: eFail Koko & Kehadiran Murid -->
+    <section>
+      <h2 class="section-title">Dokumen & Pengurusan Murid</h2>
+      <div class="menu-grid">
+        <div class="menu-card" onclick="openEFailModal()">
+          <div class="icon-box"><i class="fas fa-folder-open"></i></div>
+          <div class="menu-card-title">eFail Kokurikulum</div>
+          <div class="menu-card-desc">Arkib 38 fail unit kokurikulum SK Mantin</div>
+        </div>
+        <div class="menu-card" onclick="openKehadiranMuridModal()">
+          <div class="icon-box"><i class="fas fa-user-check"></i></div>
+          <div class="menu-card-title">Sistem Kehadiran Murid</div>
+          <div class="menu-card-desc">Tanda kehadiran mengikut unit & analisis peratus</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABS LAPORAN & PENGURUSAN KOKO -->
+    <section>
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tabMingguan')"><i class="fas fa-book"></i> Laporan Mingguan</button>
+        <button class="tab-btn" onclick="switchTab('tabPencapaian')"><i class="fas fa-trophy"></i> Laporan Pencapaian</button>
+        <button class="tab-btn" onclick="switchTab('tabJawatankuasa')"><i class="fas fa-users-cog"></i> Jawatankuasa Murid</button>
+        <button class="tab-btn" onclick="switchTab('tabGuru')"><i class="fas fa-chalkboard-teacher"></i> Kehadiran Guru</button>
+      </div>
+
+      <!-- TAB 1: LAPORAN MINGGUAN -->
+      <div id="tabMingguan" class="tab-content active">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Mingguan Perjumpaan</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Tapis mengikut sesi, perjumpaan, atau unit kokurikulum.</p>
+            </div>
+            <button class="btn-action-purple" onclick="openModal('modalMingguan')">
+              <i class="fas fa-edit"></i> Isi Laporan Mingguan
+            </button>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterMingguanSesi" class="filter-select" onchange="filterMingguanTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterMingguanPerjumpaan" class="filter-select" onchange="filterMingguanTable()">
+              <option value="">Semua Perjumpaan</option>
+            </select>
+            <select id="filterMingguanUnit" class="filter-select" onchange="filterMingguanTable()">
+              <option value="">Semua Unit</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Tarikh</th>
+                  <th>Perjumpaan</th>
+                  <th>Unit</th>
+                  <th>Tajuk Aktiviti</th>
+                  <th>Kehadiran</th>
+                  <th>Pelapor</th>
+                  <th style="text-align:center;">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody id="mingguanTableBody">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: LAPORAN PENCAPAIAN -->
+      <div id="tabPencapaian" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Pencapaian & Pertandingan Murid</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Cari peserta dan tapis mengikut sesi persekolahan atau peringkat.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-download-csv" onclick="downloadPencapaianCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
+              <button class="btn-action-purple" onclick="openModal('modalPencapaian')">
+                <i class="fas fa-award"></i> Tambah Pencapaian
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <input type="text" id="searchPesertaInput" class="search-input" placeholder="Cari nama murid..." oninput="filterPencapaianTable()">
+            <select id="filterPencapaianSesi" class="filter-select" onchange="filterPencapaianTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterPencapaianPeringkat" class="filter-select" onchange="filterPencapaianTable()">
+              <option value="">Semua Peringkat</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Nama Murid</th>
+                  <th>Tahun</th>
+                  <th>Program / Pertandingan</th>
+                  <th>Peringkat</th>
+                  <th>Pencapaian</th>
+                  <th>Guru Penyelaras</th>
+                  <th style="text-align:center;">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody id="pencapaianTableBody">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: JAWATANKUASA MURID -->
+      <div id="tabJawatankuasa" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Senarai Jawatankuasa Murid</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Struktur kepimpinan murid bagi setiap unit kokurikulum.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-download-csv" onclick="downloadJwCSV()"><i class="fas fa-file-csv"></i> Muat Turun Senarai</button>
+              <button class="btn-action-purple" onclick="openModal('modalJawatankuasa')">
+                <i class="fas fa-user-plus"></i> Lantik Jawatankuasa
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterJwUnit" class="filter-select" onchange="filterJwTable()">
+              <option value="">Semua Unit</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Unit</th>
+                  <th>Jawatan</th>
+                  <th>Nama Murid</th>
+                  <th>Tahun / Kelas</th>
+                  <th>Sesi</th>
+                </tr>
+              </thead>
+              <tbody id="jwTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: KEHADIRAN GURU -->
+      <div id="tabGuru" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Log Kehadiran Guru Kokurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Rekod kehadiran dan catatan ketidakhadiran guru pembimbing.</p>
+            </div>
+            <button class="btn-action-purple" onclick="openModal('modalGuruAtt')">
+              <i class="fas fa-user-clock"></i> Rekod Kehadiran Guru
+            </button>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Tarikh</th>
+                  <th>Nama Guru</th>
+                  <th>Aktiviti</th>
+                  <th>Perjumpaan</th>
+                  <th>Status / Catatan</th>
+                </tr>
+              </thead>
+              <tbody id="guruTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- MODAL: eFail Koko (38 Unit Grid) -->
+  <div class="modal-overlay" id="efailModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-folder-open" style="color:var(--neon-purple); margin-right:8px;"></i>Senarai eFail Unit Kokurikulum</div>
+        <button class="close-modal-btn" onclick="closeModal('efailModal')">&times;</button>
+      </div>
+      <div style="margin-bottom:14px;">
+        <input type="text" id="searchEFailInput" class="search-input" style="width:100%;" placeholder="Cari fail unit kokurikulum..." oninput="filterEFailModal()">
+      </div>
+      <div class="submodal-grid" id="efailCardsContainer"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: SISTEM KEHADIRAN MURID DINAMIK -->
+  <div class="modal-overlay" id="kehadiranMuridModal">
+    <div class="modal-box" style="max-width:700px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-user-check" style="color:var(--neon-purple); margin-right:8px;"></i>Pengisian Kehadiran Murid</div>
+        <button class="close-modal-btn" onclick="closeModal('kehadiranMuridModal')">&times;</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Sesi Persekolahan</label>
+          <select id="attSesiSelect" class="form-control" onchange="renderAttendanceChecklist()"></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kategori Kokurikulum</label>
+          <select id="attKategoriSelect" class="form-control" onchange="populateAttUnitSelect()">
+            <option value="uniform">Badan Beruniform</option>
+            <option value="persatuan">Kelab & Persatuan</option>
+            <option value="sukan">Sukan & Permainan</option>
+            <option value="rumahSukan">Rumah Sukan</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label class="form-label">Pilih Unit</label>
+          <select id="attUnitSelect" class="form-control" onchange="renderAttendanceChecklist()"></select>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
+        <span style="font-size:0.85rem; font-weight:700;">Senarai Murid Berdaftar (Susunan A-Z):</span>
+        <button type="button" class="btn-download-csv" onclick="toggleAllAttendance()"><i class="fas fa-check-double"></i> Pilih / Batal Semua</button>
+      </div>
+
+      <div class="att-list-container" id="attendanceChecklistContainer">
+        <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih unit untuk memaparkan murid.</div>
+      </div>
+
+      <div class="att-stat-box" id="attendanceStatBox">
+        <div>Jumlah Murid: <span id="statJumlah">0</span></div>
+        <div>Hadir: <span id="statHadir">0</span></div>
+        <div>Peratus: <span id="statPeratus">0%</span></div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="closeModal('kehadiranMuridModal')">Tutup</button>
+        <button type="button" class="btn-action-purple" onclick="downloadAttendanceSummary()"><i class="fas fa-download"></i> Muat Turun Analisis</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: LAPORAN MINGGUAN -->
+  <div class="modal-overlay" id="modalMingguan">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-edit" style="color:var(--neon-purple); margin-right:8px;"></i>Borang Laporan Mingguan Kokurikulum</div>
+        <button class="close-modal-btn" onclick="closeModal('modalMingguan')">&times;</button>
+      </div>
+      <form id="formMingguan" onsubmit="handleMingguanSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="mSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Perjumpaan Kali Ke- *</label>
+            <input type="number" id="mPerjumpaan" class="form-control" placeholder="1, 2, 3..." required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit Kokurikulum *</label>
+            <select id="mUnit" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tarikh Perjumpaan *</label>
+            <input type="date" id="mTarikh" class="form-control" required>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Tajuk Aktiviti *</label>
+            <input type="text" id="mTajuk" class="form-control" placeholder="Contoh: Ikatan & Simpulan / Asas Hantaran Bola" required>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Penerangan Aktiviti *</label>
+            <textarea id="mAktiviti" class="form-control" rows="3" placeholder="Penerangan aktiviti perjumpaan" required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nilai Sivik</label>
+            <select id="mSivik" class="form-control"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">PikeBM / Fokus Bahasa</label>
+            <input type="text" id="mPikebm" class="form-control" placeholder="Contoh: Arahan kawad / Laras sukan">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Penilaian KBAT</label>
+            <input type="text" id="mKbat" class="form-control" placeholder="Aplikasi kemahiran & penyelesaian masalah">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Peratus Kehadiran (cth: 92%) *</label>
+            <input type="text" id="mKehadiran" class="form-control" placeholder="95%" required>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Guru Pembimbing Yang Hadir</label>
+            <input type="text" id="mGuruPembimbing" class="form-control" placeholder="Nama-nama guru terlibat">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Muat Naik Gambar 1</label>
+            <input type="file" id="mG1" class="form-control" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Muat Naik Gambar 2</label>
+            <input type="file" id="mG2" class="form-control" accept="image/*">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Muat Naik Gambar 3</label>
+            <input type="file" id="mG3" class="form-control" accept="image/*">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Laporan Disediakan Oleh *</label>
+            <select id="mPelapor" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalMingguan')">Batal</button>
+          <button type="submit" id="btnSubmitMingguan" class="btn-action-purple">
+            <i class="fas fa-save"></i> Simpan Laporan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: LAPORAN PENCAPAIAN -->
+  <div class="modal-overlay" id="modalPencapaian">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-trophy" style="color:var(--neon-purple); margin-right:8px;"></i>Borang Laporan Pencapaian Murid</div>
+        <button class="close-modal-btn" onclick="closeModal('modalPencapaian')">&times;</button>
+      </div>
+      <form id="formPencapaian" onsubmit="handlePencapaianSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="pSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Peringkat *</label>
+            <select id="pPeringkat" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Nama Program / Pertandingan *</label>
+            <input type="text" id="pProgram" class="form-control" placeholder="Contoh: Kejohanan Olahraga MSSD Seremban" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tahun / Tingkatan *</label>
+            <input type="text" id="pTahun" class="form-control" placeholder="Contoh: Tahun 4, 5, 6" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Pencapaian *</label>
+            <select id="pPencapaian" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Nama Peserta / Murid (Pisahkan dengan koma jika ramai) *</label>
+            <textarea id="pPeserta" class="form-control" rows="3" placeholder="Contoh: Ahmad Daniel bin Ali, Nurul Huda binti Zamri" required></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Muat Naik Gambar 1</label>
+            <input type="file" id="pG1" class="form-control" accept="image/*">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Muat Naik Gambar 2</label>
+            <input type="file" id="pG2" class="form-control" accept="image/*">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Muat Naik Gambar 3</label>
+            <input type="file" id="pG3" class="form-control" accept="image/*">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Guru Penyelaras / Pembimbing *</label>
+            <select id="pPenyelaras" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPencapaian')">Batal</button>
+          <button type="submit" id="btnSubmitPencapaian" class="btn-action-purple">
+            <i class="fas fa-check"></i> Simpan Pencapaian
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: JAWATANKUASA MURID -->
+  <div class="modal-overlay" id="modalJawatankuasa">
+    <div class="modal-box" style="max-width:550px;">
+      <div class="modal-header">
+        <div class="modal-title">Pelantikan Jawatankuasa Murid</div>
+        <button class="close-modal-btn" onclick="closeModal('modalJawatankuasa')">&times;</button>
+      </div>
+      <form id="formJw" onsubmit="handleJwSubmit(event)">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Sesi Persekolahan *</label>
+          <select id="jwSesi" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Unit Kokurikulum *</label>
+          <select id="jwUnit" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Jawatan *</label>
+          <select id="jwJawatan" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Pilih Murid *</label>
+          <input type="text" id="jwNama" class="form-control" placeholder="Nama murid" required>
+        </div>
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="form-group">
+            <label class="form-label">Tahun</label>
+            <input type="text" id="jwTahun" class="form-control" placeholder="Contoh: Tahun 6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kelas</label>
+            <input type="text" id="jwKelas" class="form-control" placeholder="Contoh: Bestari">
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalJawatankuasa')">Batal</button>
+          <button type="submit" id="btnSubmitJw" class="btn-action-purple">
+            <i class="fas fa-save"></i> Lantik Jawatankuasa
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: KEHADIRAN GURU -->
+  <div class="modal-overlay" id="modalGuruAtt">
+    <div class="modal-box" style="max-width:550px;">
+      <div class="modal-header">
+        <div class="modal-title">Log Kehadiran Guru Kokurikulum</div>
+        <button class="close-modal-btn" onclick="closeModal('modalGuruAtt')">&times;</button>
+      </div>
+      <form id="formGuruAtt" onsubmit="handleGuruAttSubmit(event)">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Sesi Persekolahan *</label>
+          <select id="gaSesi" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Nama Guru *</label>
+          <select id="gaNamaGuru" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Aktiviti / Unit Koku *</label>
+          <input type="text" id="gaAktiviti" class="form-control" placeholder="Contoh: Pengakap / Bola Sepak" required>
+        </div>
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="form-group">
+            <label class="form-label">Perjumpaan Ke-</label>
+            <input type="number" id="gaPerjumpaan" class="form-control" placeholder="1" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tarikh</label>
+            <input type="date" id="gaTarikh" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Status / Sebab Tidak Hadir (Jika Berkaitan)</label>
+          <input type="text" id="gaSebab" class="form-control" placeholder="Hadir / Cuti Sakit / Kursus">
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalGuruAtt')">Batal</button>
+          <button type="submit" id="btnSubmitGa" class="btn-action-purple">
+            <i class="fas fa-check"></i> Rekod Kehadiran
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL CETAK ONE-PAGE REPORT (MINGGUAN / PENCAPAIAN) -->
+  <div class="modal-overlay" id="viewReportModal">
+    <div class="modal-box" style="max-width:850px;">
+      <div class="modal-header no-print">
+        <div class="modal-title" id="rptModalTitle"><i class="fas fa-file-invoice"></i> Paparan Laporan Kokurikulum</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-action-purple" onclick="window.print()"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
+          <button class="close-modal-btn" onclick="closeModal('viewReportModal')">&times;</button>
+        </div>
+      </div>
+
+      <div id="printableArea" class="printable-report">
+        <div class="report-header">
+          <h2 style="font-size:1.2rem; text-transform:uppercase;">SEKOLAH KEBANGSAAN MANTIN</h2>
+          <h3 style="font-size:1rem; font-weight:700;" id="rptHeading">LAPORAN MINGGUAN KOKURIKULUM</h3>
+          <p style="font-size:0.85rem;" id="rptSubheading">Sesi Persekolahan</p>
+        </div>
+
+        <table class="report-table" id="rptTableContent"></table>
+
+        <div id="rptImagesWrap" style="display:none;">
+          <div style="font-weight:700; font-size:0.85rem; margin-bottom:6px;">RAKAMAN GAMBAR AKTIVITI:</div>
+          <div class="report-images" id="rptImagesContainer"></div>
+        </div>
+
+        <div style="margin-top:30px; display:flex; justify-content:space-between;">
+          <div style="font-size:0.85rem;">
+            <p>Disediakan Oleh:</p>
+            <br><br>
+            <p style="font-weight:700; text-decoration:underline;" id="rptPelaporName">-</p>
+            <p>Guru SK Mantin</p>
+          </div>
+          <div style="font-size:0.85rem; text-align:right;">
+            <p>Disahkan Oleh:</p>
+            <br><br>
+            <p style="font-weight:700; text-decoration:underline;">..............................................</p>
+            <p>Guru Besar / GPK Kokurikulum</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastNotification" class="toast-msg"></div>
+
+  <script>
+    // MASUKKAN URL APPS SCRIPT KOKU ANDA DI SINI:
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2xRfn62cX1AXKaAPr8aLpIAl3easYwJC9nKZ88FC6oX9i39ide0Ta6Cc8hgtHNHxcFg/exec";
+
+    const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
+    if (!activeUser) {
+      window.location.href = "../login.html";
+    } else {
+      document.getElementById("navUserNama").innerText = activeUser.nama || "Guru SK Mantin";
+    }
+
+    let globalKokoData = null;
+    let attendanceState = {};
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toastNotification');
+      t.innerText = msg;
+      t.style.borderLeftColor = isError ? '#ef4444' : '#a855f7';
+      t.style.display = 'block';
+      setTimeout(() => { t.style.display = 'none'; }, 4000);
+    }
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openEFailModal() { openModal('efailModal'); }
+    function openKehadiranMuridModal() {
+      populateAttUnitSelect();
+      openModal('kehadiranMuridModal');
+    }
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) { resolve(null); return; }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const raw = reader.result;
+          resolve({
+            name: file.name,
+            type: file.type,
+            base64: raw.split(',')[1]
+          });
+        };
+        reader.onerror = err => reject(err);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    window.addEventListener('load', fetchKokoData);
+
+    const CACHE_KEY_LOCAL = "semanes_koko_cache";
+
+    async function fetchKokoData() {
+      const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
+      if (localSaved) {
+        try {
+          const cachedJSON = JSON.parse(localSaved);
+          globalKokoData = cachedJSON;
+          renderUI(cachedJSON);
+        } catch (e) {}
+      }
+
+      try {
+        const response = await fetch(APPS_SCRIPT_URL);
+        const data = await response.json();
+        if (data.success) {
+          globalKokoData = data;
+          localStorage.setItem(CACHE_KEY_LOCAL, JSON.stringify(data));
+          renderUI(data);
+        } else {
+          showToast("Ralat data: " + data.error, true);
+        }
+      } catch (err) {
+        console.warn("Rangkaian lambat, memaparkan cache:", err);
+        if (!localSaved) showToast("Ralat menyambung ke pangkalan data.", true);
+      }
+    }
+
+    function renderUI(data) {
+      // 1. Render eFail Cards
+      renderEFailCards(data.efail);
+
+      // 2. Dropdown Rujukan
+      populateSelect('filterMingguanSesi', data.options.sesi, "Semua Sesi");
+      populateSelect('filterPencapaianSesi', data.options.sesi, "Semua Sesi");
+      populateSelect('filterPencapaianPeringkat', data.options.peringkat, "Semua Peringkat");
+      populateSelect('attSesiSelect', data.options.sesi);
+
+      // Gabungkan semua nama unit untuk filter & dropdown
+      const allUnits = [...new Set([...data.options.uniform, ...data.options.persatuan, ...data.options.sukan, ...data.options.rumahSukan])];
+      populateSelect('filterMingguanUnit', allUnits, "Semua Unit");
+      populateSelect('filterJwUnit', allUnits, "Semua Unit");
+      populateSelect('mUnit', allUnits);
+      populateSelect('jwUnit', allUnits);
+
+      // Pilihan Borang Mingguan
+      populateSelect('mSesi', data.options.sesi);
+      populateSelect('mSivik', data.options.sivik);
+      populateSelect('mPelapor', data.options.guru);
+
+      // Pilihan Borang Pencapaian
+      populateSelect('pSesi', data.options.sesi);
+      populateSelect('pPeringkat', data.options.peringkat);
+      populateSelect('pPencapaian', data.options.pencapaian);
+      populateSelect('pPenyelaras', data.options.guru);
+
+      // Pilihan Borang Jawatankuasa
+      populateSelect('jwSesi', data.options.sesi);
+      populateSelect('jwJawatan', data.options.jawatan);
+
+      // Pilihan Borang Kehadiran Guru
+      populateSelect('gaSesi', data.options.sesi);
+      populateSelect('gaNamaGuru', data.options.guru);
+
+      if (activeUser && activeUser.nama) {
+        document.getElementById('mPelapor').value = activeUser.nama;
+        document.getElementById('pPenyelaras').value = activeUser.nama;
+        document.getElementById('gaNamaGuru').value = activeUser.nama;
+      }
+
+      // 3. Render Jadual
+      renderMingguanTable(data.laporanMingguan);
+      renderPencapaianTable(data.laporanPencapaian);
+      renderJwTable(data.jawatankuasa);
+      renderGuruTable(data.kehadiranGuru);
+    }
+
+    function populateSelect(id, items, defaultText = "-- Pilih --") {
+      const el = document.getElementById(id);
+      if (!el || !items) return;
+      el.innerHTML = `<option value="">${defaultText}</option>`;
+      items.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v; opt.innerText = v;
+        el.appendChild(opt);
+      });
+    }
+
+    // --- EFAIL UNIT ---
+    function renderEFailCards(list) {
+      const container = document.getElementById('efailCardsContainer');
+      container.innerHTML = '';
+      list.forEach(item => {
+        const a = document.createElement('a');
+        a.className = 'sub-card';
+        a.href = item.link || '#';
+        a.target = '_blank';
+        a.innerHTML = `
+          <div class="sub-card-icon"><i class="fas fa-folder"></i></div>
+          <div class="sub-card-title">${item.unit}</div>
+          <span style="font-size:0.7rem; color:var(--neon-dark); margin-top:4px;">${item.aktiviti}</span>
+        `;
+        container.appendChild(a);
+      });
+    }
+
+    function filterEFailModal() {
+      const q = document.getElementById('searchEFailInput').value.toLowerCase();
+      const filtered = globalKokoData.efail.filter(f => f.unit.toLowerCase().includes(q) || f.aktiviti.toLowerCase().includes(q));
+      renderEFailCards(filtered);
+    }
+
+    // --- KEHADIRAN MURID DINAMIK ---
+    function populateAttUnitSelect() {
+      const kat = document.getElementById('attKategoriSelect').value;
+      const opts = globalKokoData ? globalKokoData.options[kat] : [];
+      populateSelect('attUnitSelect', opts);
+      renderAttendanceChecklist();
+    }
+
+    function renderAttendanceChecklist() {
+      const container = document.getElementById('attendanceChecklistContainer');
+      container.innerHTML = '';
+      const kat = document.getElementById('attKategoriSelect').value;
+      const unit = document.getElementById('attUnitSelect').value;
+
+      if (!unit || !globalKokoData) {
+        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih unit.</div>';
+        updateAttendanceStats(0, 0);
+        return;
+      }
+
+      // Tapis murid mengikut unit yang dipilih
+      let matched = globalKokoData.muridKoko.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
+
+      // Susun mengikut Tahun & Nama A-Z
+      matched.sort((a, b) => {
+        if (a.tahun !== b.tahun) return a.tahun.localeCompare(b.tahun);
+        return a.nama.localeCompare(b.nama);
+      });
+
+      if (matched.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Tiada murid didaftarkan untuk unit ini.</div>';
+        updateAttendanceStats(0, 0);
+        return;
+      }
+
+      attendanceState = {};
+      matched.forEach((m, idx) => {
+        attendanceState[idx] = true; // Default: Hadir
+        const div = document.createElement('div');
+        div.className = 'att-item';
+        div.innerHTML = `
+          <label for="att_chk_${idx}">
+            <span style="font-weight:700; color:var(--neon-dark); margin-right:6px;">[Thn ${m.tahun} ${m.kelas}]</span> ${m.nama}
+          </label>
+          <input type="checkbox" id="att_chk_${idx}" checked onchange="handleAttCheck(${idx}, this.checked)">
+        `;
+        container.appendChild(div);
+      });
+
+      updateAttendanceStats(matched.length, matched.length);
+    }
+
+    function handleAttCheck(idx, checked) {
+      attendanceState[idx] = checked;
+      const total = Object.keys(attendanceState).length;
+      const hadir = Object.values(attendanceState).filter(v => v).length;
+      updateAttendanceStats(total, hadir);
+    }
+
+    function toggleAllAttendance() {
+      const checkboxes = document.querySelectorAll('#attendanceChecklistContainer input[type="checkbox"]');
+      const allChecked = Array.from(checkboxes).every(c => c.checked);
+      checkboxes.forEach((c, idx) => {
+        c.checked = !allChecked;
+        attendanceState[idx] = !allChecked;
+      });
+      const total = checkboxes.length;
+      const hadir = !allChecked ? total : 0;
+      updateAttendanceStats(total, hadir);
+    }
+
+    function updateAttendanceStats(total, hadir) {
+      document.getElementById('statJumlah').innerText = total;
+      document.getElementById('statHadir').innerText = hadir;
+      const peratus = total > 0 ? Math.round((hadir / total) * 100) : 0;
+      document.getElementById('statPeratus').innerText = `${peratus}%`;
+
+      // Kemaskini juga ke borang mingguan jika terbuka
+      const inputKehadiran = document.getElementById('mKehadiran');
+      if (inputKehadiran && peratus > 0) inputKehadiran.value = `${peratus}%`;
+    }
+
+    function downloadAttendanceSummary() {
+      const unit = document.getElementById('attUnitSelect').value || "Unit";
+      const total = document.getElementById('statJumlah').innerText;
+      const hadir = document.getElementById('statHadir').innerText;
+      const peratus = document.getElementById('statPeratus').innerText;
+
+      let csv = `Unit,Jumlah Murid,Hadir,Peratus Kehadiran\n"${unit}",${total},${hadir},"${peratus}"\n\n`;
+      csv += "Bil,Nama Murid,Tahun,Kelas,Status Kehadiran\n";
+
+      const kat = document.getElementById('attKategoriSelect').value;
+      let matched = globalKokoData.muridKoko.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
+      matched.sort((a, b) => a.nama.localeCompare(b.nama));
+
+      matched.forEach((m, idx) => {
+        const status = attendanceState[idx] ? "HADIR" : "TIDAK HADIR";
+        csv += `${idx + 1},"${m.nama}","${m.tahun}","${m.kelas}","${status}"\n`;
+      });
+
+      downloadCSV(csv, `Analisis_Kehadiran_${unit}.csv`);
+    }
+
+    // --- TABEL LAPORAN MINGGUAN ---
+    function renderMingguanTable(list) {
+      const tb = document.getElementById('mingguanTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada laporan mingguan.</td></tr>';
+        return;
+      }
+      list.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.tarikh}</td>
+          <td>Ke-${item.perjumpaan}</td>
+          <td><span style="font-weight:700; color:var(--neon-dark);">${item.unit}</span></td>
+          <td style="font-weight:600;">${item.tajuk}</td>
+          <td><span style="font-weight:700; color:#059669;">${item.kehadiran}</span></td>
+          <td>${item.disediakanOleh}</td>
+          <td style="text-align:center;">
+            <button class="btn-link-file" onclick="viewMingguanDetails(${item.id})"><i class="fas fa-eye"></i> Buka / Print</button>
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterMingguanTable() {
+      const sSesi = document.getElementById('filterMingguanSesi').value;
+      const sPerjumpaan = document.getElementById('filterMingguanPerjumpaan').value;
+      const sUnit = document.getElementById('filterMingguanUnit').value;
+
+      let filtered = globalKokoData.laporanMingguan;
+      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
+      if (sPerjumpaan) filtered = filtered.filter(r => r.perjumpaan == sPerjumpaan);
+      if (sUnit) filtered = filtered.filter(r => r.unit == sUnit);
+      renderMingguanTable(filtered);
+    }
+
+    // --- TABEL PENCAPAIAN (NORMALIZED PER MURID) ---
+    function renderPencapaianTable(list) {
+      const tb = document.getElementById('pencapaianTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod pencapaian.</td></tr>';
+        return;
+      }
+
+      // Pecahkan nama murid satu persatu
+      list.forEach(item => {
+        const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
+        if (muridArr.length === 0) muridArr.push('-');
+
+        muridArr.forEach(namaMurid => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="font-weight:700;">${namaMurid}</td>
+            <td>${item.tahun}</td>
+            <td>${item.program}</td>
+            <td><span class="header-badge" style="padding:2px 8px; font-size:0.75rem;">${item.peringkat}</span></td>
+            <td style="font-weight:700; color:var(--neon-accent);">${item.pencapaian}</td>
+            <td>${item.penyelaras}</td>
+            <td style="text-align:center;">
+              <button class="btn-link-file" onclick="viewPencapaianDetails(${item.id})"><i class="fas fa-eye"></i> Laporan</button>
+            </td>
+          `;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function filterPencapaianTable() {
+      const q = document.getElementById('searchPesertaInput').value.toLowerCase();
+      const sSesi = document.getElementById('filterPencapaianSesi').value;
+      const sPeringkat = document.getElementById('filterPencapaianPeringkat').value;
+
+      let filtered = globalKokoData.laporanPencapaian;
+      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
+      if (sPeringkat) filtered = filtered.filter(r => r.peringkat == sPeringkat);
+      if (q) filtered = filtered.filter(r => (r.peserta || '').toLowerCase().includes(q) || (r.program || '').toLowerCase().includes(q));
+
+      renderPencapaianTable(filtered);
+    }
+
+    function downloadPencapaianCSV() {
+      let csv = "Nama Murid,Tahun,Program,Peringkat,Pencapaian,Guru Penyelaras\n";
+      globalKokoData.laporanPencapaian.forEach(item => {
+        const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
+        muridArr.forEach(n => {
+          csv += `"${n}","${item.tahun}","${item.program}","${item.peringkat}","${item.pencapaian}","${item.penyelaras}"\n`;
+        });
+      });
+      downloadCSV(csv, "Pencapaian_Kokurikulum_SK_Mantin.csv");
+    }
+
+    // --- TABEL JAWATANKUASA ---
+    function renderJwTable(list) {
+      const tb = document.getElementById('jwTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod jawatankuasa.</td></tr>';
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span style="font-weight:700; color:var(--neon-dark);">${r.unit}</span></td>
+          <td style="font-weight:700;">${r.jawatan}</td>
+          <td>${r.nama}</td>
+          <td>${r.tahun} ${r.kelas}</td>
+          <td>${r.sesi}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterJwTable() {
+      const sUnit = document.getElementById('filterJwUnit').value;
+      let filtered = globalKokoData.jawatankuasa;
+      if (sUnit) filtered = filtered.filter(r => r.unit == sUnit);
+      renderJwTable(filtered);
+    }
+
+    function downloadJwCSV() {
+      let csv = "Unit,Jawatan,Nama Murid,Tahun,Kelas,Sesi\n";
+      globalKokoData.jawatankuasa.forEach(r => {
+        csv += `"${r.unit}","${r.jawatan}","${r.nama}","${r.tahun}","${r.kelas}","${r.sesi}"\n`;
+      });
+      downloadCSV(csv, "Jawatankuasa_Murid_Kokurikulum.csv");
+    }
+
+    // --- TABEL KEHADIRAN GURU ---
+    function renderGuruTable(list) {
+      const tb = document.getElementById('guruTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada log kehadiran guru.</td></tr>';
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.tarikh}</td>
+          <td style="font-weight:700;">${r.namaGuru}</td>
+          <td>${r.aktiviti}</td>
+          <td>Ke-${r.perjumpaan}</td>
+          <td><span class="header-badge" style="padding:2px 8px; font-size:0.75rem;">${r.sebab}</span></td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    // --- SUBMISSION FORMS ---
+    async function handleMingguanSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitMingguan');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      try {
+        const [g1, g2, g3] = await Promise.all([
+          fileToBase64(document.getElementById('mG1').files[0]),
+          fileToBase64(document.getElementById('mG2').files[0]),
+          fileToBase64(document.getElementById('mG3').files[0])
+        ]);
+
+        const formData = {
+          sesi: document.getElementById('mSesi').value,
+          perjumpaan: document.getElementById('mPerjumpaan').value,
+          unit: document.getElementById('mUnit').value,
+          tarikh: document.getElementById('mTarikh').value,
+          tajuk: document.getElementById('mTajuk').value,
+          aktiviti: document.getElementById('mAktiviti').value,
+          sivik: document.getElementById('mSivik').value,
+          pikebm: document.getElementById('mPikebm').value,
+          kbat: document.getElementById('mKbat').value,
+          kehadiran: document.getElementById('mKehadiran').value,
+          guruPembimbing: document.getElementById('mGuruPembimbing').value,
+          g1File: g1, g2File: g2, g3File: g3,
+          disediakanOleh: document.getElementById('mPelapor').value
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'simpan_laporan_mingguan', formData })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Laporan';
+
+        if (result.success) {
+          showToast('Laporan mingguan berjaya disimpan!');
+          closeModal('modalMingguan');
+          document.getElementById('formMingguan').reset();
+          fetchKokoData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Laporan';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    async function handlePencapaianSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitPencapaian');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      try {
+        const [g1, g2, g3] = await Promise.all([
+          fileToBase64(document.getElementById('pG1').files[0]),
+          fileToBase64(document.getElementById('pG2').files[0]),
+          fileToBase64(document.getElementById('pG3').files[0])
+        ]);
+
+        const formData = {
+          sesi: document.getElementById('pSesi').value,
+          program: document.getElementById('pProgram').value,
+          peringkat: document.getElementById('pPeringkat').value,
+          tahun: document.getElementById('pTahun').value,
+          pencapaian: document.getElementById('pPencapaian').value,
+          peserta: document.getElementById('pPeserta').value,
+          g1File: g1, g2File: g2, g3File: g3,
+          penyelaras: document.getElementById('pPenyelaras').value
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'simpan_pencapaian', formData })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Simpan Pencapaian';
+
+        if (result.success) {
+          showToast('Laporan pencapaian berjaya direkodkan!');
+          closeModal('modalPencapaian');
+          document.getElementById('formPencapaian').reset();
+          fetchKokoData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Simpan Pencapaian';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    async function handleJwSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitJw');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      const formData = {
+        sesi: document.getElementById('jwSesi').value,
+        unit: document.getElementById('jwUnit').value,
+        jawatan: document.getElementById('jwJawatan').value,
+        nama: document.getElementById('jwNama').value,
+        tahun: document.getElementById('jwTahun').value,
+        kelas: document.getElementById('jwKelas').value
+      };
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'simpan_jawatankuasa', formData })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Lantik Jawatankuasa';
+
+        if (result.success) {
+          showToast('Jawatankuasa murid berjaya disimpan!');
+          closeModal('modalJawatankuasa');
+          document.getElementById('formJw').reset();
+          fetchKokoData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Lantik Jawatankuasa';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    async function handleGuruAttSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitGa');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      const formData = {
+        sesi: document.getElementById('gaSesi').value,
+        namaGuru: document.getElementById('gaNamaGuru').value,
+        aktiviti: document.getElementById('gaAktiviti').value,
+        perjumpaan: document.getElementById('gaPerjumpaan').value,
+        tarikh: document.getElementById('gaTarikh').value,
+        sebab: document.getElementById('gaSebab').value
+      };
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'simpan_kehadiran_guru', formData })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Rekod Kehadiran';
+
+        if (result.success) {
+          showToast('Kehadiran guru berjaya direkodkan!');
+          closeModal('modalGuruAtt');
+          document.getElementById('formGuruAtt').reset();
+          fetchKokoData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i> Rekod Kehadiran';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    // --- CETAK LAPORAN ONE-PAGE REPORT ---
+    function viewMingguanDetails(id) {
+      const item = globalKokoData.laporanMingguan.find(m => m.id === id);
+      if (!item) return;
+
+      document.getElementById('rptHeading').innerText = "LAPORAN MINGGUAN KOKURIKULUM";
+      document.getElementById('rptSubheading').innerText = `Sesi: ${item.sesi} | Perjumpaan Kali Ke-${item.perjumpaan}`;
+      document.getElementById('rptPelaporName').innerText = item.disediakanOleh || 'Guru SK Mantin';
+
+      const tb = document.getElementById('rptTableContent');
+      tb.innerHTML = `
+        <tr><th>UNIT</th><td style="font-weight:700;">${item.unit}</td></tr>
+        <tr><th>TARIKH</th><td>${item.tarikh}</td></tr>
+        <tr><th>TAJUK AKTIVITI</th><td style="font-weight:700;">${item.tajuk}</td></tr>
+        <tr><th>PENERANGAN AKTIVITI</th><td style="white-space:pre-wrap;">${item.aktiviti}</td></tr>
+        <tr><th>NILAI SIVIK</th><td>${item.sivik || '-'}</td></tr>
+        <tr><th>PikeBM / KBAT</th><td>PikeBM: ${item.pikebm || '-'} | KBAT: ${item.kbat || '-'}</td></tr>
+        <tr><th>PERATUS KEHADIRAN</th><td style="font-weight:700; color:#059669;">${item.kehadiran}</td></tr>
+        <tr><th>GURU PEMBIMBING</th><td>${item.guruPembimbing || '-'}</td></tr>
+      `;
+
+      renderReportImages([item.gambar1, item.gambar2, item.gambar3]);
+      openModal('viewReportModal');
+    }
+
+    function viewPencapaianDetails(id) {
+      const item = globalKokoData.laporanPencapaian.find(p => p.id === id);
+      if (!item) return;
+
+      document.getElementById('rptHeading').innerText = "LAPORAN PENCAPAIAN KOKURIKULUM";
+      document.getElementById('rptSubheading').innerText = `Sesi Persekolahan: ${item.sesi}`;
+      document.getElementById('rptPelaporName').innerText = item.penyelaras || 'Guru Penyelaras';
+
+      const tb = document.getElementById('rptTableContent');
+      tb.innerHTML = `
+        <tr><th>PROGRAM / PERTANDINGAN</th><td style="font-weight:700;">${item.program}</td></tr>
+        <tr><th>PERINGKAT</th><td>${item.peringkat}</td></tr>
+        <tr><th>PENCAPAIAN</th><td style="font-weight:700; color:var(--neon-accent);">${item.pencapaian}</td></tr>
+        <tr><th>TAHUN / TINGKATAN</th><td>${item.tahun}</td></tr>
+        <tr><th>SENARAI PESERTA</th><td style="white-space:pre-wrap;">${item.peserta}</td></tr>
+      `;
+
+      renderReportImages([item.gambar1, item.gambar2, item.gambar3]);
+      openModal('viewReportModal');
+    }
+
+    function renderReportImages(imgs) {
+      const imgBox = document.getElementById('rptImagesContainer');
+      imgBox.innerHTML = '';
+      const valid = imgs.filter(g => g && g.startsWith('http'));
+      if (valid.length > 0) {
+        document.getElementById('rptImagesWrap').style.display = 'block';
+        valid.forEach(url => {
+          const im = document.createElement('img');
+          im.src = url;
+          imgBox.appendChild(im);
+        });
+      } else {
+        document.getElementById('rptImagesWrap').style.display = 'none';
+      }
+    }
+
+    function downloadCSV(csvContent, fileName) {
+      const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = fileName;
+      link.click();
+    }
+  </script>
+</body>
+</html>
