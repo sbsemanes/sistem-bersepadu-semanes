@@ -383,7 +383,7 @@
       font-size: 0.78rem;
     }
 
-    /* BAR STICKY KEKAL DI ATAS SEMASA MENATAL */
+    /* BAR STICKY KEKAL DI ATAS SEMASA SCROLL */
     .sticky-bar-top {
       position: sticky;
       top: -24px;
@@ -407,14 +407,15 @@
     .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
     .report-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
     .report-table td, .report-table th { border: 1px solid #000; padding: 6px 8px; font-size: 0.82rem; }
-    .report-table th { background: #f1f5f9; width: 26%; text-align: left; }
+    .report-table th { background: #f1f5f9; width: 30%; text-align: left; }
     .report-images { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
     .report-images img { width: 100%; height: 130px; object-fit: cover; border: 1px solid #ccc; }
 
+    /* PEMBAIKAN CETAKAN: SUPAYA KAD PROFIL TIDAK KOSONG */
     @media print {
-      body * { visibility: hidden; }
-      #printableArea, #printableArea * { visibility: visible; }
-      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      body * { visibility: hidden !important; }
+      #studentProfileCardContent, #studentProfileCardContent * { visibility: visible !important; }
+      #studentProfileCardContent { position: absolute; left: 0; top: 0; width: 100%; }
       .no-print { display: none !important; }
     }
 
@@ -536,13 +537,13 @@
         </div>
       </div>
 
-      <!-- TAB 2: REKOD KEHADIRAN MURID (JADUAL) -->
+      <!-- TAB 2: REKOD KEHADIRAN MURID (JUMLAH KEHADIRAN MENGIKUT KEGIATAN KOKU) -->
       <div id="tabKehadiranTable" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Jadual Rekod Kehadiran Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Senarai pendaftaran aktiviti murid SK Mantin dari DB Sekolah.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Memaparkan jumlah kehadiran murid mengikut setiap kegiatan kokurikulum.</p>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-download-csv" onclick="downloadAllAttendanceCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
@@ -571,14 +572,15 @@
                 <tr>
                   <th>Nama Murid</th>
                   <th>Kelas</th>
-                  <th>Badan Beruniform</th>
-                  <th>Kelab & Persatuan</th>
-                  <th>Sukan & Permainan</th>
-                  <th>Rumah Sukan</th>
+                  <th style="text-align:center;">Hadir Uniform</th>
+                  <th style="text-align:center;">Hadir Persatuan</th>
+                  <th style="text-align:center;">Hadir Sukan</th>
+                  <th style="text-align:center;">Hadir Rumah Sukan</th>
+                  <th style="text-align:center;">Jumlah Hadir</th>
                 </tr>
               </thead>
               <tbody id="kehadiranMasterTableBody">
-                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan data murid...</td></tr>
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan data murid...</td></tr>
               </tbody>
             </table>
           </div>
@@ -731,6 +733,7 @@
         </div>
       </div>
 
+      <!-- PENAPIS TAHUN, KELAS & CARIAN NAMA -->
       <div class="no-print" style="margin-bottom:16px;">
         <div class="filter-wrapper" style="margin-bottom:8px;">
           <select id="pFilterTahun" class="filter-select" onchange="filterProfileStudentDropdown()">
@@ -769,12 +772,23 @@
           <tr><th>RUMAH SUKAN</th><td id="pCardRumah" style="font-weight:600; color:var(--neon-dark);">-</td></tr>
           <tr><th>JAWATANKUASA DISANDANG</th><td id="pCardJw">-</td></tr>
           <tr><th>REKOD PENCAPAIAN</th><td id="pCardPencapaian">-</td></tr>
+          <!-- JUMLAH KEHADIRAN MENGIKUT SETIAP KEGIATAN KOKURIKULUM -->
+          <tr>
+            <th>JUMLAH KEHADIRAN AKTIVITI</th>
+            <td id="pCardKehadiranRingkas" style="font-weight:600;">
+              Uniform: <b id="pAttUni">0</b> kali | 
+              Persatuan: <b id="pAttPer">0</b> kali | 
+              Sukan: <b id="pAttSuk">0</b> kali | 
+              Rumah Sukan: <b id="pAttRum">0</b> kali
+              <div style="margin-top:4px; color:var(--neon-accent);">Keseluruhan: <b id="pAttTotal">0</b> kehadiran</div>
+            </td>
+          </tr>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- MODAL 3: SISTEM KEHADIRAN MURID DINAMIK -->
+  <!-- MODAL 3: SISTEM KEHADIRAN MURID DINAMIK (DENGAN BUTANG SIMPAN & MUAT TURUN) -->
   <div class="modal-overlay" id="kehadiranMuridModal">
     <div class="modal-box" style="max-width:700px;">
       <div class="modal-header">
@@ -789,6 +803,7 @@
         <div class="form-group">
           <label class="form-label">Kategori Kokurikulum</label>
           <select id="attKategoriSelect" class="form-control" onchange="populateAttUnitSelect()">
+            <option value="">-- Pilih Kategori --</option>
             <option value="uniform">Badan Beruniform</option>
             <option value="persatuan">Kelab & Persatuan</option>
             <option value="sukan">Sukan & Permainan</option>
@@ -797,7 +812,9 @@
         </div>
         <div class="form-group full-width">
           <label class="form-label">Pilih Unit</label>
-          <select id="attUnitSelect" class="form-control" onchange="renderAttendanceChecklist()"></select>
+          <select id="attUnitSelect" class="form-control" onchange="renderAttendanceChecklist()">
+            <option value="">-- Pilih Unit --</option>
+          </select>
         </div>
       </div>
 
@@ -807,7 +824,7 @@
       </div>
 
       <div class="att-list-container" id="attendanceChecklistContainer">
-        <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih unit untuk memaparkan murid.</div>
+        <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih kategori dan unit untuk memaparkan murid.</div>
       </div>
 
       <div class="att-stat-box" id="attendanceStatBox">
@@ -816,6 +833,7 @@
         <div>Peratus: <span id="statPeratus">0%</span></div>
       </div>
 
+      <!-- BUTANG SIMPAN & MUAT TURUN BERSEBELAHAN -->
       <div class="form-actions" style="margin-top:16px;">
         <button type="button" class="btn-secondary" onclick="closeModal('kehadiranMuridModal')">Tutup</button>
         <button type="button" id="btnSimpanKehadiranLog" class="btn-action-purple" onclick="saveAttendanceSessionLog()">
@@ -987,7 +1005,6 @@
         </div>
       </div>
 
-      <!-- PENAPIS TAHUN, KELAS & CARIAN -->
       <div class="filter-wrapper" style="margin-bottom:12px;">
         <select id="pesertaFilterTahun" class="filter-select" onchange="filterPesertaList()">
           <option value="">Semua Tahun</option>
@@ -1051,7 +1068,7 @@
     </div>
   </div>
 
-  <!-- MODAL KHAS 2: CARIAN MURID JAWATANKUASA (BERASINGAN - RADIO BUTTON DENGAN BUTANG TUTUP & PILIH STICKY) -->
+  <!-- MODAL KHAS 2: CARIAN MURID JAWATANKUASA (BERASINGAN - RADIO BUTTON) -->
   <div class="modal-overlay" id="modalPilihMuridJw">
     <div class="modal-box" style="max-width:600px;">
       <div class="sticky-bar-top">
@@ -1067,7 +1084,6 @@
         </div>
       </div>
 
-      <!-- PENAPIS TAHUN, KELAS & CARIAN -->
       <div class="filter-wrapper" style="margin-bottom:12px;">
         <select id="jwFilterTahun" class="filter-select" onchange="filterJwStudentList()">
           <option value="">Semua Tahun</option>
@@ -1231,7 +1247,7 @@
 
     window.addEventListener('load', fetchKokoData);
 
-    const CACHE_KEY_LOCAL = "semanes_koko_cache_v4";
+    const CACHE_KEY_LOCAL = "semanes_koko_cache_v5";
 
     async function fetchKokoData() {
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
@@ -1404,6 +1420,13 @@
       document.getElementById('pCardJw').innerText = jwString;
       document.getElementById('pCardPencapaian').innerHTML = pString;
 
+      // Paparkan Jumlah Kehadiran Setiap Kegiatan Kokurikulum
+      document.getElementById('pAttUni').innerText = m.attUniform || 0;
+      document.getElementById('pAttPer').innerText = m.attPersatuan || 0;
+      document.getElementById('pAttSuk').innerText = m.attSukan || 0;
+      document.getElementById('pAttRum').innerText = m.attRumahSukan || 0;
+      document.getElementById('pAttTotal').innerText = m.totalHadir || 0;
+
       box.style.display = 'block';
     }
 
@@ -1461,7 +1484,7 @@
       closeModal('modalPilihPeserta');
     }
 
-    // --- MODAL KHAS 2: CARIAN MURID JAWATANKUASA (BERASINGAN - RADIO BUTTON) ---
+    // --- MODAL KHAS 2: CARIAN MURID JAWATANKUASA ---
     function openModalPilihMuridJw() {
       selectedJwStudent = null;
       document.getElementById('jwPickedLabel').innerText = "Pilih seorang murid";
@@ -1523,8 +1546,16 @@
     // --- CHECKLIST KEHADIRAN DINAMIK MODAL ---
     function populateAttUnitSelect() {
       const kat = document.getElementById('attKategoriSelect').value;
+      const unitSelect = document.getElementById('attUnitSelect');
+
+      if (!kat) {
+        unitSelect.innerHTML = '<option value="">-- Pilih Unit --</option>';
+        renderAttendanceChecklist();
+        return;
+      }
+
       const opts = globalKokoData ? globalKokoData.options.kategoriKoko[getKategoriName(kat)] : [];
-      populateSelect('attUnitSelect', opts || []);
+      populateSelect('attUnitSelect', opts || [], "-- Pilih Unit --");
       renderAttendanceChecklist();
     }
 
@@ -1541,12 +1572,13 @@
       const kat = document.getElementById('attKategoriSelect').value;
       const unit = document.getElementById('attUnitSelect').value;
 
-      if (!unit || !globalKokoData) {
-        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih unit.</div>';
+      if (!kat || !unit || !globalKokoData) {
+        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih kategori dan unit.</div>';
         updateAttendanceStats(0, 0);
         return;
       }
 
+      // Tapis murid mengikut unit kokurikulum yang dipilih
       let matched = globalKokoData.keahlianMurid.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
       matched.sort((a, b) => {
         if (a.tahun !== b.tahun) return a.tahun.localeCompare(b.tahun);
@@ -1561,7 +1593,7 @@
 
       attendanceState = {};
       matched.forEach((m, idx) => {
-        attendanceState[idx] = true;
+        attendanceState[idx] = { nama: m.nama, hadir: true };
         const div = document.createElement('div');
         div.className = 'checkbox-item';
         div.style.cssText = "display:flex; justify-content:space-between; padding:6px 10px; background:#fff; border-radius:8px; margin-bottom:4px; border:1px solid #f1f5f9;";
@@ -1578,9 +1610,9 @@
     }
 
     function handleAttCheck(idx, checked) {
-      attendanceState[idx] = checked;
+      if (attendanceState[idx]) attendanceState[idx].hadir = checked;
       const total = Object.keys(attendanceState).length;
-      const hadir = Object.values(attendanceState).filter(v => v).length;
+      const hadir = Object.values(attendanceState).filter(v => v.hadir).length;
       updateAttendanceStats(total, hadir);
     }
 
@@ -1589,7 +1621,7 @@
       const allChecked = Array.from(checkboxes).every(c => c.checked);
       checkboxes.forEach((c, idx) => {
         c.checked = !allChecked;
-        attendanceState[idx] = !allChecked;
+        if (attendanceState[idx]) attendanceState[idx].hadir = !allChecked;
       });
       const total = checkboxes.length;
       const hadir = !allChecked ? total : 0;
@@ -1620,6 +1652,9 @@
         return;
       }
 
+      // Senaraikan murid yang ditanda hadir
+      const senaraiMuridHadir = Object.values(attendanceState).filter(s => s.hadir).map(s => s.nama);
+
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
@@ -1631,6 +1666,7 @@
             action: 'simpan_kehadiran_murid_log',
             formData: {
               sesi, kategori: kat, unit, jumlah: total, hadir, peratus,
+              senaraiMuridHadir: senaraiMuridHadir,
               direkodOleh: activeUser ? activeUser.nama : 'Guru SK Mantin'
             }
           })
@@ -1640,7 +1676,8 @@
         btn.innerHTML = '<i class="fas fa-save"></i> Simpan Kehadiran';
 
         if (result.success) {
-          showToast('Log kehadiran berjaya disimpan ke pangkalan data!');
+          showToast('Kehadiran berjaya disimpan dan dikemas kini!');
+          fetchKokoData(); // Segarkan data kiraan kehadiran
         } else {
           showToast('Ralat: ' + result.message, true);
         }
@@ -1665,19 +1702,19 @@
       matched.sort((a, b) => a.nama.localeCompare(b.nama));
 
       matched.forEach((m, idx) => {
-        const status = attendanceState[idx] ? "HADIR" : "TIDAK HADIR";
+        const status = (attendanceState[idx] && attendanceState[idx].hadir) ? "HADIR" : "TIDAK HADIR";
         csv += `${idx + 1},"${m.nama}","${m.tahun}","${m.kelas}","${status}"\n`;
       });
 
       downloadCSV(csv, `Analisis_Kehadiran_${unit}.csv`);
     }
 
-    // --- KEHADIRAN MASTER TABLE (TAB 2) ---
+    // --- REKOD KEHADIRAN MURID (JUMLAH KEHADIRAN MENGIKUT KEGIATAN KOKU) ---
     function renderKehadiranMasterTable(list) {
       const tb = document.getElementById('kehadiranMasterTableBody');
       tb.innerHTML = '';
       if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada rekod keahlian murid.</td></tr>';
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod data murid.</td></tr>';
         return;
       }
       list.forEach(m => {
@@ -1685,10 +1722,11 @@
         tr.innerHTML = `
           <td style="font-weight:700;">${m.nama}</td>
           <td>${m.tahun} ${m.kelas}</td>
-          <td><span class="profile-badge">${m.uniform || '-'}</span></td>
-          <td><span class="profile-badge">${m.persatuan || '-'}</span></td>
-          <td><span class="profile-badge">${m.sukan || '-'}</span></td>
-          <td>${m.rumahSukan || '-'}</td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attUniform || 0} kali</span></td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attPersatuan || 0} kali</span></td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attSukan || 0} kali</span></td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attRumahSukan || 0} kali</span></td>
+          <td style="text-align:center; font-weight:700; color:var(--neon-accent);">${m.totalHadir || 0}</td>
         `;
         tb.appendChild(tr);
       });
@@ -1705,11 +1743,11 @@
     }
 
     function downloadAllAttendanceCSV() {
-      let csv = "Nama Murid,Tahun,Kelas,Badan Beruniform,Kelab & Persatuan,Sukan & Permainan,Rumah Sukan\n";
+      let csv = "Nama Murid,Tahun,Kelas,Kehadiran Uniform,Kehadiran Persatuan,Kehadiran Sukan,Kehadiran Rumah Sukan,Jumlah Kehadiran\n";
       globalKokoData.keahlianMurid.forEach(m => {
-        csv += `"${m.nama}","${m.tahun}","${m.kelas}","${m.uniform}","${m.persatuan}","${m.sukan}","${m.rumahSukan}"\n`;
+        csv += `"${m.nama}","${m.tahun}","${m.kelas}",${m.attUniform || 0},${m.attPersatuan || 0},${m.attSukan || 0},${m.attRumahSukan || 0},${m.totalHadir || 0}\n`;
       });
-      downloadCSV(csv, "Pendaftaran_Aktiviti_Kokurikulum_Murid.csv");
+      downloadCSV(csv, "Rekod_Jumlah_Kehadiran_Kokurikulum_Murid.csv");
     }
 
     // --- TABEL LAPORAN MINGGUAN & PENAPIS BERTINGKAT ---
