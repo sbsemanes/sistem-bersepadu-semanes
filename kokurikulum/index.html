@@ -100,10 +100,10 @@
       box-shadow: 0 0 8px var(--neon-purple);
     }
 
-    /* KAD MENU UTAMA: eFail Koko & Kehadiran */
+    /* KAD MENU UTAMA */
     .menu-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 16px;
       margin-bottom: 35px;
     }
@@ -352,42 +352,37 @@
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
     .btn-secondary { padding: 8px 16px; border-radius: 10px; background: #f1f5f9; color: var(--text-muted); border: none; font-weight: 600; cursor: pointer; }
 
-    /* CHECKLIST KEHADIRAN MURID */
-    .att-list-container {
-      max-height: 280px;
+    /* CHECKBOX MULTI-SELECT GURU PEMBIMBING */
+    .checkbox-group-container {
+      max-height: 160px;
       overflow-y: auto;
-      border: 1px solid var(--border-soft);
+      border: 1.5px solid var(--border-soft);
       border-radius: 10px;
-      padding: 10px;
+      padding: 8px 12px;
       background: #f8fafc;
-      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 6px;
     }
-    .att-item {
+    .checkbox-item {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 6px 10px;
-      background: #ffffff;
-      border-radius: 8px;
-      border: 1px solid #f1f5f9;
-      margin-bottom: 6px;
+      gap: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
-    .att-item label { font-size: 0.82rem; font-weight: 600; cursor: pointer; flex: 1; }
 
-    .att-stat-box {
+    /* KAD MAKLUMAT MURID LENGKAP */
+    .profile-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
       background: #f3e8ff;
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      justify-content: space-around;
-      margin-top: 12px;
-      font-size: 0.85rem;
-      font-weight: 700;
       color: var(--neon-dark);
-      text-align: center;
+      font-weight: 700;
+      font-size: 0.78rem;
     }
 
-    /* CETAKAN LAPORAN */
     .printable-report { border: 2px solid #0f172a; padding: 20px; color: #000000; background: #ffffff; line-height: 1.5; }
     .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
     .report-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
@@ -439,27 +434,33 @@
       <p class="header-subtext">Sekolah Kebangsaan Mantin — Membina Potensi, Mengukir Prestasi</p>
     </header>
 
-    <!-- KAD MENU UTAMA: eFail Koko & Kehadiran Murid -->
+    <!-- KAD MENU UTAMA: eFail Koko, Data Murid & Kehadiran -->
     <section>
-      <h2 class="section-title">Dokumen & Pengurusan Murid</h2>
+      <h2 class="section-title">Dokumen & Pangkalan Data Murid</h2>
       <div class="menu-grid">
         <div class="menu-card" onclick="openEFailModal()">
           <div class="icon-box"><i class="fas fa-folder-open"></i></div>
           <div class="menu-card-title">eFail Kokurikulum</div>
           <div class="menu-card-desc">Arkib 38 fail unit kokurikulum SK Mantin</div>
         </div>
-        <div class="menu-card" onclick="openKehadiranMuridModal()">
+        <div class="menu-card" onclick="openModal('modalProfilMurid')">
+          <div class="icon-box"><i class="fas fa-id-card"></i></div>
+          <div class="menu-card-title">Pangkalan Data Murid</div>
+          <div class="menu-card-desc">Semak profil koku, keahlian, pencapaian & kehadiran</div>
+        </div>
+        <div class="menu-card" onclick="openModal('kehadiranMuridModal')">
           <div class="icon-box"><i class="fas fa-user-check"></i></div>
           <div class="menu-card-title">Sistem Kehadiran Murid</div>
-          <div class="menu-card-desc">Tanda kehadiran mengikut unit & analisis peratus</div>
+          <div class="menu-card-desc">Tanda kehadiran murid & analisis peratus aktiviti</div>
         </div>
       </div>
     </section>
 
-    <!-- TABS LAPORAN & PENGURUSAN KOKO -->
+    <!-- TABS LAPORAN KOKO -->
     <section>
       <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tabMingguan')"><i class="fas fa-book"></i> Laporan Mingguan</button>
+        <button class="tab-btn" onclick="switchTab('tabKehadiranTable')"><i class="fas fa-tasks"></i> Rekod Kehadiran Murid</button>
         <button class="tab-btn" onclick="switchTab('tabPencapaian')"><i class="fas fa-trophy"></i> Laporan Pencapaian</button>
         <button class="tab-btn" onclick="switchTab('tabJawatankuasa')"><i class="fas fa-users-cog"></i> Jawatankuasa Murid</button>
         <button class="tab-btn" onclick="switchTab('tabGuru')"><i class="fas fa-chalkboard-teacher"></i> Kehadiran Guru</button>
@@ -471,7 +472,7 @@
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Mingguan Perjumpaan</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Tapis mengikut sesi, perjumpaan, atau unit kokurikulum.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Tapis mengikut kategori kokurikulum atau unit pilihan.</p>
             </div>
             <button class="btn-action-purple" onclick="openModal('modalMingguan')">
               <i class="fas fa-edit"></i> Isi Laporan Mingguan
@@ -482,8 +483,12 @@
             <select id="filterMingguanSesi" class="filter-select" onchange="filterMingguanTable()">
               <option value="">Semua Sesi</option>
             </select>
-            <select id="filterMingguanPerjumpaan" class="filter-select" onchange="filterMingguanTable()">
-              <option value="">Semua Perjumpaan</option>
+            <select id="filterMingguanKategori" class="filter-select" onchange="handleFilterKategoriChange()">
+              <option value="">Semua Kategori</option>
+              <option value="Badan Beruniform">Badan Beruniform</option>
+              <option value="Kelab & Persatuan">Kelab & Persatuan</option>
+              <option value="Sukan & Permainan">Sukan & Permainan</option>
+              <option value="Rumah Sukan">Rumah Sukan</option>
             </select>
             <select id="filterMingguanUnit" class="filter-select" onchange="filterMingguanTable()">
               <option value="">Semua Unit</option>
@@ -511,13 +516,59 @@
         </div>
       </div>
 
-      <!-- TAB 2: LAPORAN PENCAPAIAN -->
+      <!-- TAB 2: REKOD KEHADIRAN MURID (JADUAL) -->
+      <div id="tabKehadiranTable" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Jadual Rekod Kehadiran Murid</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Senarai pendaftaran aktiviti murid SK Mantin dari DB Sekolah.</p>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-download-csv" onclick="downloadAllAttendanceCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
+              <button class="btn-action-purple" onclick="openModal('kehadiranMuridModal')">
+                <i class="fas fa-check-square"></i> Tanda Kehadiran Baru
+              </button>
+            </div>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <input type="text" id="searchKehadiranMurid" class="search-input" placeholder="Cari nama murid..." oninput="filterKehadiranMuridTable()">
+            <select id="filterKehadiranTahun" class="filter-select" onchange="filterKehadiranMuridTable()">
+              <option value="">Semua Tahun</option>
+              <option value="4">Tahun 4</option>
+              <option value="5">Tahun 5</option>
+              <option value="6">Tahun 6</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Nama Murid</th>
+                  <th>Kelas</th>
+                  <th>Badan Beruniform</th>
+                  <th>Kelab & Persatuan</th>
+                  <th>Sukan & Permainan</th>
+                  <th>Rumah Sukan</th>
+                </tr>
+              </thead>
+              <tbody id="kehadiranMasterTableBody">
+                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan data murid...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: LAPORAN PENCAPAIAN -->
       <div id="tabPencapaian" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Rekod Pencapaian & Pertandingan Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Cari peserta dan tapis mengikut sesi persekolahan atau peringkat.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Carian peserta satu persatu dari pangkalan DB Sekolah.</p>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-download-csv" onclick="downloadPencapaianCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
@@ -528,7 +579,7 @@
           </div>
 
           <div class="filter-wrapper" style="margin-bottom:14px;">
-            <input type="text" id="searchPesertaInput" class="search-input" placeholder="Cari nama murid..." oninput="filterPencapaianTable()">
+            <input type="text" id="searchPesertaInput" class="search-input" placeholder="Cari nama peserta..." oninput="filterPencapaianTable()">
             <select id="filterPencapaianSesi" class="filter-select" onchange="filterPencapaianTable()">
               <option value="">Semua Sesi</option>
             </select>
@@ -542,7 +593,6 @@
               <thead>
                 <tr>
                   <th>Nama Murid</th>
-                  <th>Tahun</th>
                   <th>Program / Pertandingan</th>
                   <th>Peringkat</th>
                   <th>Pencapaian</th>
@@ -551,20 +601,20 @@
                 </tr>
               </thead>
               <tbody id="pencapaianTableBody">
-                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 3: JAWATANKUASA MURID -->
+      <!-- TAB 4: JAWATANKUASA MURID -->
       <div id="tabJawatankuasa" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Senarai Jawatankuasa Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Struktur kepimpinan murid bagi setiap unit kokurikulum.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Struktur kepimpinan murid mengikut kategori & unit.</p>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-download-csv" onclick="downloadJwCSV()"><i class="fas fa-file-csv"></i> Muat Turun Senarai</button>
@@ -599,13 +649,13 @@
         </div>
       </div>
 
-      <!-- TAB 4: KEHADIRAN GURU -->
+      <!-- TAB 5: KEHADIRAN GURU -->
       <div id="tabGuru" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Log Kehadiran Guru Kokurikulum</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Rekod kehadiran dan catatan ketidakhadiran guru pembimbing.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Pilihan nama guru dari senarai rasmi DB Sekolah.</p>
             </div>
             <button class="btn-action-purple" onclick="openModal('modalGuruAtt')">
               <i class="fas fa-user-clock"></i> Rekod Kehadiran Guru
@@ -633,7 +683,7 @@
     </section>
   </div>
 
-  <!-- MODAL: eFail Koko (38 Unit Grid) -->
+  <!-- MODAL 1: eFail Koko (38 Unit Grid) -->
   <div class="modal-overlay" id="efailModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -641,13 +691,52 @@
         <button class="close-modal-btn" onclick="closeModal('efailModal')">&times;</button>
       </div>
       <div style="margin-bottom:14px;">
-        <input type="text" id="searchEFailInput" class="search-input" style="width:100%;" placeholder="Cari fail unit kokurikulum..." oninput="filterEFailModal()">
+        <input type="text" id="searchEFailInput" class="search-input" style="width:100%;" placeholder="Cari unit kokurikulum..." oninput="filterEFailModal()">
       </div>
       <div class="submodal-grid" id="efailCardsContainer"></div>
     </div>
   </div>
 
-  <!-- MODAL: SISTEM KEHADIRAN MURID DINAMIK -->
+  <!-- MODAL 2: KAD DATA MURID LENGKAP -->
+  <div class="modal-overlay" id="modalProfilMurid">
+    <div class="modal-box" style="max-width:700px;">
+      <div class="modal-header no-print">
+        <div class="modal-title"><i class="fas fa-id-card" style="color:var(--neon-purple); margin-right:8px;"></i>Pangkalan Data & Profil Murid</div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-action-purple" onclick="window.print()"><i class="fas fa-print"></i> Cetak Profil</button>
+          <button class="close-modal-btn" onclick="closeModal('modalProfilMurid')">&times;</button>
+        </div>
+      </div>
+
+      <div class="no-print" style="margin-bottom:16px;">
+        <label class="form-label">Cari & Pilih Murid (Dari DB Sekolah):</label>
+        <select id="profileMuridSelect" class="form-control" onchange="renderStudentProfileCard()">
+          <option value="">-- Pilih Murid --</option>
+        </select>
+      </div>
+
+      <div id="studentProfileCardContent" class="printable-report" style="display:none;">
+        <div class="report-header">
+          <h2 style="font-size:1.15rem; text-transform:uppercase;">SEKOLAH KEBANGSAAN MANTIN</h2>
+          <h3 style="font-size:0.95rem; font-weight:700;">PROFIL KOKURIKULUM INDIVIDU MURID</h3>
+        </div>
+
+        <table class="report-table">
+          <tr><th>NAMA MURID</th><td id="pCardNama" style="font-weight:700;">-</td></tr>
+          <tr><th>TAHUN / KELAS</th><td id="pCardKelas">-</td></tr>
+          <tr><th>BADAN BERUNIFORM</th><td id="pCardUniform">-</td></tr>
+          <tr><th>KELAB & PERSATUAN</th><td id="pCardPersatuan">-</td></tr>
+          <tr><th>SUKAN & PERMAINAN</th><td id="pCardSukan">-</td></tr>
+          <tr><th>RUMAH SUKAN</th><td id="pCardRumah">-</td></tr>
+          <tr><th>JAWATANKUASA DISANDANG</th><td id="pCardJw">-</td></tr>
+          <tr><th>REKOD PENCAPAIAN</th><td id="pCardPencapaian">-</td></tr>
+          <tr><th>JUMLAH KEHADIRAN AKTIVITI</th><td id="pCardKehadiran">-</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: SISTEM KEHADIRAN MURID DINAMIK -->
   <div class="modal-overlay" id="kehadiranMuridModal">
     <div class="modal-box" style="max-width:700px;">
       <div class="modal-header">
@@ -675,7 +764,7 @@
       </div>
 
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
-        <span style="font-size:0.85rem; font-weight:700;">Senarai Murid Berdaftar (Susunan A-Z):</span>
+        <span style="font-size:0.85rem; font-weight:700;">Senarai Murid (Susunan Tahun & Nama A-Z):</span>
         <button type="button" class="btn-download-csv" onclick="toggleAllAttendance()"><i class="fas fa-check-double"></i> Pilih / Batal Semua</button>
       </div>
 
@@ -684,19 +773,19 @@
       </div>
 
       <div class="att-stat-box" id="attendanceStatBox">
-        <div>Jumlah Murid: <span id="statJumlah">0</span></div>
+        <div>Jumlah: <span id="statJumlah">0</span></div>
         <div>Hadir: <span id="statHadir">0</span></div>
         <div>Peratus: <span id="statPeratus">0%</span></div>
       </div>
 
       <div class="form-actions">
         <button type="button" class="btn-secondary" onclick="closeModal('kehadiranMuridModal')">Tutup</button>
-        <button type="button" class="btn-action-purple" onclick="downloadAttendanceSummary()"><i class="fas fa-download"></i> Muat Turun Analisis</button>
+        <button type="button" class="btn-action-purple" onclick="downloadAttendanceSummary()"><i class="fas fa-download"></i> Muat Turun Analisis CSV</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL BORANG: LAPORAN MINGGUAN -->
+  <!-- MODAL 4: BORANG LAPORAN MINGGUAN -->
   <div class="modal-overlay" id="modalMingguan">
     <div class="modal-box">
       <div class="modal-header">
@@ -713,17 +802,21 @@
             <label class="form-label">Perjumpaan Kali Ke- *</label>
             <input type="number" id="mPerjumpaan" class="form-control" placeholder="1, 2, 3..." required>
           </div>
-          <div class="form-group">
-            <label class="form-label">Unit Kokurikulum *</label>
+          <div class="form-group full-width">
+            <label class="form-label">Unit Kokurikulum (Dikelompokkan Mengikut Kategori) *</label>
             <select id="mUnit" class="form-control" required></select>
           </div>
           <div class="form-group">
             <label class="form-label">Tarikh Perjumpaan *</label>
             <input type="date" id="mTarikh" class="form-control" required>
           </div>
+          <div class="form-group">
+            <label class="form-label">Peratus Kehadiran Murid *</label>
+            <input type="text" id="mKehadiran" class="form-control" placeholder="Contoh: 95%" required>
+          </div>
           <div class="form-group full-width">
             <label class="form-label">Tajuk Aktiviti *</label>
-            <input type="text" id="mTajuk" class="form-control" placeholder="Contoh: Ikatan & Simpulan / Asas Hantaran Bola" required>
+            <input type="text" id="mTajuk" class="form-control" placeholder="Tajuk aktiviti perjumpaan" required>
           </div>
           <div class="form-group full-width">
             <label class="form-label">Penerangan Aktiviti *</label>
@@ -735,19 +828,15 @@
           </div>
           <div class="form-group">
             <label class="form-label">PikeBM / Fokus Bahasa</label>
-            <input type="text" id="mPikebm" class="form-control" placeholder="Contoh: Arahan kawad / Laras sukan">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Penilaian KBAT</label>
-            <input type="text" id="mKbat" class="form-control" placeholder="Aplikasi kemahiran & penyelesaian masalah">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Peratus Kehadiran (cth: 92%) *</label>
-            <input type="text" id="mKehadiran" class="form-control" placeholder="95%" required>
+            <input type="text" id="mPikebm" class="form-control" placeholder="Catatan PikeBM">
           </div>
           <div class="form-group full-width">
-            <label class="form-label">Guru Pembimbing Yang Hadir</label>
-            <input type="text" id="mGuruPembimbing" class="form-control" placeholder="Nama-nama guru terlibat">
+            <label class="form-label">Penilaian KBAT</label>
+            <input type="text" id="mKbat" class="form-control" placeholder="Kemahiran berfikir aras tinggi">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Guru Pembimbing Yang Hadir (Pilih dari DB Sekolah) *</label>
+            <div class="checkbox-group-container" id="guruPembimbingCheckboxes"></div>
           </div>
           <div class="form-group">
             <label class="form-label">Muat Naik Gambar 1</label>
@@ -776,7 +865,7 @@
     </div>
   </div>
 
-  <!-- MODAL BORANG: LAPORAN PENCAPAIAN -->
+  <!-- MODAL 5: BORANG LAPORAN PENCAPAIAN (BERSEBELAHAN & CARIAN MURID) -->
   <div class="modal-overlay" id="modalPencapaian">
     <div class="modal-box">
       <div class="modal-header">
@@ -785,30 +874,32 @@
       </div>
       <form id="formPencapaian" onsubmit="handlePencapaianSubmit(event)">
         <div class="form-grid">
-          <div class="form-group">
+          <div class="form-group full-width">
             <label class="form-label">Sesi Persekolahan *</label>
             <select id="pSesi" class="form-control" required></select>
           </div>
+          <div class="form-group full-width">
+            <label class="form-label">Nama Program / Pertandingan *</label>
+            <input type="text" id="pProgram" class="form-control" placeholder="Contoh: Kejohanan Bola Sepak MSSD" required>
+          </div>
+          <!-- PERINGKAT & PENCAPAIAN BERSEBELAHAN (TAHUN DIBUANG) -->
           <div class="form-group">
             <label class="form-label">Peringkat *</label>
             <select id="pPeringkat" class="form-control" required></select>
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Nama Program / Pertandingan *</label>
-            <input type="text" id="pProgram" class="form-control" placeholder="Contoh: Kejohanan Olahraga MSSD Seremban" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tahun / Tingkatan *</label>
-            <input type="text" id="pTahun" class="form-control" placeholder="Contoh: Tahun 4, 5, 6" required>
           </div>
           <div class="form-group">
             <label class="form-label">Pencapaian *</label>
             <select id="pPencapaian" class="form-control" required></select>
           </div>
+
           <div class="form-group full-width">
-            <label class="form-label">Nama Peserta / Murid (Pisahkan dengan koma jika ramai) *</label>
-            <textarea id="pPeserta" class="form-control" rows="3" placeholder="Contoh: Ahmad Daniel bin Ali, Nurul Huda binti Zamri" required></textarea>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label class="form-label">Pilih Peserta Murid (Dari DB Sekolah) *</label>
+              <button type="button" class="btn-download-csv" onclick="openPilihPesertaModal()"><i class="fas fa-user-plus"></i> Carian & Pilih Murid</button>
+            </div>
+            <textarea id="pPeserta" class="form-control" rows="3" placeholder="Nama murid yang dipilih akan disenaraikan di sini..." required readonly></textarea>
           </div>
+
           <div class="form-group">
             <label class="form-label">Muat Naik Gambar 1</label>
             <input type="file" id="pG1" class="form-control" accept="image/*">
@@ -836,7 +927,22 @@
     </div>
   </div>
 
-  <!-- MODAL BORANG: JAWATANKUASA MURID -->
+  <!-- MODAL PEMILIH PESERTA PENCAPAIAN (MULTI-CHECKBOX) -->
+  <div class="modal-overlay" id="modalPilihPeserta">
+    <div class="modal-box" style="max-width:550px;">
+      <div class="modal-header">
+        <div class="modal-title">Pilih Peserta Murid (DB Sekolah)</div>
+        <button class="close-modal-btn" onclick="closeModal('modalPilihPeserta')">&times;</button>
+      </div>
+      <input type="text" id="searchPesertaPicker" class="search-input" style="width:100%; margin-bottom:10px;" placeholder="Taip nama atau kelas murid..." oninput="filterPesertaPicker()">
+      <div class="att-list-container" id="pesertaPickerList" style="max-height:300px;"></div>
+      <div class="form-actions">
+        <button type="button" class="btn-action-purple" onclick="confirmPesertaSelection()">Selesai Memilih</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 6: BORANG JAWATANKUASA MURID -->
   <div class="modal-overlay" id="modalJawatankuasa">
     <div class="modal-box" style="max-width:550px;">
       <div class="modal-header">
@@ -849,7 +955,7 @@
           <select id="jwSesi" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Unit Kokurikulum *</label>
+          <label class="form-label">Unit Kokurikulum (Mengikut Kategori) *</label>
           <select id="jwUnit" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
@@ -857,17 +963,19 @@
           <select id="jwJawatan" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Pilih Murid *</label>
-          <input type="text" id="jwNama" class="form-control" placeholder="Nama murid" required>
+          <label class="form-label">Pilih Murid (Dari DB Sekolah) *</label>
+          <select id="jwMuridSelect" class="form-control" onchange="autoFillJwMurid()" required>
+            <option value="">-- Pilih Murid --</option>
+          </select>
         </div>
         <div class="form-grid" style="margin-bottom:12px;">
           <div class="form-group">
             <label class="form-label">Tahun</label>
-            <input type="text" id="jwTahun" class="form-control" placeholder="Contoh: Tahun 6">
+            <input type="text" id="jwTahun" class="form-control" readonly>
           </div>
           <div class="form-group">
             <label class="form-label">Kelas</label>
-            <input type="text" id="jwKelas" class="form-control" placeholder="Contoh: Bestari">
+            <input type="text" id="jwKelas" class="form-control" readonly>
           </div>
         </div>
         <div class="form-actions">
@@ -880,7 +988,7 @@
     </div>
   </div>
 
-  <!-- MODAL BORANG: KEHADIRAN GURU -->
+  <!-- MODAL 7: BORANG KEHADIRAN GURU -->
   <div class="modal-overlay" id="modalGuruAtt">
     <div class="modal-box" style="max-width:550px;">
       <div class="modal-header">
@@ -893,12 +1001,12 @@
           <select id="gaSesi" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Nama Guru *</label>
+          <label class="form-label">Nama Guru (Dari DB Sekolah) *</label>
           <select id="gaNamaGuru" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Aktiviti / Unit Koku *</label>
-          <input type="text" id="gaAktiviti" class="form-control" placeholder="Contoh: Pengakap / Bola Sepak" required>
+          <label class="form-label">Aktiviti / Unit Koku (Mengikut Kategori) *</label>
+          <select id="gaAktiviti" class="form-control" required></select>
         </div>
         <div class="form-grid" style="margin-bottom:12px;">
           <div class="form-group">
@@ -911,7 +1019,7 @@
           </div>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Status / Sebab Tidak Hadir (Jika Berkaitan)</label>
+          <label class="form-label">Status / Sebab Tidak Hadir</label>
           <input type="text" id="gaSebab" class="form-control" placeholder="Hadir / Cuti Sakit / Kursus">
         </div>
         <div class="form-actions">
@@ -938,7 +1046,7 @@
       <div id="printableArea" class="printable-report">
         <div class="report-header">
           <h2 style="font-size:1.2rem; text-transform:uppercase;">SEKOLAH KEBANGSAAN MANTIN</h2>
-          <h3 style="font-size:1rem; font-weight:700;" id="rptHeading">LAPORAN MINGGUAN KOKURIKULUM</h3>
+          <h3 style="font-size:1rem; font-weight:700;" id="rptHeading">LAPORAN KOKURIKULUM</h3>
           <p style="font-size:0.85rem;" id="rptSubheading">Sesi Persekolahan</p>
         </div>
 
@@ -971,7 +1079,7 @@
 
   <script>
     // MASUKKAN URL APPS SCRIPT KOKU ANDA DI SINI:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz2xRfn62cX1AXKaAPr8aLpIAl3easYwJC9nKZ88FC6oX9i39ide0Ta6Cc8hgtHNHxcFg/exec";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1-Z_XwP6e5j-N2j2l_U7uK4mY9nO1bC8wX_QxK/exec";
 
     const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
     if (!activeUser) {
@@ -982,6 +1090,7 @@
 
     let globalKokoData = null;
     let attendanceState = {};
+    let selectedPesertaSet = new Set();
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -1001,10 +1110,6 @@
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openEFailModal() { openModal('efailModal'); }
-    function openKehadiranMuridModal() {
-      populateAttUnitSelect();
-      openModal('kehadiranMuridModal');
-    }
 
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
@@ -1025,7 +1130,7 @@
 
     window.addEventListener('load', fetchKokoData);
 
-    const CACHE_KEY_LOCAL = "semanes_koko_cache";
+    const CACHE_KEY_LOCAL = "semanes_koko_cache_v2";
 
     async function fetchKokoData() {
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
@@ -1057,37 +1162,26 @@
       // 1. Render eFail Cards
       renderEFailCards(data.efail);
 
-      // 2. Dropdown Rujukan
+      // 2. Dropdown Rujukan Sesi & Peringkat
       populateSelect('filterMingguanSesi', data.options.sesi, "Semua Sesi");
       populateSelect('filterPencapaianSesi', data.options.sesi, "Semua Sesi");
       populateSelect('filterPencapaianPeringkat', data.options.peringkat, "Semua Peringkat");
       populateSelect('attSesiSelect', data.options.sesi);
-
-      // Gabungkan semua nama unit untuk filter & dropdown
-      const allUnits = [...new Set([...data.options.uniform, ...data.options.persatuan, ...data.options.sukan, ...data.options.rumahSukan])];
-      populateSelect('filterMingguanUnit', allUnits, "Semua Unit");
-      populateSelect('filterJwUnit', allUnits, "Semua Unit");
-      populateSelect('mUnit', allUnits);
-      populateSelect('jwUnit', allUnits);
-
-      // Pilihan Borang Mingguan
       populateSelect('mSesi', data.options.sesi);
-      populateSelect('mSivik', data.options.sivik);
-      populateSelect('mPelapor', data.options.guru);
-
-      // Pilihan Borang Pencapaian
       populateSelect('pSesi', data.options.sesi);
+      populateSelect('jwSesi', data.options.sesi);
+      populateSelect('gaSesi', data.options.sesi);
+
+      // Pilihan Peringkat & Pencapaian
       populateSelect('pPeringkat', data.options.peringkat);
       populateSelect('pPencapaian', data.options.pencapaian);
-      populateSelect('pPenyelaras', data.options.guru);
-
-      // Pilihan Borang Jawatankuasa
-      populateSelect('jwSesi', data.options.sesi);
+      populateSelect('mSivik', data.options.sivik);
       populateSelect('jwJawatan', data.options.jawatan);
 
-      // Pilihan Borang Kehadiran Guru
-      populateSelect('gaSesi', data.options.sesi);
-      populateSelect('gaNamaGuru', data.options.guru);
+      // Pilihan Guru dari DB Sekolah
+      populateSelect('mPelapor', data.guruMaster);
+      populateSelect('pPenyelaras', data.guruMaster);
+      populateSelect('gaNamaGuru', data.guruMaster);
 
       if (activeUser && activeUser.nama) {
         document.getElementById('mPelapor').value = activeUser.nama;
@@ -1095,8 +1189,26 @@
         document.getElementById('gaNamaGuru').value = activeUser.nama;
       }
 
-      // 3. Render Jadual
+      // 3. Dropdown Unit Berkelompok (Optgroup Kategori)
+      populateGroupedUnits('mUnit', data.options.kategoriKoko);
+      populateGroupedUnits('jwUnit', data.options.kategoriKoko);
+      populateGroupedUnits('gaAktiviti', data.options.kategoriKoko);
+
+      // Gabungkan semua unit untuk penapis
+      const allUnits = [];
+      Object.values(data.options.kategoriKoko).forEach(list => allUnits.push(...list));
+      populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
+      populateSelect('filterJwUnit', [...new Set(allUnits)], "Semua Unit");
+
+      // 4. Guru Pembimbing Checkboxes (Multi-select DB Sekolah)
+      renderGuruCheckboxes(data.guruMaster);
+
+      // 5. Dropdown Pemilih Murid Jawatankuasa & Profil Murid
+      populateStudentSelects(data.muridMaster);
+
+      // 6. Render Semua Jadual
       renderMingguanTable(data.laporanMingguan);
+      renderKehadiranMasterTable(data.keahlianMurid);
       renderPencapaianTable(data.laporanPencapaian);
       renderJwTable(data.jawatankuasa);
       renderGuruTable(data.kehadiranGuru);
@@ -1110,6 +1222,51 @@
         const opt = document.createElement('option');
         opt.value = v; opt.innerText = v;
         el.appendChild(opt);
+      });
+    }
+
+    function populateGroupedUnits(selectId, kategoriObj) {
+      const el = document.getElementById(selectId);
+      if (!el || !kategoriObj) return;
+      el.innerHTML = '<option value="">-- Pilih Unit Kokurikulum --</option>';
+      for (const [kat, units] of Object.entries(kategoriObj)) {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = kat;
+        units.forEach(u => {
+          const opt = document.createElement('option');
+          opt.value = u; opt.innerText = u;
+          optgroup.appendChild(opt);
+        });
+        el.appendChild(optgroup);
+      }
+    }
+
+    function renderGuruCheckboxes(guruList) {
+      const container = document.getElementById('guruPembimbingCheckboxes');
+      container.innerHTML = '';
+      guruList.forEach((g, idx) => {
+        const label = document.createElement('label');
+        label.className = 'checkbox-item';
+        label.innerHTML = `<input type="checkbox" value="${g}"> ${g}`;
+        container.appendChild(label);
+      });
+    }
+
+    function populateStudentSelects(muridList) {
+      const jwSelect = document.getElementById('jwMuridSelect');
+      const profileSelect = document.getElementById('profileMuridSelect');
+      jwSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
+      profileSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
+
+      muridList.forEach((m, idx) => {
+        const text = `${m.nama} (${m.tahun} ${m.kelas})`;
+        const opt1 = document.createElement('option');
+        opt1.value = idx; opt1.innerText = text;
+        jwSelect.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.value = idx; opt2.innerText = text;
+        profileSelect.appendChild(opt2);
       });
     }
 
@@ -1137,12 +1294,96 @@
       renderEFailCards(filtered);
     }
 
-    // --- KEHADIRAN MURID DINAMIK ---
+    // --- KAD PROFIL MURID LENGKAP ---
+    function renderStudentProfileCard() {
+      const idx = document.getElementById('profileMuridSelect').value;
+      const box = document.getElementById('studentProfileCardContent');
+      if (idx === "" || !globalKokoData) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const murid = globalKokoData.muridMaster[idx];
+      const nama = murid.nama.trim().toLowerCase();
+
+      // Cari Maklumat Keahlian dari Sheet Kehadiran
+      const kInfo = globalKokoData.keahlianMurid.find(k => k.nama.trim().toLowerCase() === nama) || {};
+
+      // Cari Jawatan Murid
+      const jwMurid = globalKokoData.jawatankuasa.filter(j => j.nama.trim().toLowerCase() === nama);
+      const jwString = jwMurid.length > 0 ? jwMurid.map(j => `${j.jawatan} (${j.unit})`).join(', ') : 'Tiada';
+
+      // Cari Rekod Pencapaian
+      const pMurid = globalKokoData.laporanPencapaian.filter(p => (p.peserta || '').toLowerCase().includes(nama));
+      const pString = pMurid.length > 0 ? pMurid.map(p => `${p.pencapaian} - ${p.program} (${p.peringkat})`).join('<br>') : 'Tiada penyertaan direkodkan';
+
+      // Isi Kad
+      document.getElementById('pCardNama').innerText = murid.nama;
+      document.getElementById('pCardKelas').innerText = `${murid.tahun} ${murid.kelas}`;
+      document.getElementById('pCardUniform').innerText = kInfo.uniform || '-';
+      document.getElementById('pCardPersatuan').innerText = kInfo.persatuan || '-';
+      document.getElementById('pCardSukan').innerText = kInfo.sukan || '-';
+      document.getElementById('pCardRumah').innerText = kInfo.rumahSukan || '-';
+      document.getElementById('pCardJw').innerText = jwString;
+      document.getElementById('pCardPencapaian').innerHTML = pString;
+      document.getElementById('pCardKehadiran').innerText = "Telah didaftarkan dalam rekod kehadiran sekolah";
+
+      box.style.display = 'block';
+    }
+
+    // --- KEHADIRAN MASTER TABLE (TAB 2) ---
+    function renderKehadiranMasterTable(list) {
+      const tb = document.getElementById('kehadiranMasterTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada rekod keahlian murid.</td></tr>';
+        return;
+      }
+      list.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:700;">${m.nama}</td>
+          <td>${m.tahun} ${m.kelas}</td>
+          <td><span class="profile-badge">${m.uniform || '-'}</span></td>
+          <td><span class="profile-badge">${m.persatuan || '-'}</span></td>
+          <td><span class="profile-badge">${m.sukan || '-'}</span></td>
+          <td>${m.rumahSukan || '-'}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterKehadiranMuridTable() {
+      const q = document.getElementById('searchKehadiranMurid').value.toLowerCase();
+      const thn = document.getElementById('filterKehadiranTahun').value;
+      let filtered = globalKokoData.keahlianMurid;
+
+      if (thn) filtered = filtered.filter(m => (m.tahun || '').toString().includes(thn));
+      if (q) filtered = filtered.filter(m => m.nama.toLowerCase().includes(q) || (m.kelas || '').toLowerCase().includes(q));
+      renderKehadiranMasterTable(filtered);
+    }
+
+    function downloadAllAttendanceCSV() {
+      let csv = "Nama Murid,Tahun,Kelas,Badan Beruniform,Kelab & Persatuan,Sukan & Permainan,Rumah Sukan\n";
+      globalKokoData.keahlianMurid.forEach(m => {
+        csv += `"${m.nama}","${m.tahun}","${m.kelas}","${m.uniform}","${m.persatuan}","${m.sukan}","${m.rumahSukan}"\n`;
+      });
+      downloadCSV(csv, "Pendaftaran_Aktiviti_Kokurikulum_Murid.csv");
+    }
+
+    // --- CHECKLIST KEHADIRAN DINAMIK MODAL ---
     function populateAttUnitSelect() {
       const kat = document.getElementById('attKategoriSelect').value;
-      const opts = globalKokoData ? globalKokoData.options[kat] : [];
-      populateSelect('attUnitSelect', opts);
+      const opts = globalKokoData ? globalKokoData.options.kategoriKoko[getKategoriName(kat)] : [];
+      populateSelect('attUnitSelect', opts || []);
       renderAttendanceChecklist();
+    }
+
+    function getKategoriName(katKey) {
+      if (katKey === 'uniform') return 'Badan Beruniform';
+      if (katKey === 'persatuan') return 'Kelab & Persatuan';
+      if (katKey === 'sukan') return 'Sukan & Permainan';
+      return 'Rumah Sukan';
     }
 
     function renderAttendanceChecklist() {
@@ -1157,10 +1398,7 @@
         return;
       }
 
-      // Tapis murid mengikut unit yang dipilih
-      let matched = globalKokoData.muridKoko.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
-
-      // Susun mengikut Tahun & Nama A-Z
+      let matched = globalKokoData.keahlianMurid.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
       matched.sort((a, b) => {
         if (a.tahun !== b.tahun) return a.tahun.localeCompare(b.tahun);
         return a.nama.localeCompare(b.nama);
@@ -1174,11 +1412,12 @@
 
       attendanceState = {};
       matched.forEach((m, idx) => {
-        attendanceState[idx] = true; // Default: Hadir
+        attendanceState[idx] = true;
         const div = document.createElement('div');
-        div.className = 'att-item';
+        div.className = 'checkbox-item';
+        div.style.cssText = "display:flex; justify-content:space-between; padding:6px 10px; background:#fff; border-radius:8px; margin-bottom:4px; border:1px solid #f1f5f9;";
         div.innerHTML = `
-          <label for="att_chk_${idx}">
+          <label for="att_chk_${idx}" style="cursor:pointer; flex:1;">
             <span style="font-weight:700; color:var(--neon-dark); margin-right:6px;">[Thn ${m.tahun} ${m.kelas}]</span> ${m.nama}
           </label>
           <input type="checkbox" id="att_chk_${idx}" checked onchange="handleAttCheck(${idx}, this.checked)">
@@ -1214,7 +1453,6 @@
       const peratus = total > 0 ? Math.round((hadir / total) * 100) : 0;
       document.getElementById('statPeratus').innerText = `${peratus}%`;
 
-      // Kemaskini juga ke borang mingguan jika terbuka
       const inputKehadiran = document.getElementById('mKehadiran');
       if (inputKehadiran && peratus > 0) inputKehadiran.value = `${peratus}%`;
     }
@@ -1229,7 +1467,7 @@
       csv += "Bil,Nama Murid,Tahun,Kelas,Status Kehadiran\n";
 
       const kat = document.getElementById('attKategoriSelect').value;
-      let matched = globalKokoData.muridKoko.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
+      let matched = globalKokoData.keahlianMurid.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
       matched.sort((a, b) => a.nama.localeCompare(b.nama));
 
       matched.forEach((m, idx) => {
@@ -1240,7 +1478,22 @@
       downloadCSV(csv, `Analisis_Kehadiran_${unit}.csv`);
     }
 
-    // --- TABEL LAPORAN MINGGUAN ---
+    // --- TABEL LAPORAN MINGGUAN & PENAPIS BERTINGKAT ---
+    function handleFilterKategoriChange() {
+      const kat = document.getElementById('filterMingguanKategori').value;
+      const unitSelect = document.getElementById('filterMingguanUnit');
+
+      if (!kat) {
+        const allUnits = [];
+        Object.values(globalKokoData.options.kategoriKoko).forEach(list => allUnits.push(...list));
+        populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
+      } else {
+        const units = globalKokoData.options.kategoriKoko[kat] || [];
+        populateSelect('filterMingguanUnit', units, "Semua Unit dalam Kategori");
+      }
+      filterMingguanTable();
+    }
+
     function renderMingguanTable(list) {
       const tb = document.getElementById('mingguanTableBody');
       tb.innerHTML = '';
@@ -1267,26 +1520,31 @@
 
     function filterMingguanTable() {
       const sSesi = document.getElementById('filterMingguanSesi').value;
-      const sPerjumpaan = document.getElementById('filterMingguanPerjumpaan').value;
+      const sKat = document.getElementById('filterMingguanKategori').value;
       const sUnit = document.getElementById('filterMingguanUnit').value;
 
       let filtered = globalKokoData.laporanMingguan;
       if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
-      if (sPerjumpaan) filtered = filtered.filter(r => r.perjumpaan == sPerjumpaan);
-      if (sUnit) filtered = filtered.filter(r => r.unit == sUnit);
+
+      if (sUnit) {
+        filtered = filtered.filter(r => r.unit == sUnit);
+      } else if (sKat) {
+        const unitsInKat = globalKokoData.options.kategoriKoko[sKat] || [];
+        filtered = filtered.filter(r => unitsInKat.includes(r.unit));
+      }
+
       renderMingguanTable(filtered);
     }
 
-    // --- TABEL PENCAPAIAN (NORMALIZED PER MURID) ---
+    // --- TABEL PENCAPAIAN ---
     function renderPencapaianTable(list) {
       const tb = document.getElementById('pencapaianTableBody');
       tb.innerHTML = '';
       if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod pencapaian.</td></tr>';
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada rekod pencapaian.</td></tr>';
         return;
       }
 
-      // Pecahkan nama murid satu persatu
       list.forEach(item => {
         const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
         if (muridArr.length === 0) muridArr.push('-');
@@ -1295,7 +1553,6 @@
           const tr = document.createElement('tr');
           tr.innerHTML = `
             <td style="font-weight:700;">${namaMurid}</td>
-            <td>${item.tahun}</td>
             <td>${item.program}</td>
             <td><span class="header-badge" style="padding:2px 8px; font-size:0.75rem;">${item.peringkat}</span></td>
             <td style="font-weight:700; color:var(--neon-accent);">${item.pencapaian}</td>
@@ -1323,17 +1580,69 @@
     }
 
     function downloadPencapaianCSV() {
-      let csv = "Nama Murid,Tahun,Program,Peringkat,Pencapaian,Guru Penyelaras\n";
+      let csv = "Nama Murid,Program,Peringkat,Pencapaian,Guru Penyelaras\n";
       globalKokoData.laporanPencapaian.forEach(item => {
         const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
         muridArr.forEach(n => {
-          csv += `"${n}","${item.tahun}","${item.program}","${item.peringkat}","${item.pencapaian}","${item.penyelaras}"\n`;
+          csv += `"${n}","${item.program}","${item.peringkat}","${item.pencapaian}","${item.penyelaras}"\n`;
         });
       });
       downloadCSV(csv, "Pencapaian_Kokurikulum_SK_Mantin.csv");
     }
 
+    // --- PEMILIHAN PESERTA PENCAPAIAN ---
+    function openPilihPesertaModal() {
+      selectedPesertaSet.clear();
+      renderPesertaPickerList(globalKokoData.muridMaster);
+      openModal('modalPilihPeserta');
+    }
+
+    function renderPesertaPickerList(list) {
+      const container = document.getElementById('pesertaPickerList');
+      container.innerHTML = '';
+      list.forEach((m, idx) => {
+        const div = document.createElement('div');
+        div.className = 'checkbox-item';
+        div.style.cssText = "display:flex; justify-content:space-between; padding:6px 10px; background:#fff; border-radius:6px; margin-bottom:4px; border:1px solid #f1f5f9;";
+        div.innerHTML = `
+          <label for="picker_chk_${idx}" style="cursor:pointer; flex:1;">
+            <b>${m.nama}</b> <span style="color:#64748b;">(${m.tahun} ${m.kelas})</span>
+          </label>
+          <input type="checkbox" id="picker_chk_${idx}" onchange="handlePesertaToggle('${m.nama}', this.checked)">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function filterPesertaPicker() {
+      const q = document.getElementById('searchPesertaPicker').value.toLowerCase();
+      const filtered = globalKokoData.muridMaster.filter(m => m.nama.toLowerCase().includes(q) || m.kelas.toLowerCase().includes(q));
+      renderPesertaPickerList(filtered);
+    }
+
+    function handlePesertaToggle(nama, checked) {
+      if (checked) selectedPesertaSet.add(nama);
+      else selectedPesertaSet.delete(nama);
+    }
+
+    function confirmPesertaSelection() {
+      document.getElementById('pPeserta').value = Array.from(selectedPesertaSet).join(', ');
+      closeModal('modalPilihPeserta');
+    }
+
     // --- TABEL JAWATANKUASA ---
+    function autoFillJwMurid() {
+      const idx = document.getElementById('jwMuridSelect').value;
+      if (idx !== "" && globalKokoData) {
+        const m = globalKokoData.muridMaster[idx];
+        document.getElementById('jwTahun').value = m.tahun;
+        document.getElementById('jwKelas').value = m.kelas;
+      } else {
+        document.getElementById('jwTahun').value = "";
+        document.getElementById('jwKelas').value = "";
+      }
+    }
+
     function renderJwTable(list) {
       const tb = document.getElementById('jwTableBody');
       tb.innerHTML = '';
@@ -1397,6 +1706,9 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
+      // Ambil senarai guru pembimbing yang ditanda
+      const guruChecked = Array.from(document.querySelectorAll('#guruPembimbingCheckboxes input:checked')).map(i => i.value);
+
       try {
         const [g1, g2, g3] = await Promise.all([
           fileToBase64(document.getElementById('mG1').files[0]),
@@ -1415,7 +1727,7 @@
           pikebm: document.getElementById('mPikebm').value,
           kbat: document.getElementById('mKbat').value,
           kehadiran: document.getElementById('mKehadiran').value,
-          guruPembimbing: document.getElementById('mGuruPembimbing').value,
+          guruPembimbing: guruChecked.join(', '),
           g1File: g1, g2File: g2, g3File: g3,
           disediakanOleh: document.getElementById('mPelapor').value
         };
@@ -1461,7 +1773,6 @@
           sesi: document.getElementById('pSesi').value,
           program: document.getElementById('pProgram').value,
           peringkat: document.getElementById('pPeringkat').value,
-          tahun: document.getElementById('pTahun').value,
           pencapaian: document.getElementById('pPencapaian').value,
           peserta: document.getElementById('pPeserta').value,
           g1File: g1, g2File: g2, g3File: g3,
@@ -1498,11 +1809,14 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
+      const idx = document.getElementById('jwMuridSelect').value;
+      const m = globalKokoData.muridMaster[idx];
+
       const formData = {
         sesi: document.getElementById('jwSesi').value,
         unit: document.getElementById('jwUnit').value,
         jawatan: document.getElementById('jwJawatan').value,
-        nama: document.getElementById('jwNama').value,
+        nama: m ? m.nama : '',
         tahun: document.getElementById('jwTahun').value,
         kelas: document.getElementById('jwKelas').value
       };
@@ -1610,7 +1924,6 @@
         <tr><th>PROGRAM / PERTANDINGAN</th><td style="font-weight:700;">${item.program}</td></tr>
         <tr><th>PERINGKAT</th><td>${item.peringkat}</td></tr>
         <tr><th>PENCAPAIAN</th><td style="font-weight:700; color:var(--neon-accent);">${item.pencapaian}</td></tr>
-        <tr><th>TAHUN / TINGKATAN</th><td>${item.tahun}</td></tr>
         <tr><th>SENARAI PESERTA</th><td style="white-space:pre-wrap;">${item.peserta}</td></tr>
       `;
 
