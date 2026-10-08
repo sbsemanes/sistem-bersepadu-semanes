@@ -383,7 +383,7 @@
       font-size: 0.78rem;
     }
 
-    /* MODAL HEADER & ACTION STICKY */
+    /* BAR STICKY KEKAL DI ATAS SEMASA MENATAL */
     .sticky-bar-top {
       position: sticky;
       top: -24px;
@@ -395,6 +395,12 @@
       align-items: center;
       border-bottom: 1.5px solid var(--border-soft);
       margin-bottom: 14px;
+    }
+
+    .sticky-bar-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
     }
 
     .printable-report { border: 2px solid #0f172a; padding: 20px; color: #000000; background: #ffffff; line-height: 1.5; }
@@ -448,7 +454,7 @@
       <p class="header-subtext">Sekolah Kebangsaan Mantin — Membina Potensi, Mengukir Prestasi</p>
     </header>
 
-    <!-- KAD MENU UTAMA: eFail Koko, Data Murid & Kehadiran -->
+    <!-- KAD MENU UTAMA -->
     <section>
       <h2 class="section-title">Dokumen & Pangkalan Data Murid</h2>
       <div class="menu-grid">
@@ -714,7 +720,7 @@
     </div>
   </div>
 
-  <!-- MODAL 2: KAD DATA MURID LENGKAP DENGAN FILTER TAHUN, KELAS & SEARCH -->
+  <!-- MODAL 2: KAD DATA MURID LENGKAP -->
   <div class="modal-overlay" id="modalProfilMurid">
     <div class="modal-box" style="max-width:750px;">
       <div class="modal-header no-print">
@@ -725,7 +731,6 @@
         </div>
       </div>
 
-      <!-- FILTER TAHUN, KELAS & CARIAN NAMA -->
       <div class="no-print" style="margin-bottom:16px;">
         <div class="filter-wrapper" style="margin-bottom:8px;">
           <select id="pFilterTahun" class="filter-select" onchange="filterProfileStudentDropdown()">
@@ -769,7 +774,7 @@
     </div>
   </div>
 
-  <!-- MODAL 3: SISTEM KEHADIRAN MURID DINAMIK (DENGAN BUTANG SIMPAN & MUAT TURUN) -->
+  <!-- MODAL 3: SISTEM KEHADIRAN MURID DINAMIK -->
   <div class="modal-overlay" id="kehadiranMuridModal">
     <div class="modal-box" style="max-width:700px;">
       <div class="modal-header">
@@ -811,7 +816,6 @@
         <div>Peratus: <span id="statPeratus">0%</span></div>
       </div>
 
-      <!-- BUTANG SIMPAN & BERSEBELAHAN BUTANG MUAT TURUN -->
       <div class="form-actions" style="margin-top:16px;">
         <button type="button" class="btn-secondary" onclick="closeModal('kehadiranMuridModal')">Tutup</button>
         <button type="button" id="btnSimpanKehadiranLog" class="btn-action-purple" onclick="saveAttendanceSessionLog()">
@@ -904,7 +908,7 @@
     </div>
   </div>
 
-  <!-- MODAL 5: BORANG LAPORAN PENCAPAIAN (BERSEBELAHAN & PEMILIH MURID STICKY) -->
+  <!-- MODAL 5: BORANG LAPORAN PENCAPAIAN -->
   <div class="modal-overlay" id="modalPencapaian">
     <div class="modal-box">
       <div class="modal-header">
@@ -933,7 +937,7 @@
           <div class="form-group full-width">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
               <label class="form-label">Pilih Peserta Murid (Dari DB Sekolah) *</label>
-              <button type="button" class="btn-download-csv" onclick="openStudentPicker('pencapaian')">
+              <button type="button" class="btn-download-csv" onclick="openModalPilihPeserta()">
                 <i class="fas fa-user-plus"></i> Carian & Pilih Murid
               </button>
             </div>
@@ -967,23 +971,25 @@
     </div>
   </div>
 
-  <!-- MODAL PEMILIH MURID UNIVERSAL (DENGAN BUTANG SELESAI MEMILIH STICKY) -->
-  <div class="modal-overlay" id="modalStudentPicker">
-    <div class="modal-box" style="max-width:580px;">
-      <!-- STICKY BAR: BUTANG SELESAI MEMILIH KEKAL DI ATAS SEMASA SCROLL -->
+  <!-- MODAL KHAS 1: CARIAN PESERTA PENCAPAIAN (MULTI-CHECKBOX DENGAN BUTANG TUTUP & SELESAI STICKY) -->
+  <div class="modal-overlay" id="modalPilihPeserta">
+    <div class="modal-box" style="max-width:600px;">
       <div class="sticky-bar-top">
         <div>
-          <h4 id="pickerTitle" style="font-weight:800; font-size:1rem; color:var(--text-main);">Pilih Murid (DB Sekolah)</h4>
-          <span style="font-size:0.75rem; color:var(--neon-dark);" id="pickerCounter">0 murid dipilih</span>
+          <h4 style="font-weight:800; font-size:1rem; color:var(--text-main);">Pilih Peserta Pertandingan</h4>
+          <span style="font-size:0.75rem; color:var(--neon-dark);" id="pesertaCounterLabel">0 murid dipilih</span>
         </div>
-        <button type="button" class="btn-action-purple" onclick="confirmStudentPicker()">
-          <i class="fas fa-check-circle"></i> Selesai Memilih
-        </button>
+        <div class="sticky-bar-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPilihPeserta')">Batal / Tutup</button>
+          <button type="button" class="btn-action-purple" onclick="confirmPesertaSelection()">
+            <i class="fas fa-check-circle"></i> Selesai Memilih
+          </button>
+        </div>
       </div>
 
-      <!-- FILTER TAHUN, KELAS & CARIAN DALAM PICKER -->
-      <div class="filter-wrapper" style="margin-bottom:10px;">
-        <select id="pickerFilterTahun" class="filter-select" onchange="filterPickerList()">
+      <!-- PENAPIS TAHUN, KELAS & CARIAN -->
+      <div class="filter-wrapper" style="margin-bottom:12px;">
+        <select id="pesertaFilterTahun" class="filter-select" onchange="filterPesertaList()">
           <option value="">Semua Tahun</option>
           <option value="1">Tahun 1</option>
           <option value="2">Tahun 2</option>
@@ -992,17 +998,17 @@
           <option value="5">Tahun 5</option>
           <option value="6">Tahun 6</option>
         </select>
-        <select id="pickerFilterKelas" class="filter-select" onchange="filterPickerList()">
+        <select id="pesertaFilterKelas" class="filter-select" onchange="filterPesertaList()">
           <option value="">Semua Kelas</option>
         </select>
-        <input type="text" id="pickerSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama murid..." oninput="filterPickerList()">
+        <input type="text" id="pesertaSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama peserta..." oninput="filterPesertaList()">
       </div>
 
-      <div class="att-list-container" id="studentPickerContainer" style="max-height:360px;"></div>
+      <div class="att-list-container" id="pesertaChecklistContainer" style="max-height:360px;"></div>
     </div>
   </div>
 
-  <!-- MODAL 6: BORANG JAWATANKUASA MURID (KATEGORI & CARIAN MURID) -->
+  <!-- MODAL 6: BORANG JAWATANKUASA MURID -->
   <div class="modal-overlay" id="modalJawatankuasa">
     <div class="modal-box" style="max-width:550px;">
       <div class="modal-header">
@@ -1023,11 +1029,10 @@
           <select id="jwJawatan" class="form-control" required></select>
         </div>
 
-        <!-- CARIAN NAMA MURID SEPERTI PENCAPAIAN (KOTAK TAHUN & KELAS DIBUANG) -->
         <div class="form-group" style="margin-bottom:14px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
             <label class="form-label">Pilih Murid (DB Sekolah) *</label>
-            <button type="button" class="btn-download-csv" onclick="openStudentPicker('jawatankuasa')">
+            <button type="button" class="btn-download-csv" onclick="openModalPilihMuridJw()">
               <i class="fas fa-search"></i> Carian Murid
             </button>
           </div>
@@ -1043,6 +1048,43 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL KHAS 2: CARIAN MURID JAWATANKUASA (BERASINGAN - RADIO BUTTON DENGAN BUTANG TUTUP & PILIH STICKY) -->
+  <div class="modal-overlay" id="modalPilihMuridJw">
+    <div class="modal-box" style="max-width:600px;">
+      <div class="sticky-bar-top">
+        <div>
+          <h4 style="font-weight:800; font-size:1rem; color:var(--text-main);">Pilih Murid Jawatankuasa</h4>
+          <span style="font-size:0.75rem; color:var(--neon-dark);" id="jwPickedLabel">Pilih seorang murid</span>
+        </div>
+        <div class="sticky-bar-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPilihMuridJw')">Batal / Tutup</button>
+          <button type="button" class="btn-action-purple" onclick="confirmJwStudentSelection()">
+            <i class="fas fa-check-circle"></i> Pilih Murid Ini
+          </button>
+        </div>
+      </div>
+
+      <!-- PENAPIS TAHUN, KELAS & CARIAN -->
+      <div class="filter-wrapper" style="margin-bottom:12px;">
+        <select id="jwFilterTahun" class="filter-select" onchange="filterJwStudentList()">
+          <option value="">Semua Tahun</option>
+          <option value="1">Tahun 1</option>
+          <option value="2">Tahun 2</option>
+          <option value="3">Tahun 3</option>
+          <option value="4">Tahun 4</option>
+          <option value="5">Tahun 5</option>
+          <option value="6">Tahun 6</option>
+        </select>
+        <select id="jwFilterKelas" class="filter-select" onchange="filterJwStudentList()">
+          <option value="">Semua Kelas</option>
+        </select>
+        <input type="text" id="jwSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama murid..." oninput="filterJwStudentList()">
+      </div>
+
+      <div class="att-list-container" id="jwRadioContainer" style="max-height:360px;"></div>
     </div>
   </div>
 
@@ -1148,9 +1190,8 @@
 
     let globalKokoData = null;
     let attendanceState = {};
-    let pickerMode = 'pencapaian'; // 'pencapaian' atau 'jawatankuasa'
-    let selectedPickerSet = new Set();
-    let singlePickedMurid = null;
+    let selectedPesertaSet = new Set();
+    let selectedJwStudent = null;
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -1190,7 +1231,7 @@
 
     window.addEventListener('load', fetchKokoData);
 
-    const CACHE_KEY_LOCAL = "semanes_koko_cache_v3";
+    const CACHE_KEY_LOCAL = "semanes_koko_cache_v4";
 
     async function fetchKokoData() {
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
@@ -1256,10 +1297,7 @@
 
       renderGuruCheckboxes(data.guruMaster);
 
-      // Isi Senarai Kelas Murid pada Dropdown Penapis Profil & Picker
       populateKelasFilters(data.muridMaster);
-
-      // Render Senarai Murid dalam Pangkalan Data Profil
       filterProfileStudentDropdown();
 
       renderMingguanTable(data.laporanMingguan);
@@ -1312,10 +1350,11 @@
       muridList.forEach(m => { if (m.kelas) kelasSet.add(m.kelas); });
       const kelasArr = Array.from(kelasSet).sort();
       populateSelect('pFilterKelas', kelasArr, "Semua Kelas");
-      populateSelect('pickerFilterKelas', kelasArr, "Semua Kelas");
+      populateSelect('pesertaFilterKelas', kelasArr, "Semua Kelas");
+      populateSelect('jwFilterKelas', kelasArr, "Semua Kelas");
     }
 
-    // --- KAD PANGKALAN DATA & PROFIL MURID (DENGAN FILTER TAHUN, KELAS & SEARCH) ---
+    // --- KAD PANGKALAN DATA & PROFIL MURID ---
     function filterProfileStudentDropdown() {
       const thn = document.getElementById('pFilterTahun').value;
       const kls = document.getElementById('pFilterKelas').value.toLowerCase();
@@ -1350,15 +1389,12 @@
       const m = globalKokoData.keahlianMurid[idx];
       const nama = m.nama.trim().toLowerCase();
 
-      // Cari Jawatan Murid
       const jwMurid = globalKokoData.jawatankuasa.filter(j => j.nama.trim().toLowerCase() === nama);
       const jwString = jwMurid.length > 0 ? jwMurid.map(j => `${j.jawatan} (${j.unit})`).join(', ') : 'Tiada';
 
-      // Cari Rekod Pencapaian
       const pMurid = globalKokoData.laporanPencapaian.filter(p => (p.peserta || '').toLowerCase().includes(nama));
       const pString = pMurid.length > 0 ? pMurid.map(p => `${p.pencapaian} - ${p.program} (${p.peringkat})`).join('<br>') : 'Tiada penyertaan direkodkan';
 
-      // Isi Kad Profil Murid
       document.getElementById('pCardNama').innerText = m.nama;
       document.getElementById('pCardKelas').innerText = `${m.tahun} ${m.kelas}`;
       document.getElementById('pCardUniform').innerText = m.uniform || '-';
@@ -1371,23 +1407,73 @@
       box.style.display = 'block';
     }
 
-    // --- PEMILIHAN MURID DENGAN BUTANG STICKY (PENCAPAIAN & JAWATANKUASA) ---
-    function openStudentPicker(mode) {
-      pickerMode = mode;
-      selectedPickerSet.clear();
-      singlePickedMurid = null;
-
-      document.getElementById('pickerTitle').innerText = mode === 'pencapaian' ? "Pilih Peserta Murid (Boleh Pilih Ramai)" : "Pilih Murid Jawatankuasa (Pilih Seorang)";
-      document.getElementById('pickerCounter').innerText = "0 murid dipilih";
-      filterPickerList();
-      openModal('modalStudentPicker');
+    // --- MODAL KHAS 1: CARIAN PESERTA PENCAPAIAN ---
+    function openModalPilihPeserta() {
+      selectedPesertaSet.clear();
+      filterPesertaList();
+      openModal('modalPilihPeserta');
     }
 
-    function filterPickerList() {
-      const thn = document.getElementById('pickerFilterTahun').value;
-      const kls = document.getElementById('pickerFilterKelas').value.toLowerCase();
-      const q = document.getElementById('pickerSearchInput').value.toLowerCase();
-      const container = document.getElementById('studentPickerContainer');
+    function filterPesertaList() {
+      const thn = document.getElementById('pesertaFilterTahun').value;
+      const kls = document.getElementById('pesertaFilterKelas').value.toLowerCase();
+      const q = document.getElementById('pesertaSearchInput').value.toLowerCase();
+      const container = document.getElementById('pesertaChecklistContainer');
+      container.innerHTML = '';
+
+      if (!globalKokoData) return;
+
+      const filtered = globalKokoData.muridMaster.filter(m => {
+        const matchThn = !thn || (m.tahun || '').toString() === thn;
+        const matchKls = !kls || (m.kelas || '').toLowerCase() === kls;
+        const matchQ = !q || (m.nama || '').toLowerCase().includes(q);
+        return matchThn && matchKls && matchQ;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Tiada murid sepadan.</div>';
+        return;
+      }
+
+      filtered.forEach((m, idx) => {
+        const isChecked = selectedPesertaSet.has(m.nama);
+        const div = document.createElement('div');
+        div.className = 'checkbox-item';
+        div.style.cssText = "display:flex; justify-content:space-between; padding:8px 12px; background:#fff; border-radius:8px; margin-bottom:4px; border:1px solid #f1f5f9;";
+        div.innerHTML = `
+          <label for="pck_peserta_${idx}" style="cursor:pointer; flex:1;">
+            <b>${m.nama}</b> <span style="color:#64748b;">(${m.tahun} ${m.kelas})</span>
+          </label>
+          <input type="checkbox" id="pck_peserta_${idx}" ${isChecked ? 'checked' : ''} onchange="handlePesertaToggle('${m.nama}', this.checked)">
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function handlePesertaToggle(nama, checked) {
+      if (checked) selectedPesertaSet.add(nama);
+      else selectedPesertaSet.delete(nama);
+      document.getElementById('pesertaCounterLabel').innerText = `${selectedPesertaSet.size} murid dipilih`;
+    }
+
+    function confirmPesertaSelection() {
+      document.getElementById('pPeserta').value = Array.from(selectedPesertaSet).join(', ');
+      closeModal('modalPilihPeserta');
+    }
+
+    // --- MODAL KHAS 2: CARIAN MURID JAWATANKUASA (BERASINGAN - RADIO BUTTON) ---
+    function openModalPilihMuridJw() {
+      selectedJwStudent = null;
+      document.getElementById('jwPickedLabel').innerText = "Pilih seorang murid";
+      filterJwStudentList();
+      openModal('modalPilihMuridJw');
+    }
+
+    function filterJwStudentList() {
+      const thn = document.getElementById('jwFilterTahun').value;
+      const kls = document.getElementById('jwFilterKelas').value.toLowerCase();
+      const q = document.getElementById('jwSearchInput').value.toLowerCase();
+      const container = document.getElementById('jwRadioContainer');
       container.innerHTML = '';
 
       if (!globalKokoData) return;
@@ -1408,50 +1494,30 @@
         const div = document.createElement('div');
         div.className = 'checkbox-item';
         div.style.cssText = "display:flex; justify-content:space-between; padding:8px 12px; background:#fff; border-radius:8px; margin-bottom:4px; border:1px solid #f1f5f9;";
-
-        if (pickerMode === 'pencapaian') {
-          const isChecked = selectedPickerSet.has(m.nama);
-          div.innerHTML = `
-            <label for="pck_${idx}" style="cursor:pointer; flex:1;">
-              <b>${m.nama}</b> <span style="color:#64748b;">(${m.tahun} ${m.kelas})</span>
-            </label>
-            <input type="checkbox" id="pck_${idx}" ${isChecked ? 'checked' : ''} onchange="handlePickerToggle('${m.nama}', this.checked)">
-          `;
-        } else {
-          // Jawatankuasa: Radio / Pilih satu
-          div.innerHTML = `
-            <label for="pck_${idx}" style="cursor:pointer; flex:1;">
-              <b>${m.nama}</b> <span style="color:#64748b;">(${m.tahun} ${m.kelas})</span>
-            </label>
-            <input type="radio" name="singleMuridPick" id="pck_${idx}" onchange="handleSinglePickerToggle('${m.nama}', '${m.tahun}', '${m.kelas}')">
-          `;
-        }
+        div.innerHTML = `
+          <label for="pck_jw_${idx}" style="cursor:pointer; flex:1;">
+            <b>${m.nama}</b> <span style="color:#64748b;">(${m.tahun} ${m.kelas})</span>
+          </label>
+          <input type="radio" name="jwMuridRadioPick" id="pck_jw_${idx}" onchange="handleJwRadioPick('${m.nama}', '${m.tahun}', '${m.kelas}')">
+        `;
         container.appendChild(div);
       });
     }
 
-    function handlePickerToggle(nama, checked) {
-      if (checked) selectedPickerSet.add(nama);
-      else selectedPickerSet.delete(nama);
-      document.getElementById('pickerCounter').innerText = `${selectedPickerSet.size} murid dipilih`;
+    function handleJwRadioPick(nama, thn, kls) {
+      selectedJwStudent = { nama, tahun: thn, kelas: kls };
+      document.getElementById('jwPickedLabel').innerText = `Dipilih: ${nama} (${thn} ${kls})`;
     }
 
-    function handleSinglePickerToggle(nama, thn, kls) {
-      singlePickedMurid = { nama, tahun: thn, kelas: kls };
-      document.getElementById('pickerCounter').innerText = `Dipilih: ${nama}`;
-    }
-
-    function confirmStudentPicker() {
-      if (pickerMode === 'pencapaian') {
-        document.getElementById('pPeserta').value = Array.from(selectedPickerSet).join(', ');
+    function confirmJwStudentSelection() {
+      if (selectedJwStudent) {
+        document.getElementById('jwNama').value = selectedJwStudent.nama;
+        document.getElementById('jwTahunHidden').value = selectedJwStudent.tahun;
+        document.getElementById('jwKelasHidden').value = selectedJwStudent.kelas;
+        closeModal('modalPilihMuridJw');
       } else {
-        if (singlePickedMurid) {
-          document.getElementById('jwNama').value = singlePickedMurid.nama;
-          document.getElementById('jwTahunHidden').value = singlePickedMurid.tahun;
-          document.getElementById('jwKelasHidden').value = singlePickedMurid.kelas;
-        }
+        showToast("Sila pilih seorang murid terlebih dahulu.", true);
       }
-      closeModal('modalStudentPicker');
     }
 
     // --- CHECKLIST KEHADIRAN DINAMIK MODAL ---
