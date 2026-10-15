@@ -369,7 +369,7 @@
         </div>
 
         <div>
-          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Pilih Helaian:</label>
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Pilih Data:</label>
           <select id="sheetSelector" class="form-select" onchange="fetchCurrentSheetData()"></select>
         </div>
 
@@ -457,7 +457,6 @@
       document.getElementById('adminName').innerText = `${activeUser.nama} (Admin)`;
     }
 
-    // SENARAI SHEET YANG DISUSUN SECARA MENGIKUT KOLUM
     const COLUMN_WISE_SHEETS = [
       "data sekolah",
       "data kurikulum",
@@ -470,7 +469,7 @@
     let isEditing = false;
     let isColumnWise = false;
     let columnDataMap = {};
-    let globalKokoOptions = { uniform: [], persatuan: [], sukan: [], rumahSukan: [] };
+    let globalMuridOptions = { tahun: [], kelas: [], uniform: [], persatuan: [], sukan: [], rumahSukan: [] };
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -519,8 +518,8 @@
 
           currentHeaders = data.headers;
           currentRows = data.rows;
-          if (data.kokoOptions) {
-            globalKokoOptions = data.kokoOptions;
+          if (data.muridOptions) {
+            globalMuridOptions = data.muridOptions;
           }
 
           const cleanSheetName = (data.currentSheet || "").toLowerCase().trim();
@@ -781,7 +780,7 @@
       openModal('crudModal');
     }
 
-    // PEMBINA BORANG PINTAR: DROPDOWN UNTUK KOKU
+    // PEMBINA BORANG PINTAR: DROPDOWN UNTUK TAHUN, KELAS & KOKU
     function buildDynamicForm(values = null) {
       const container = document.getElementById('dynamicFormFields');
       container.innerHTML = '';
@@ -796,23 +795,35 @@
         const div = document.createElement('div');
         div.className = 'form-group';
 
-        // Semak jenis kolum jika berada di Data Murid
         let isDropdown = false;
         let optList = [];
+        let sourceLabel = '';
 
         if (isDataMurid) {
-          if (hUpper.includes("UNIFORM")) {
+          if (hUpper === "TAHUN" || hUpper.includes("TAHUN")) {
             isDropdown = true;
-            optList = globalKokoOptions.uniform || [];
+            optList = globalMuridOptions.tahun || [];
+            sourceLabel = '(Data Sekolah)';
+          } else if (hUpper === "KELAS" || hUpper.includes("KELAS")) {
+            isDropdown = true;
+            optList = globalMuridOptions.kelas || [];
+            sourceLabel = '(Data Sekolah)';
+          } else if (hUpper.includes("UNIFORM")) {
+            isDropdown = true;
+            optList = globalMuridOptions.uniform || [];
+            sourceLabel = '(Data KOKO)';
           } else if (hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) {
             isDropdown = true;
-            optList = globalKokoOptions.persatuan || [];
+            optList = globalMuridOptions.persatuan || [];
+            sourceLabel = '(Data KOKO)';
           } else if (hUpper.includes("SUKAN") && !hUpper.includes("RUMAH")) {
             isDropdown = true;
-            optList = globalKokoOptions.sukan || [];
+            optList = globalMuridOptions.sukan || [];
+            sourceLabel = '(Data KOKO)';
           } else if (hUpper.includes("RUMAH")) {
             isDropdown = true;
-            optList = globalKokoOptions.rumahSukan || [];
+            optList = globalMuridOptions.rumahSukan || [];
+            sourceLabel = '(Data KOKO)';
           }
         }
 
@@ -824,7 +835,7 @@
           });
 
           div.innerHTML = `
-            <label class="form-label">${h} <span style="color:var(--neon-cyan); font-size:0.75rem;">(Data KOKO)</span></label>
+            <label class="form-label">${h} <span style="color:var(--neon-cyan); font-size:0.75rem;">${sourceLabel}</span></label>
             <select class="form-control crud-input" data-col="${idx}">
               ${optionsHtml}
             </select>
@@ -899,7 +910,7 @@
           showToast("Gagal memadam: " + result.message, true);
         }
       } catch (err) {
-        showToast("Ralat: " + err.toString(), true);
+        showToast("Ralat sambungan: " + err.toString(), true);
       }
     }
   </script>
