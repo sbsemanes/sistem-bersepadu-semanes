@@ -350,8 +350,8 @@
     </div>
 
     <header class="header-section">
-      <span class="header-badge">KONSOL PUSAT PENTADBIR</span>
-      <h1 class="header-title">Pengurusan Data Google Sheets SeMaNeS</h1>
+      <span class="header-badge">KONSOL ADMIN</span>
+      <h1 class="header-title">Pengurusan Data SeMaNeS</h1>
     </header>
 
     <!-- PANEL PEMILIHAN DATA -->
@@ -360,16 +360,16 @@
         <div>
           <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Pangkalan Data:</label>
           <select id="dbSelector" class="form-select" onchange="handleDbChange()">
-            <option value="db_sekolah">1. DB Sekolah (Master)</option>
-            <option value="homepage">2. DB Homepage & Tempahan</option>
+            <option value="db_sekolah">1. DB Sekolah</option>
+            <option value="homepage">2. DB Homepage</option>
             <option value="kurikulum">3. DB Kurikulum</option>
-            <option value="hem">4. DB Hal Ehwal Murid (HEM)</option>
+            <option value="hem">4. DB Hal Ehwal Murid</option>
             <option value="kokurikulum">5. DB Kokurikulum</option>
           </select>
         </div>
 
         <div>
-          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Pilih Helaian (Sheet):</label>
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Pilih Helaian:</label>
           <select id="sheetSelector" class="form-select" onchange="fetchCurrentSheetData()"></select>
         </div>
 
