@@ -116,10 +116,37 @@
       box-shadow: 0 0 12px var(--neon-green-glow);
     }
 
+    /* REMEMBER ME WRAPPER */
+    .remember-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: -4px;
+      margin-bottom: 18px;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+
+    .remember-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      user-select: none;
+    }
+
+    .remember-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--neon-green);
+      cursor: pointer;
+    }
+
     .btn-login {
       width: 100%;
       padding: 12px;
-      margin-top: 10px;
+      margin-top: 4px;
       border-radius: 12px;
       background: var(--neon-green);
       color: #ffffff;
@@ -145,6 +172,7 @@
       background: #94a3b8;
       box-shadow: none;
       cursor: not-allowed;
+      transform: none;
     }
 
     .alert-box {
@@ -167,14 +195,51 @@
       border: 1px solid #bbf7d0;
       color: #15803d;
     }
+
+    /* BAHAGIAN BUTANG ADMIN KHAS */
+    .admin-access-box {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--border-soft);
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .btn-admin {
+      width: 100%;
+      padding: 10px;
+      border-radius: 12px;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1.5px solid #38bdf8;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .btn-admin:hover {
+      background: #1e293b;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
 
   <div class="login-card">
     <div class="logo-container">
-      <!-- Masukkan link logo telus SK Mantin bila sedia -->
-      <img src="https://drive.google.com/thumbnail?id=1RS_uTMj2Bn7BKnj5U2MLGrcYTwJiQOGj&sz=w2000" id="schoolLogo" alt="Logo SK Mantin" class="logo-img">
+      <img src="https://drive.google.com/thumbnail?id=1RS_uTMj2Bn7BKnj5U2MLGrcYTwJiQOGj&sz=w200" id="schoolLogo" alt="Logo SK Mantin" class="logo-img">
     </div>
 
     <h1 class="login-title">SK Mantin</h1>
@@ -197,30 +262,64 @@
         </div>
       </div>
 
+      <!-- KOTAK REMEMBER ME -->
+      <div class="remember-wrapper">
+        <label class="remember-label">
+          <input type="checkbox" id="rememberMe"> Ingat Saya (Remember Me)
+        </label>
+      </div>
+
       <button type="submit" id="btnLogin" class="btn-login">
         <i class="fas fa-sign-in-alt"></i> Log Masuk
       </button>
 
       <div id="alertBox" class="alert-box alert-error"></div>
     </form>
+
+    <!-- BAHAGIAN AKSES PORTAL ADMIN (MUNCUL JIKA AKAUN ADMIN) -->
+    <div class="admin-access-box" id="adminBox">
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">Akaun anda mempunyai akses pentadbir:</p>
+      <a href="./admin.html" class="btn-admin">
+        <i class="fas fa-user-shield"></i> Buka Portal Admin Sistem
+      </a>
+    </div>
   </div>
 
   <script>
     // MASUKKAN URL APPS SCRIPT ANDA DI SINI
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
-    // Jika guru sudah log masuk sebelum ini, bawa terus ke index.html
-    if (sessionStorage.getItem("semanes_user")) {
-      window.location.href = "./index.html";
-    }
+    // 1. Semakan awal semasa laman dibuka
+    window.addEventListener('load', () => {
+      // Semak sama ada butiran 'Remember Me' tersimpan di peranti
+      const savedUser = JSON.parse(localStorage.getItem("semanes_remembered_user"));
+      if (savedUser) {
+        document.getElementById("usernameInput").value = savedUser.username || "";
+        document.getElementById("passwordInput").value = savedUser.password || "";
+        document.getElementById("rememberMe").checked = true;
+      }
+
+      // Jika guru sudah log masuk pada sesi semasa:
+      const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
+      if (activeUser) {
+        // Jika akaun admin, benarkan terus buka admin atau bawa ke portal
+        if (activeUser.peranan && activeUser.peranan.toLowerCase() === "admin") {
+          document.getElementById("adminBox").style.display = "block";
+        } else {
+          window.location.href = "./index.html";
+        }
+      }
+    });
 
     async function handleLoginSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById("btnLogin");
       const alertBox = document.getElementById("alertBox");
+      const adminBox = document.getElementById("adminBox");
 
       const u = document.getElementById("usernameInput").value.trim();
       const p = document.getElementById("passwordInput").value.trim();
+      const isRemember = document.getElementById("rememberMe").checked;
 
       alertBox.style.display = "none";
       btn.disabled = true;
@@ -244,12 +343,27 @@
           alertBox.innerText = "Log masuk berjaya! Membuka portal...";
           alertBox.style.display = "block";
 
-          // Simpan maklumat sesi guru dalam pelayar
+          // Simpan maklumat sesi aktif pelayar
           sessionStorage.setItem("semanes_user", JSON.stringify(result.user));
 
-          setTimeout(() => {
-            window.location.href = "./index.html";
-          }, 800);
+          // Logik Remember Me: Simpan atau padam dari localStorage
+          if (isRemember) {
+            localStorage.setItem("semanes_remembered_user", JSON.stringify({ username: u, password: p }));
+          } else {
+            localStorage.removeItem("semanes_remembered_user");
+          }
+
+          // Semak sama ada pengguna mempunyai hak Admin
+          if (result.user.peranan && result.user.peranan.toLowerCase() === "admin") {
+            adminBox.style.display = "block";
+            setTimeout(() => {
+              window.location.href = "./index.html";
+            }, 900);
+          } else {
+            setTimeout(() => {
+              window.location.href = "./index.html";
+            }, 800);
+          }
         } else {
           btn.disabled = false;
           btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log Masuk';
