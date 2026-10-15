@@ -350,8 +350,8 @@
     </div>
 
     <header class="header-section">
-      <span class="header-badge">KONSOL ADMIN SeMaNeS</span>
-      <h1 class="header-title">Pengurusan Data SeMaNeS</h1>
+      <span class="header-badge">KONSOL PUSAT PENTADBIR</span>
+      <h1 class="header-title">Pengurusan Data Google Sheets SeMaNeS</h1>
     </header>
 
     <!-- PANEL PEMILIHAN DATA -->
@@ -469,7 +469,8 @@
     let currentRows = [];
     let isEditing = false;
     let isColumnWise = false;
-    let columnDataMap = {}; // Simpanan item per kolum
+    let columnDataMap = {};
+    let globalKokoOptions = { uniform: [], persatuan: [], sukan: [], rumahSukan: [] };
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -490,7 +491,6 @@
       fetchCurrentSheetData(null);
     }
 
-    // Ambil Data Sheet
     async function fetchCurrentSheetData(targetSheet = null) {
       const dbKey = document.getElementById('dbSelector').value;
       const sheetName = targetSheet || document.getElementById('sheetSelector').value;
@@ -519,8 +519,10 @@
 
           currentHeaders = data.headers;
           currentRows = data.rows;
+          if (data.kokoOptions) {
+            globalKokoOptions = data.kokoOptions;
+          }
 
-          // Semak sama ada sheet semasa adalah jenis Column-wise
           const cleanSheetName = (data.currentSheet || "").toLowerCase().trim();
           isColumnWise = COLUMN_WISE_SHEETS.includes(cleanSheetName);
 
@@ -531,7 +533,7 @@
             modeIndicator.innerHTML = '<i class="fas fa-columns"></i> Mod Kolum (Column-wise)';
             modeIndicator.style.color = '#a855f7';
             modeIndicator.style.borderColor = '#a855f7';
-            btnAddRow.style.display = 'none'; // Sembunyi butang tambah baris
+            btnAddRow.style.display = 'none';
             document.getElementById('rowWiseContainer').style.display = 'none';
             document.getElementById('columnWiseContainer').style.display = 'grid';
             
@@ -555,7 +557,7 @@
     }
 
     // ========================================================
-    // LOGIK MOD KOLUM (COLUMN-WISE EDITING)
+    // LOGIK MOD KOLUM
     // ========================================================
     function buildColumnDataMap() {
       columnDataMap = {};
@@ -591,7 +593,6 @@
         const card = document.createElement('div');
         card.className = 'column-card';
 
-        // Filter carian
         let displayItems = col.items;
         if (filterText) {
           displayItems = col.items.filter(item => item.toLowerCase().includes(filterText.toLowerCase()));
@@ -633,7 +634,6 @@
       });
     }
 
-    // Tambah item baharu dalam sesuatu kolum
     async function handleAddColItem(colIdx) {
       const input = document.getElementById(`addInput_${colIdx}`);
       const val = input.value.trim();
@@ -649,7 +649,6 @@
       await syncColumnToBackend(colIdx);
     }
 
-    // Buka modal edit item kolum tunggal
     function openColItemEdit(colIdx, itemIdx) {
       document.getElementById('editColIdx').value = colIdx;
       document.getElementById('editItemIdx').value = itemIdx;
@@ -672,7 +671,6 @@
       await syncColumnToBackend(colIdx);
     }
 
-    // Padam item dalam kolum
     async function handleDeleteColItem(colIdx, itemIdx) {
       const itemNama = columnDataMap[colIdx].items[itemIdx];
       if (!confirm(`Padam "${itemNama}" dari ${columnDataMap[colIdx].header}?`)) return;
@@ -683,12 +681,11 @@
       await syncColumnToBackend(colIdx);
     }
 
-    // Hantar data kolum ke Google Sheets
     async function syncColumnToBackend(colIdx) {
       const dbKey = document.getElementById('dbSelector').value;
       const sheetName = document.getElementById('sheetSelector').value;
       const items = columnDataMap[colIdx].items;
-      const realColNumber = parseInt(colIdx) + 1; // 1-based index untuk Google Sheets
+      const realColNumber = parseInt(colIdx) + 1;
 
       try {
         const res = await fetch(APPS_SCRIPT_URL, {
@@ -714,7 +711,7 @@
     }
 
     // ========================================================
-    // LOGIK MOD BARIS BIASA (ROW-WISE)
+    // LOGIK MOD BARIS & DROPDOWN DINAMIK UNTUK DATA MURID
     // ========================================================
     function renderRowWiseTable(headers, rows) {
       const th = document.getElementById('tableHead');
@@ -784,17 +781,61 @@
       openModal('crudModal');
     }
 
+    // PEMBINA BORANG PINTAR: DROPDOWN UNTUK KOKU
     function buildDynamicForm(values = null) {
       const container = document.getElementById('dynamicFormFields');
       container.innerHTML = '';
+      
+      const dbKey = document.getElementById('dbSelector').value;
+      const sheetName = (document.getElementById('sheetSelector').value || "").toLowerCase().trim();
+      const isDataMurid = (dbKey === "db_sekolah" && sheetName === "data murid");
+
       currentHeaders.forEach((h, idx) => {
         const val = values ? (values[idx] || '') : '';
+        const hUpper = (h || "").toUpperCase();
         const div = document.createElement('div');
         div.className = 'form-group';
-        div.innerHTML = `
-          <label class="form-label">${h}</label>
-          <input type="text" class="form-control crud-input" data-col="${idx}" value="${val}">
-        `;
+
+        // Semak jenis kolum jika berada di Data Murid
+        let isDropdown = false;
+        let optList = [];
+
+        if (isDataMurid) {
+          if (hUpper.includes("UNIFORM")) {
+            isDropdown = true;
+            optList = globalKokoOptions.uniform || [];
+          } else if (hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) {
+            isDropdown = true;
+            optList = globalKokoOptions.persatuan || [];
+          } else if (hUpper.includes("SUKAN") && !hUpper.includes("RUMAH")) {
+            isDropdown = true;
+            optList = globalKokoOptions.sukan || [];
+          } else if (hUpper.includes("RUMAH")) {
+            isDropdown = true;
+            optList = globalKokoOptions.rumahSukan || [];
+          }
+        }
+
+        if (isDropdown && optList.length > 0) {
+          let optionsHtml = '<option value="">-- Pilih --</option>';
+          optList.forEach(opt => {
+            const isSel = (opt.trim().toLowerCase() === val.trim().toLowerCase()) ? 'selected' : '';
+            optionsHtml += `<option value="${opt}" ${isSel}>${opt}</option>`;
+          });
+
+          div.innerHTML = `
+            <label class="form-label">${h} <span style="color:var(--neon-cyan); font-size:0.75rem;">(Data KOKO)</span></label>
+            <select class="form-control crud-input" data-col="${idx}">
+              ${optionsHtml}
+            </select>
+          `;
+        } else {
+          div.innerHTML = `
+            <label class="form-label">${h}</label>
+            <input type="text" class="form-control crud-input" data-col="${idx}" value="${val}">
+          `;
+        }
+
         container.appendChild(div);
       });
     }
