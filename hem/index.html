@@ -424,16 +424,98 @@
     <!-- TABS PENGURUSAN LAPORAN -->
     <section>
       <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('tabFailHEM')"><i class="fas fa-folder"></i> Fail HEM</button>
-        <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
-        <button class="tab-btn" onclick="switchTab('tabBertugas')"><i class="fas fa-clipboard-check"></i> Laporan Guru Bertugas</button>
-        <button class="tab-btn" onclick="switchTab('tabUnit')"><i class="fas fa-file-alt"></i> Laporan Unit HEM</button>
+        <button class="tab-btn active" onclick="switchTab('tabBertugas')"><i class="fas fa-clipboard-check"></i> Laporan Guru Bertugas</button>
         <button class="tab-btn" onclick="switchTab('tabJadual')"><i class="fas fa-calendar-alt"></i> Jadual Bertugas</button>
+        <button class="tab-btn" onclick="switchTab('tabFailHEM')"><i class="fas fa-folder"></i> Fail HEM</button>
+        <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
         <button class="tab-btn" onclick="switchTab('tabSalahLaku')"><i class="fas fa-user-slash"></i> Laporan Salah Laku</button>
+        <button class="tab-btn" onclick="switchTab('tabUnit')"><i class="fas fa-file-alt"></i> Laporan Unit HEM</button>
       </div>
 
-      <!-- TAB 1: FAIL HEM (PARTITION) -->
-      <div id="tabFailHEM" class="tab-content active">
+      <!-- TAB 1: LAPORAN GURU BERTUGAS (HARIAN) -->
+      <div id="tabBertugas" class="tab-content active">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Guru Bertugas Harian</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Pilih sesi dan minggu persekolahan untuk menyaring laporan.</p>
+            </div>
+            <button class="btn-action-red" onclick="openModal('modalBertugas')">
+              <i class="fas fa-edit"></i> Isi Laporan Bertugas
+            </button>
+          </div>
+
+          <!-- FILTERS DINAMIK -->
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterBertugasSesi" class="filter-select" onchange="filterBertugasTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterBertugasMinggu" class="filter-select" onchange="filterBertugasTable()">
+              <option value="">Semua Minggu</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Tarikh</th>
+                  <th>Minggu</th>
+                  <th>Sesi</th>
+                  <th>Kumpulan</th>
+                  <th>Pelapor</th>
+                  <th style="text-align:center;">Tindakan</th>
+                </tr>
+              </thead>
+              <tbody id="bertugasTableBody">
+                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 2: JADUAL BERTUGAS MINGGUAN -->
+      <div id="tabJadual" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Jadual Bertugas Mingguan Guru</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Fail dan dokumen jadual giliran guru bertugas.</p>
+            </div>
+            <button class="btn-action-red" onclick="openModal('modalUploadJadual')">
+              <i class="fas fa-upload"></i> Muat Naik Jadual
+            </button>
+          </div>
+
+          <!-- FILTERS DINAMIK -->
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterJadualMinggu" class="filter-select" onchange="filterJadualTable()">
+              <option value="">Semua Minggu</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi Persekolahan</th>
+                  <th>Sesi</th>
+                  <th>Minggu</th>
+                  <th>Kumpulan</th>
+                  <th style="text-align:center;">Fail Jadual</th>
+                </tr>
+              </thead>
+              <tbody id="jadualTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: FAIL HEM (PARTITION) -->
+      <div id="tabFailHEM" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
@@ -477,7 +559,7 @@
         </div>
       </div>
 
-      <!-- TAB 2: FAIL OPR HEM -->
+      <!-- TAB 4: FAIL OPR HEM -->
       <div id="tabOPR" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -520,27 +602,17 @@
         </div>
       </div>
 
-      <!-- TAB 3: LAPORAN GURU BERTUGAS (HARIAN) -->
-      <div id="tabBertugas" class="tab-content">
+      <!-- TAB 5: LAPORAN SALAH LAKU -->
+      <div id="tabSalahLaku" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
-              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Guru Bertugas Harian</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Pilih sesi dan minggu persekolahan untuk menyaring laporan.</p>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Salah Laku Murid</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Catatan kes disiplin dan tindakan susulan sekolah.</p>
             </div>
-            <button class="btn-action-red" onclick="openModal('modalBertugas')">
-              <i class="fas fa-edit"></i> Isi Laporan Bertugas
+            <button class="btn-action-red" onclick="openModal('modalSalahLaku')">
+              <i class="fas fa-user-shield"></i> Lapor Kes Salah Laku
             </button>
-          </div>
-
-          <!-- FILTERS DINAMIK -->
-          <div class="filter-wrapper" style="margin-bottom:14px;">
-            <select id="filterBertugasSesi" class="filter-select" onchange="filterBertugasTable()">
-              <option value="">Semua Sesi</option>
-            </select>
-            <select id="filterBertugasMinggu" class="filter-select" onchange="filterBertugasTable()">
-              <option value="">Semua Minggu</option>
-            </select>
           </div>
 
           <div class="table-scroll-container">
@@ -548,14 +620,14 @@
               <thead>
                 <tr>
                   <th>Tarikh</th>
-                  <th>Minggu</th>
-                  <th>Sesi</th>
-                  <th>Kumpulan</th>
-                  <th>Pelapor</th>
-                  <th style="text-align:center;">Tindakan</th>
+                  <th>Nama Murid</th>
+                  <th>Tahun / Kelas</th>
+                  <th>Kesalahan</th>
+                  <th>Tindakan</th>
+                  <th>Guru Pelapor</th>
                 </tr>
               </thead>
-              <tbody id="bertugasTableBody">
+              <tbody id="salahLakuTableBody">
                 <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
               </tbody>
             </table>
@@ -563,7 +635,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: LAPORAN UNIT HEM -->
+      <!-- TAB 6: LAPORAN UNIT HEM -->
       <div id="tabUnit" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -596,78 +668,6 @@
                 </tr>
               </thead>
               <tbody id="unitTableBody">
-                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 5: JADUAL BERTUGAS MINGGUAN -->
-      <div id="tabJadual" class="tab-content">
-        <div class="table-card">
-          <div class="table-top-bar">
-            <div>
-              <h3 style="font-size:1.1rem; font-weight:800;">Jadual Bertugas Mingguan Guru</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Fail dan dokumen jadual giliran guru bertugas.</p>
-            </div>
-            <button class="btn-action-red" onclick="openModal('modalUploadJadual')">
-              <i class="fas fa-upload"></i> Muat Naik Jadual
-            </button>
-          </div>
-
-          <!-- FILTERS DINAMIK -->
-          <div class="filter-wrapper" style="margin-bottom:14px;">
-            <select id="filterJadualMinggu" class="filter-select" onchange="filterJadualTable()">
-              <option value="">Semua Minggu</option>
-            </select>
-          </div>
-
-          <div class="table-scroll-container">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Sesi Persekolahan</th>
-                  <th>Sesi</th>
-                  <th>Minggu</th>
-                  <th>Kumpulan</th>
-                  <th style="text-align:center;">Fail Jadual</th>
-                </tr>
-              </thead>
-              <tbody id="jadualTableBody">
-                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB 6: LAPORAN SALAH LAKU -->
-      <div id="tabSalahLaku" class="tab-content">
-        <div class="table-card">
-          <div class="table-top-bar">
-            <div>
-              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Salah Laku Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Catatan kes disiplin dan tindakan susulan sekolah.</p>
-            </div>
-            <button class="btn-action-red" onclick="openModal('modalSalahLaku')">
-              <i class="fas fa-user-shield"></i> Lapor Kes Salah Laku
-            </button>
-          </div>
-
-          <div class="table-scroll-container">
-            <table class="custom-table">
-              <thead>
-                <tr>
-                  <th>Tarikh</th>
-                  <th>Nama Murid</th>
-                  <th>Tahun / Kelas</th>
-                  <th>Kesalahan</th>
-                  <th>Tindakan</th>
-                  <th>Guru Pelapor</th>
-                </tr>
-              </thead>
-              <tbody id="salahLakuTableBody">
                 <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
               </tbody>
             </table>
@@ -884,6 +884,109 @@
     </div>
   </div>
 
+  <!-- MODAL BORANG: MUAT NAIK JADUAL BERTUGAS -->
+  <div class="modal-overlay" id="modalUploadJadual">
+    <div class="modal-box" style="max-width:500px;">
+      <div class="modal-header">
+        <div class="modal-title">Muat Naik Jadual Bertugas</div>
+        <button class="close-modal-btn" onclick="closeModal('modalUploadJadual')">&times;</button>
+      </div>
+      <form id="formJadual" onsubmit="handleJadualSubmit(event)">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Sesi Persekolahan *</label>
+          <select id="jSesiPersekolahan" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Sesi *</label>
+          <select id="jSesi" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Minggu Persekolahan *</label>
+          <select id="jMinggu" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Kumpulan Guru Bertugas *</label>
+          <select id="jKumpulan" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Fail Jadual (PDF / Gambar) *</label>
+          <input type="file" id="jFile" class="form-control" accept="application/pdf,image/*" required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalUploadJadual')">Batal</button>
+          <button type="submit" id="btnSubmitJadual" class="btn-action-red">
+            <i class="fas fa-upload"></i> Muat Naik & Simpan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: SALAH LAKU MURID -->
+  <div class="modal-overlay" id="modalSalahLaku">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-user-slash" style="color:var(--neon-red); margin-right:8px;"></i>Borang Laporan Salah Laku Murid</div>
+        <button class="close-modal-btn" onclick="closeModal('modalSalahLaku')">&times;</button>
+      </div>
+      <form id="formSalahLaku" onsubmit="handleSalahLakuSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Tarikh Kejadian *</label>
+            <input type="date" id="slTarikh" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Masa</label>
+            <input type="time" id="slMasa" class="form-control">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Tempat Kejadian *</label>
+            <input type="text" id="slTempat" class="form-control" placeholder="Contoh: Belakang Blok D / Kantin" required>
+          </div>
+
+          <!-- RUANG CARIAN NAMA MURID & DROPDOWN PILIHAN -->
+          <div class="form-group full-width">
+            <label class="form-label"><i class="fas fa-search" style="color:var(--neon-red); margin-right:4px;"></i>Cari Nama Murid / Kelas</label>
+            <input type="text" id="slMuridSearch" class="form-control" placeholder="Taip nama atau kelas untuk tapis senarai..." oninput="filterMuridOptions()">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Murid (Dari DB Sekolah) *</label>
+            <select id="slMuridSelect" class="form-control" onchange="autoFillMurid()" required>
+              <option value="">-- Pilih Murid --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tahun</label>
+            <input type="text" id="slTahun" class="form-control" readonly>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kelas</label>
+            <input type="text" id="slKelas" class="form-control" readonly>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Jenis Kesalahan *</label>
+            <textarea id="slKesalahan" class="form-control" rows="2" placeholder="Huraian kesalahan murid" required></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Tindakan Diambil *</label>
+            <textarea id="slTindakan" class="form-control" rows="2" placeholder="Nasihat, amaran, atau rujukan kaunselor" required></textarea>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Guru Yang Melapor *</label>
+            <select id="slPelapor" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalSalahLaku')">Batal</button>
+          <button type="submit" id="btnSubmitSalahLaku" class="btn-action-red">
+            <i class="fas fa-check"></i> Rekod Kes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL BORANG: LAPORAN UNIT HEM -->
   <div class="modal-overlay" id="modalLaporanUnit">
     <div class="modal-box">
@@ -972,102 +1075,6 @@
     </div>
   </div>
 
-  <!-- MODAL BORANG: MUAT NAIK JADUAL BERTUGAS -->
-  <div class="modal-overlay" id="modalUploadJadual">
-    <div class="modal-box" style="max-width:500px;">
-      <div class="modal-header">
-        <div class="modal-title">Muat Naik Jadual Bertugas</div>
-        <button class="close-modal-btn" onclick="closeModal('modalUploadJadual')">&times;</button>
-      </div>
-      <form id="formJadual" onsubmit="handleJadualSubmit(event)">
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Sesi Persekolahan *</label>
-          <select id="jSesiPersekolahan" class="form-control" required></select>
-        </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Sesi *</label>
-          <select id="jSesi" class="form-control" required></select>
-        </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Minggu Persekolahan *</label>
-          <select id="jMinggu" class="form-control" required></select>
-        </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Kumpulan Guru Bertugas *</label>
-          <select id="jKumpulan" class="form-control" required></select>
-        </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Fail Jadual (PDF / Gambar) *</label>
-          <input type="file" id="jFile" class="form-control" accept="application/pdf,image/*" required>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal('modalUploadJadual')">Batal</button>
-          <button type="submit" id="btnSubmitJadual" class="btn-action-red">
-            <i class="fas fa-upload"></i> Muat Naik & Simpan
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL BORANG: SALAH LAKU MURID -->
-  <div class="modal-overlay" id="modalSalahLaku">
-    <div class="modal-box" style="max-width:650px;">
-      <div class="modal-header">
-        <div class="modal-title"><i class="fas fa-user-slash" style="color:var(--neon-red); margin-right:8px;"></i>Borang Laporan Salah Laku Murid</div>
-        <button class="close-modal-btn" onclick="closeModal('modalSalahLaku')">&times;</button>
-      </div>
-      <form id="formSalahLaku" onsubmit="handleSalahLakuSubmit(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">Tarikh Kejadian *</label>
-            <input type="date" id="slTarikh" class="form-control" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Masa</label>
-            <input type="time" id="slMasa" class="form-control">
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Tempat Kejadian *</label>
-            <input type="text" id="slTempat" class="form-control" placeholder="Contoh: Belakang Blok D / Kantin" required>
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Pilih Murid (Dari DB Sekolah) *</label>
-            <select id="slMuridSelect" class="form-control" onchange="autoFillMurid()" required>
-              <option value="">-- Pilih Murid --</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tahun</label>
-            <input type="text" id="slTahun" class="form-control" readonly>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Kelas</label>
-            <input type="text" id="slKelas" class="form-control" readonly>
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Jenis Kesalahan *</label>
-            <textarea id="slKesalahan" class="form-control" rows="2" placeholder="Huraian kesalahan murid" required></textarea>
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Tindakan Diambil *</label>
-            <textarea id="slTindakan" class="form-control" rows="2" placeholder="Nasihat, amaran, atau rujukan kaunselor" required></textarea>
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Guru Yang Melapor *</label>
-            <select id="slPelapor" class="form-control" required></select>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal('modalSalahLaku')">Batal</button>
-          <button type="submit" id="btnSubmitSalahLaku" class="btn-action-red">
-            <i class="fas fa-check"></i> Rekod Kes
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- MODAL PAPARAN CETAK / ONE-PAGE REPORT (BERTUGAS / UNIT) -->
   <div class="modal-overlay" id="viewReportModal">
     <div class="modal-box" style="max-width:850px;">
@@ -1142,7 +1149,16 @@
       document.getElementById(tabId).classList.add('active');
     }
 
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function openModal(id) { 
+      document.getElementById(id).style.display = 'flex'; 
+      if (id === 'modalSalahLaku') {
+        const searchInput = document.getElementById('slMuridSearch');
+        if (searchInput) {
+          searchInput.value = '';
+          filterMuridOptions();
+        }
+      }
+    }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openEFailModal() { openModal('efailModal'); }
 
@@ -1294,14 +1310,7 @@
       populateSelect('jKumpulan', data.options.kumpulan);
 
       // Dropdown Salah Laku Murid
-      const muridSelect = document.getElementById('slMuridSelect');
-      muridSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
-      data.options.murid.forEach((m, idx) => {
-        const opt = document.createElement('option');
-        opt.value = idx;
-        opt.innerText = `${m.nama} (${m.tahun} ${m.kelas})`;
-        muridSelect.appendChild(opt);
-      });
+      filterMuridOptions();
       populateSelect('slPelapor', data.options.guru);
 
       if (activeUser && activeUser.nama) {
@@ -1339,6 +1348,35 @@
         opt.value = v;
         el.appendChild(opt);
       });
+    }
+
+    // Fungsi penapis / search senarai murid
+    function filterMuridOptions() {
+      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) return;
+      const searchTxt = (document.getElementById('slMuridSearch')?.value || '').toLowerCase().trim();
+      const muridSelect = document.getElementById('slMuridSelect');
+      const prevVal = muridSelect.value;
+
+      muridSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
+
+      let hasMatch = false;
+      globalHemData.options.murid.forEach((m, idx) => {
+        const fullName = `${m.nama} (${m.tahun} ${m.kelas})`;
+        if (!searchTxt || fullName.toLowerCase().includes(searchTxt)) {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.innerText = fullName;
+          if (String(idx) === String(prevVal)) {
+            opt.selected = true;
+            hasMatch = true;
+          }
+          muridSelect.appendChild(opt);
+        }
+      });
+
+      if (!hasMatch && prevVal !== "") {
+        autoFillMurid();
+      }
     }
 
     function autoFillMurid() {
@@ -1843,6 +1881,8 @@
           showToast('Laporan salah laku berjaya direkodkan!');
           closeModal('modalSalahLaku');
           document.getElementById('formSalahLaku').reset();
+          document.getElementById('slMuridSearch').value = '';
+          filterMuridOptions();
           fetchHemData();
         } else {
           showToast('Ralat: ' + result.message, true);
