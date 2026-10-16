@@ -357,6 +357,65 @@
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     .btn-secondary { padding: 9px 16px; border-radius: 10px; background: #f1f5f9; color: var(--text-muted); border: none; font-weight: 600; cursor: pointer; }
 
+    /* GAYA SENARAI & TAG PILIHAN BERGANDA MURID */
+    .selected-tags-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 40px;
+      padding: 8px 10px;
+      border: 1.5px dashed var(--border-soft);
+      border-radius: 10px;
+      background: #fafafa;
+      align-items: center;
+    }
+    .murid-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .murid-tag-remove {
+      cursor: pointer;
+      color: #ef4444;
+      font-weight: 800;
+      border-radius: 50%;
+      padding: 0 4px;
+      transition: background 0.2s;
+    }
+    .murid-tag-remove:hover { background: #fecaca; }
+
+    .murid-picker-list {
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1.5px solid var(--border-soft);
+      border-radius: 10px;
+      margin-top: 10px;
+      background: #f8fafc;
+    }
+    .murid-picker-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--border-soft);
+      cursor: pointer;
+      background: #ffffff;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .murid-picker-item:last-child { border-bottom: none; }
+    .murid-picker-item:hover { background: #fff1f2; }
+    .murid-picker-item.checked { background: #fef2f2; }
+    .murid-picker-name { font-weight: 700; font-size: 0.88rem; display: flex; align-items: center; gap: 10px; }
+    .murid-picker-meta { font-size: 0.78rem; color: var(--text-muted); background: #f1f5f9; padding: 2px 8px; border-radius: 6px; }
+
     /* CETAKAN LAPORAN */
     .printable-report { border: 2px solid #0f172a; padding: 24px; color: #000000; background: #ffffff; line-height: 1.5; }
     .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 12px; margin-bottom: 16px; }
@@ -519,7 +578,7 @@
         <div class="table-card">
           <div class="table-top-bar">
             <div>
-              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Fail Unit HEM (Partition)</h3>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Fail Unit HEM</h3>
               <p style="font-size:0.82rem; color:var(--text-muted);">Simpanan fail dokumen mengikut unit HEM dan partition fail.</p>
             </div>
             <button class="btn-action-red" onclick="openModal('modalFailHEM')">
@@ -641,7 +700,7 @@
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Program Unit HEM</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Laporan aktiviti tahunan unit di bawah sektor HEM.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Laporan aktiviti unit HEM.</p>
             </div>
             <button class="btn-action-red" onclick="openModal('modalLaporanUnit')">
               <i class="fas fa-plus-circle"></i> Tambah Laporan Unit
@@ -944,25 +1003,27 @@
             <input type="text" id="slTempat" class="form-control" placeholder="Contoh: Belakang Blok D / Kantin" required>
           </div>
 
-          <!-- RUANG CARIAN NAMA MURID & DROPDOWN PILIHAN -->
+          <!-- RUANG PILIH BEBERAPA ORANG MURID -->
           <div class="form-group full-width">
-            <label class="form-label"><i class="fas fa-search" style="color:var(--neon-red); margin-right:4px;"></i>Cari Nama Murid / Kelas</label>
-            <input type="text" id="slMuridSearch" class="form-control" placeholder="Taip nama atau kelas untuk tapis senarai..." oninput="filterMuridOptions()">
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">Pilih Murid (Dari DB Sekolah) *</label>
-            <select id="slMuridSelect" class="form-control" onchange="autoFillMurid()" required>
-              <option value="">-- Pilih Murid --</option>
-            </select>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label class="form-label">Murid Terlibat (Pilih dari DB Sekolah) *</label>
+              <button type="button" class="btn-action-red" onclick="openPilihMuridModal()" style="padding:6px 14px; font-size:0.8rem;">
+                <i class="fas fa-user-plus"></i> Pilih / Tambah Murid
+              </button>
+            </div>
+            <!-- Senarai Tag Murid yang Dipilih -->
+            <div id="slSelectedContainer" class="selected-tags-box">
+              <span id="slPlaceholderTag" style="color:#94a3b8; font-size:0.82rem;">Belum ada murid dipilih. Sila klik butang di atas.</span>
+            </div>
           </div>
 
           <div class="form-group">
             <label class="form-label">Tahun</label>
-            <input type="text" id="slTahun" class="form-control" readonly>
+            <input type="text" id="slTahun" class="form-control" placeholder="Auto dari pilihan murid" readonly>
           </div>
           <div class="form-group">
             <label class="form-label">Kelas</label>
-            <input type="text" id="slKelas" class="form-control" readonly>
+            <input type="text" id="slKelas" class="form-control" placeholder="Auto dari pilihan murid" readonly>
           </div>
           <div class="form-group full-width">
             <label class="form-label">Jenis Kesalahan *</label>
@@ -984,6 +1045,36 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL KHAS: PILIH BEBERAPA ORANG MURID DARI DB SEKOLAH (DENGAN CHECKBOX & CARIAN) -->
+  <div class="modal-overlay" id="modalPilihMurid" style="z-index: 1050;">
+    <div class="modal-box" style="max-width:560px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-users" style="color:var(--neon-red); margin-right:8px;"></i>Pilih Murid (DB Sekolah)</div>
+        <button class="close-modal-btn" onclick="closeModal('modalPilihMurid')">&times;</button>
+      </div>
+
+      <!-- Ruang Carian & Aksi Cepat -->
+      <div>
+        <label class="form-label">Cari Nama Murid atau Kelas</label>
+        <input type="text" id="pickerSearchInput" class="form-control" placeholder="Taip nama atau kelas untuk tapis..." oninput="renderMuridPickerList()">
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);" id="pickerSelectedCount">0 murid dipilih</span>
+        <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;" onclick="selectAllFilteredMurid()">Pilih Semua Yang Ditapis</button>
+      </div>
+
+      <div class="murid-picker-list" id="pickerContainerList">
+        <!-- Senarai murid dijana dengan checkbox -->
+      </div>
+
+      <div class="form-actions" style="margin-top:16px;">
+        <button type="button" class="btn-secondary" onclick="closeModal('modalPilihMurid')">Batal</button>
+        <button type="button" class="btn-action-red" onclick="applySelectedMurid()"><i class="fas fa-check-double"></i> Sahkan Pilihan</button>
+      </div>
     </div>
   </div>
 
@@ -1132,6 +1223,10 @@
 
     let globalHemData = null;
 
+    // Simpanan ID indeks murid yang dipilih
+    let selectedMuridIndexes = new Set();
+    let tempPickerSelection = new Set();
+
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
       t.innerText = msg;
@@ -1149,18 +1244,126 @@
       document.getElementById(tabId).classList.add('active');
     }
 
-    function openModal(id) { 
-      document.getElementById(id).style.display = 'flex'; 
-      if (id === 'modalSalahLaku') {
-        const searchInput = document.getElementById('slMuridSearch');
-        if (searchInput) {
-          searchInput.value = '';
-          filterMuridOptions();
-        }
-      }
-    }
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openEFailModal() { openModal('efailModal'); }
+
+    // --- PENGENDALIAN PILIHAN BERGANDA MURID (MULTIPLE SELECTION) ---
+    function openPilihMuridModal() {
+      tempPickerSelection = new Set(selectedMuridIndexes);
+      const searchInput = document.getElementById('pickerSearchInput');
+      if (searchInput) searchInput.value = '';
+      renderMuridPickerList();
+      openModal('modalPilihMurid');
+    }
+
+    function toggleMuridCheck(idx) {
+      if (tempPickerSelection.has(idx)) {
+        tempPickerSelection.delete(idx);
+      } else {
+        tempPickerSelection.add(idx);
+      }
+      renderMuridPickerList();
+    }
+
+    function selectAllFilteredMurid() {
+      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) return;
+      const q = (document.getElementById('pickerSearchInput')?.value || '').toLowerCase().trim();
+      globalHemData.options.murid.forEach((m, idx) => {
+        const fullTxt = `${m.nama} ${m.tahun} ${m.kelas}`.toLowerCase();
+        if (!q || fullTxt.includes(q)) {
+          tempPickerSelection.add(idx);
+        }
+      });
+      renderMuridPickerList();
+    }
+
+    function renderMuridPickerList() {
+      const container = document.getElementById('pickerContainerList');
+      if (!container) return;
+
+      document.getElementById('pickerSelectedCount').innerText = `${tempPickerSelection.size} murid dipilih`;
+
+      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) {
+        container.innerHTML = '<div style="padding:16px; text-align:center; color:#94a3b8;">Tiada data murid dimuatkan.</div>';
+        return;
+      }
+
+      const q = (document.getElementById('pickerSearchInput')?.value || '').toLowerCase().trim();
+      const list = globalHemData.options.murid;
+      
+      let html = '';
+      let matchCount = 0;
+
+      list.forEach((m, idx) => {
+        const fullTxt = `${m.nama} ${m.tahun} ${m.kelas}`.toLowerCase();
+        if (!q || fullTxt.includes(q)) {
+          matchCount++;
+          const isChecked = tempPickerSelection.has(idx);
+          html += `
+            <div class="murid-picker-item ${isChecked ? 'checked' : ''}" onclick="toggleMuridCheck(${idx})">
+              <span class="murid-picker-name">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} style="cursor:pointer; accent-color:var(--neon-red);" onclick="event.stopPropagation(); toggleMuridCheck(${idx});">
+                ${m.nama}
+              </span>
+              <span class="murid-picker-meta">${m.tahun} ${m.kelas}</span>
+            </div>
+          `;
+        }
+      });
+
+      if (matchCount === 0) {
+        html = '<div style="padding:16px; text-align:center; color:#94a3b8;">Tiada rekod murid yang sepadan.</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function applySelectedMurid() {
+      selectedMuridIndexes = new Set(tempPickerSelection);
+      updateSelectedMuridTags();
+      closeModal('modalPilihMurid');
+    }
+
+    function removeSelectedMurid(idx) {
+      selectedMuridIndexes.delete(idx);
+      updateSelectedMuridTags();
+    }
+
+    function updateSelectedMuridTags() {
+      const box = document.getElementById('slSelectedContainer');
+      box.innerHTML = '';
+
+      if (selectedMuridIndexes.size === 0) {
+        box.innerHTML = '<span id="slPlaceholderTag" style="color:#94a3b8; font-size:0.82rem;">Belum ada murid dipilih. Sila klik butang di atas.</span>';
+        document.getElementById('slTahun').value = '';
+        document.getElementById('slKelas').value = '';
+        return;
+      }
+
+      const tahunSet = new Set();
+      const kelasSet = new Set();
+
+      selectedMuridIndexes.forEach(idx => {
+        const m = globalHemData.options.murid[idx];
+        if (m) {
+          if (m.tahun) tahunSet.add(m.tahun);
+          if (m.kelas) kelasSet.add(m.kelas);
+
+          const tag = document.createElement('span');
+          tag.className = 'murid-tag';
+          tag.innerHTML = `
+            ${m.nama} (${m.tahun} ${m.kelas})
+            <span class="murid-tag-remove" onclick="removeSelectedMurid(${idx})">&times;</span>
+          `;
+          box.appendChild(tag);
+        }
+      });
+
+      // Kemaskini ruang Tahun & Kelas secara gabungan pintar
+      document.getElementById('slTahun').value = Array.from(tahunSet).sort().join(', ');
+      document.getElementById('slKelas').value = Array.from(kelasSet).sort().join(', ');
+    }
 
     function fileToBase64(file) {
       return new Promise((resolve, reject) => {
@@ -1213,7 +1416,6 @@
       }
     }
 
-    // Helper: Isi dropdown dinamik hanya jika ada nilai sebenar dalam data
     function updateDynamicDropdown(elementId, dataset, propertyKey, defaultLabel) {
       const el = document.getElementById(elementId);
       if (!el) return;
@@ -1260,7 +1462,7 @@
       renderFailHEMTable(data.failHEM || []);
       renderOPRTable(data.opr || []);
 
-      // 3. Kemaskini Dropdown Filter Jadual Secara Dinamik (Hanya yang ada data)
+      // 3. Kemaskini Dropdown Filter Jadual Secara Dinamik
       updateDynamicDropdown('filterFailHemSesi', data.failHEM, 'sesi', 'Semua Sesi');
       updateDynamicDropdown('filterFailHemUnit', data.failHEM, 'unit', 'Semua Unit HEM');
 
@@ -1273,7 +1475,7 @@
       updateDynamicDropdown('filterUnitSelect', data.laporanUnit, 'unit', 'Semua Unit HEM');
       updateDynamicDropdown('filterJadualMinggu', data.jadualBertugas, 'minggu', 'Semua Minggu');
 
-      // 4. Dropdowns Borang (Berdasarkan senarai rujukan / options)
+      // 4. Dropdowns Borang
       populateSelect('hemSesi', data.options.sesiPersekolahan);
       populateSelect('hemUnit', data.options.unitHEM);
       populateSelect('hemPelapor', data.options.guru);
@@ -1309,8 +1511,7 @@
       populateSelect('jMinggu', data.options.minggu);
       populateSelect('jKumpulan', data.options.kumpulan);
 
-      // Dropdown Salah Laku Murid
-      filterMuridOptions();
+      // Tetapkan Guru Pelapor
       populateSelect('slPelapor', data.options.guru);
 
       if (activeUser && activeUser.nama) {
@@ -1348,47 +1549,6 @@
         opt.value = v;
         el.appendChild(opt);
       });
-    }
-
-    // Fungsi penapis / search senarai murid
-    function filterMuridOptions() {
-      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) return;
-      const searchTxt = (document.getElementById('slMuridSearch')?.value || '').toLowerCase().trim();
-      const muridSelect = document.getElementById('slMuridSelect');
-      const prevVal = muridSelect.value;
-
-      muridSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
-
-      let hasMatch = false;
-      globalHemData.options.murid.forEach((m, idx) => {
-        const fullName = `${m.nama} (${m.tahun} ${m.kelas})`;
-        if (!searchTxt || fullName.toLowerCase().includes(searchTxt)) {
-          const opt = document.createElement('option');
-          opt.value = idx;
-          opt.innerText = fullName;
-          if (String(idx) === String(prevVal)) {
-            opt.selected = true;
-            hasMatch = true;
-          }
-          muridSelect.appendChild(opt);
-        }
-      });
-
-      if (!hasMatch && prevVal !== "") {
-        autoFillMurid();
-      }
-    }
-
-    function autoFillMurid() {
-      const idx = document.getElementById('slMuridSelect').value;
-      if (idx !== "" && globalHemData && globalHemData.options.murid[idx]) {
-        const m = globalHemData.options.murid[idx];
-        document.getElementById('slTahun').value = m.tahun;
-        document.getElementById('slKelas').value = m.kelas;
-      } else {
-        document.getElementById('slTahun').value = "";
-        document.getElementById('slKelas').value = "";
-      }
     }
 
     // --- RENDERING & FILTERS JADUAL FAIL HEM & OPR ---
@@ -1848,18 +2008,28 @@
 
     async function handleSalahLakuSubmit(e) {
       e.preventDefault();
+
+      if (selectedMuridIndexes.size === 0) {
+        showToast("Sila pilih sekurang-kurangnya seorang murid.", true);
+        return;
+      }
+
       const btn = document.getElementById('btnSubmitSalahLaku');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
-      const selIdx = document.getElementById('slMuridSelect').value;
-      const muridData = globalHemData.options.murid[selIdx];
+      // Kumpul nama murid
+      const namaList = [];
+      selectedMuridIndexes.forEach(idx => {
+        const m = globalHemData.options.murid[idx];
+        if (m) namaList.push(m.nama);
+      });
 
       const formData = {
         tarikh: document.getElementById('slTarikh').value,
         masa: document.getElementById('slMasa').value,
         tempat: document.getElementById('slTempat').value,
-        namaMurid: muridData ? muridData.nama : '',
+        namaMurid: namaList.join(', '),
         tahun: document.getElementById('slTahun').value,
         kelas: document.getElementById('slKelas').value,
         kesalahan: document.getElementById('slKesalahan').value,
@@ -1881,8 +2051,9 @@
           showToast('Laporan salah laku berjaya direkodkan!');
           closeModal('modalSalahLaku');
           document.getElementById('formSalahLaku').reset();
-          document.getElementById('slMuridSearch').value = '';
-          filterMuridOptions();
+          selectedMuridIndexes.clear();
+          tempPickerSelection.clear();
+          updateSelectedMuridTags();
           fetchHemData();
         } else {
           showToast('Ralat: ' + result.message, true);
