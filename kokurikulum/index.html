@@ -365,7 +365,28 @@
     .modal-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
     .close-modal-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
 
-    .submodal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+    /* KATEGORI E-FAIL STYLING */
+    .efail-category-section {
+      margin-bottom: 20px;
+    }
+
+    .efail-category-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--neon-dark);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1.5px dashed #e9d5ff;
+      padding-bottom: 5px;
+    }
+
+    .efail-category-title i {
+      color: var(--neon-purple);
+    }
+
+    .submodal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
     .sub-card {
       background: #f8fafc;
       border: 1px solid var(--border-soft);
@@ -382,6 +403,31 @@
     .sub-card:hover { background: #ffffff; border-color: var(--neon-purple); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(168, 85, 247, 0.2); }
     .sub-card-icon { width: 42px; height: 42px; border-radius: 10px; background: #f3e8ff; color: var(--neon-dark); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 8px; }
     .sub-card-title { font-size: 0.8rem; font-weight: 700; line-height: 1.3; }
+
+    .category-pills-bar {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .cat-pill-btn {
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: #f8fafc;
+      border: 1px solid var(--border-soft);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cat-pill-btn:hover, .cat-pill-btn.active {
+      background: var(--neon-purple);
+      color: #ffffff;
+      border-color: var(--neon-purple);
+    }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
@@ -467,7 +513,7 @@
         <div class="menu-card" onclick="openEFailModal()">
           <div class="icon-box"><i class="fas fa-folder-open"></i></div>
           <div class="menu-card-title">eFail Kokurikulum</div>
-          <div class="menu-card-desc">Arkib 38 fail unit kokurikulum SK Mantin</div>
+          <div class="menu-card-desc">Arkib 38 fail unit kokurikulum SK Mantin (Mengikut Kategori)</div>
         </div>
         <div class="menu-card" onclick="openModal('modalProfilMurid')">
           <div class="icon-box"><i class="fas fa-id-card"></i></div>
@@ -607,7 +653,7 @@
             </button>
           </div>
 
-          <!-- KAD JUMLAH KETIDAKHADIRAN GURU -->
+          <!-- KAD STATISTIK GURU -->
           <div class="stat-koko-grid">
             <div class="stat-koko-card">
               <div class="stat-koko-icon"><i class="fas fa-user-times"></i></div>
@@ -831,17 +877,31 @@
     </section>
   </div>
 
-  <!-- MODAL: eFail Koko (Grid) -->
+  <!-- MODAL: eFail Koko (DIPERBAIKI DENGAN KATEGORI KOKURIKULUM) -->
   <div class="modal-overlay" id="efailModal">
     <div class="modal-box">
       <div class="modal-header">
-        <div class="modal-title"><i class="fas fa-folder-open" style="color:var(--neon-purple); margin-right:8px;"></i>Senarai eFail Unit Kokurikulum</div>
+        <div class="modal-title"><i class="fas fa-folder-open" style="color:var(--neon-purple); margin-right:8px;"></i>Senarai eFail Unit Kokurikulum (Mengikut Kategori)</div>
         <button class="close-modal-btn" onclick="closeModal('efailModal')">&times;</button>
       </div>
-      <div style="margin-bottom:14px;">
-        <input type="text" id="searchEFailInput" class="search-input" style="width:100%;" placeholder="Cari unit kokurikulum..." oninput="filterEFailModal()">
+
+      <!-- BAR PENAPIS KATEGORI CEPAT -->
+      <div class="category-pills-bar" id="efailCatPills">
+        <button type="button" class="cat-pill-btn active" onclick="setEFailCategoryFilter('ALL', this)">Semua Kategori</button>
+        <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('1. INDUK', this)">Fail Induk</button>
+        <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('BADAN BERUNIFORM', this)">Badan Beruniform</button>
+        <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('KELAB PERSATUAN', this)">Kelab & Persatuan</button>
+        <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('SUKAN PERMAINAN', this)">Sukan & Permainan</button>
+        <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('SUKAN PERMAINAN (PETANG)', this)">Sukan (Petang)</button>
+        <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('RUMAH SUKAN', this)">Rumah Sukan</button>
       </div>
-      <div class="submodal-grid" id="efailCardsContainer"></div>
+
+      <div style="margin-bottom:14px;">
+        <input type="text" id="searchEFailInput" class="search-input" style="width:100%;" placeholder="Cari nama unit..." oninput="filterEFailModal()">
+      </div>
+
+      <!-- CONTAINER BERKATEGORI -->
+      <div id="efailCardsContainer"></div>
     </div>
   </div>
 
@@ -879,7 +939,6 @@
         </select>
       </div>
 
-      <!-- KANDUNGAN PROFIL MURID -->
       <div id="studentProfileCardContent" class="printable-report" style="display:none;">
         <div class="report-header">
           <h2 style="font-size:1.15rem; text-transform:uppercase;">SEKOLAH KEBANGSAAN MANTIN</h2>
@@ -1039,7 +1098,7 @@
         </div>
         <div class="form-group" style="margin-bottom:12px;">
           <label class="form-label">Status / Sebab Tidak Hadir *</label>
-          <input type="text" id="gaSebab" class="form-control" placeholder="Tulis 'Hadir' jika hadir, atau nyatakan sebab (cth: Cuti Sakit, Kursus)" required>
+          <input type="text" id="gaSebab" class="form-control" placeholder="Tulis 'Hadir' jika hadir, atau nyatakan sebab" required>
         </div>
         <div class="form-actions">
           <button type="button" class="btn-secondary" onclick="closeModal('modalGuruAtt')">Batal</button>
@@ -1405,6 +1464,7 @@
     let attendanceState = {};
     let selectedPesertaSet = new Set();
     let selectedJwStudent = null;
+    let activeEFailCategory = 'ALL';
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -1474,7 +1534,6 @@
       }
     }
 
-    // Helper Dropdown Pintar Dinamik
     function updateDynamicDropdown(elementId, dataset, propertyKey, defaultLabel) {
       const el = document.getElementById(elementId);
       if (!el) return;
@@ -1502,9 +1561,8 @@
     }
 
     function renderUI(data) {
-      renderEFailCards(data.efail);
+      renderCategorizedEFailCards(data.efail);
 
-      // Kemaskini Dropdowns Dinamik untuk Penapis
       updateDynamicDropdown('filterMingguanSesi', data.laporanMingguan, 'sesi', 'Semua Sesi');
       updateDynamicDropdown('filterPencapaianSesi', data.laporanPencapaian, 'sesi', 'Semua Sesi');
       updateDynamicDropdown('filterPencapaianPeringkat', data.laporanPencapaian, 'peringkat', 'Semua Peringkat');
@@ -1517,7 +1575,6 @@
 
       updateDynamicDropdown('filterGuruNama', data.kehadiranGuru, 'namaGuru', 'Semua Guru');
 
-      // Dropdown Borang
       populateSelect('attSesiSelect', data.options.sesi);
       populateSelect('mSesi', data.options.sesi);
       populateSelect('pSesi', data.options.sesi);
@@ -1565,7 +1622,6 @@
       populateKelasFilters(data.muridMaster);
       filterProfileStudentDropdown();
 
-      // Render Jadual
       renderMingguanTable(data.laporanMingguan);
       renderKehadiranMasterTable(data.keahlianMurid);
       renderPencapaianTable(data.laporanPencapaian);
@@ -1574,7 +1630,6 @@
       renderFailKOKOTable(data.failKOKO || []);
       renderOPRTable(data.opr || []);
 
-      // Statistik Guru Tidak Hadir
       renderStatistikGuru(data.statistikGuru);
     }
 
@@ -1648,7 +1703,7 @@
       populateSelect('jwFilterKelas', kelasArr, "Semua Kelas");
     }
 
-    // --- PROFIL & KAD DATA MURID (DENGAN PEMBAIKAN CETAK) ---
+    // --- PROFIL & KAD DATA MURID ---
     function filterProfileStudentDropdown() {
       const thn = document.getElementById('pFilterTahun').value;
       const kls = document.getElementById('pFilterKelas').value.toLowerCase();
@@ -1707,7 +1762,6 @@
       box.style.display = 'block';
     }
 
-    // PEMBAIKAN CETAK PROFIL MURID
     function printStudentCard() {
       const card = document.getElementById('studentProfileCardContent');
       if (!card || card.style.display === 'none') {
@@ -1928,7 +1982,7 @@
       }
     }
 
-    // --- TABEL KEHADIRAN GURU (DENGAN STATUS HADIR/TIDAK HADIR) ---
+    // --- TABEL KEHADIRAN GURU ---
     function renderGuruTable(list) {
       const tb = document.getElementById('guruTableBody');
       tb.innerHTML = '';
@@ -1968,7 +2022,6 @@
       renderGuruTable(filtered);
     }
 
-    // --- FUNGSI ASAL LAIN DIKEKALKAN PENUH ---
     function renderMingguanTable(list) {
       const tb = document.getElementById('mingguanTableBody');
       tb.innerHTML = '';
@@ -2152,7 +2205,6 @@
       downloadCSV(csv, "Jawatankuasa_Murid_Kokurikulum.csv");
     }
 
-    // Modal Helpers
     function openModalPilihPeserta() {
       selectedPesertaSet.clear();
       filterPesertaList();
@@ -2609,7 +2661,6 @@
       }
     }
 
-    // Cetakan Laporan
     function viewMingguanDetails(id) {
       const item = globalKokoData.laporanMingguan.find(m => m.id === id);
       if (!item) return;
@@ -2678,26 +2729,102 @@
       link.click();
     }
 
-    function filterEFailModal() {
-      const q = document.getElementById('searchEFailInput').value.toLowerCase();
-      const filtered = globalKokoData.efail.filter(f => f.unit.toLowerCase().includes(q) || f.aktiviti.toLowerCase().includes(q));
-      renderEFailCards(filtered);
+    // --- LOGIK PAPARAN E-FAIL MENGIKUT KATEGORI ---
+    function setEFailCategoryFilter(cat, btn) {
+      activeEFailCategory = cat;
+      document.querySelectorAll('#efailCatPills .cat-pill-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      filterEFailModal();
     }
 
-    function renderEFailCards(list) {
+    function filterEFailModal() {
+      if (!globalKokoData || !globalKokoData.efail) return;
+      const q = document.getElementById('searchEFailInput').value.toLowerCase();
+      
+      const filtered = globalKokoData.efail.filter(f => {
+        const matchQ = !q || f.unit.toLowerCase().includes(q) || (f.aktiviti || '').toLowerCase().includes(q);
+        const matchCat = (activeEFailCategory === 'ALL') || (f.aktiviti && f.aktiviti.toUpperCase().includes(activeEFailCategory));
+        return matchQ && matchCat;
+      });
+
+      renderCategorizedEFailCards(filtered);
+    }
+
+    function renderCategorizedEFailCards(list) {
       const container = document.getElementById('efailCardsContainer');
       container.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        container.innerHTML = '<div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Tiada fail unit ditemui.</div>';
+        return;
+      }
+
+      // Kumpulkan item mengikut AKTIVITI (Kategori)
+      const grouped = {};
       list.forEach(item => {
-        const a = document.createElement('a');
-        a.className = 'sub-card';
-        a.href = item.link || '#';
-        a.target = '_blank';
-        a.innerHTML = `
-          <div class="sub-card-icon"><i class="fas fa-folder"></i></div>
-          <div class="sub-card-title">${item.unit}</div>
-          <span style="font-size:0.7rem; color:var(--neon-dark); margin-top:4px;">${item.aktiviti}</span>
+        let cat = (item.aktiviti || 'LAIN-LAIN').trim().toUpperCase();
+        if (cat.includes('DIBUBARKAN')) cat = 'ARKIB / DIBUBARKAN';
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(item);
+      });
+
+      // Susunan kategori standard
+      const order = [
+        '1. INDUK',
+        'BADAN BERUNIFORM',
+        'KELAB PERSATUAN',
+        'SUKAN PERMAINAN',
+        'SUKAN PERMAINAN (PETANG)',
+        'RUMAH SUKAN',
+        'ARKIB / DIBUBARKAN',
+        'LAIN-LAIN'
+      ];
+
+      const sortedCategories = Object.keys(grouped).sort((a, b) => {
+        const ia = order.indexOf(a);
+        const ib = order.indexOf(b);
+        if (ia !== -1 && ib !== -1) return ia - ib;
+        if (ia !== -1) return -1;
+        if (ib !== -1) return 1;
+        return a.localeCompare(b);
+      });
+
+      sortedCategories.forEach(catName => {
+        const items = grouped[catName];
+        if (!items || items.length === 0) return;
+
+        const section = document.createElement('div');
+        section.className = 'efail-category-section';
+
+        let iconClass = 'fas fa-folder';
+        if (catName.includes('UNIFORM')) iconClass = 'fas fa-shield-alt';
+        else if (catName.includes('PERSATUAN')) iconClass = 'fas fa-users';
+        else if (catName.includes('SUKAN')) iconClass = 'fas fa-running';
+        else if (catName.includes('RUMAH')) iconClass = 'fas fa-flag';
+        else if (catName.includes('INDUK')) iconClass = 'fas fa-star';
+
+        section.innerHTML = `
+          <div class="efail-category-title">
+            <i class="${iconClass}"></i> ${catName} <span style="font-size:0.75rem; color:#94a3b8; font-weight:600;">(${items.length} unit)</span>
+          </div>
+          <div class="submodal-grid"></div>
         `;
-        container.appendChild(a);
+
+        const grid = section.querySelector('.submodal-grid');
+        items.forEach(item => {
+          const a = document.createElement('a');
+          a.className = 'sub-card';
+          a.href = item.link || '#';
+          a.target = '_blank';
+          a.innerHTML = `
+            <div class="sub-card-icon"><i class="fas fa-folder"></i></div>
+            <div class="sub-card-title">${item.unit}</div>
+            <span style="font-size:0.68rem; color:var(--text-muted); margin-top:4px;">Buka Google Drive</span>
+          `;
+          grid.appendChild(a);
+        });
+
+        container.appendChild(section);
       });
     }
   </script>
