@@ -8,19 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Favicon & Home Screen Icons -->
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-
-<!-- iOS (Apple) -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="SeMaNeS">
-
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#10b981">
 
   <style>
     :root {
@@ -469,7 +456,7 @@
     let isEditing = false;
     let isColumnWise = false;
     let columnDataMap = {};
-    let globalMuridOptions = { tahun: [], kelas: [], uniform: [], persatuan: [], sukan: [], rumahSukan: [] };
+    let globalMuridOptions = { tahun: [], kelas: [], agama: [], bacaan: [], guruTasmik: [], uniform: [], persatuan: [], sukan: [], rumahSukan: [] };
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -495,7 +482,7 @@
       const sheetName = targetSheet || document.getElementById('sheetSelector').value;
       
       const tb = document.getElementById('tableBody');
-      tb.innerHTML = '<tr><td colspan="10" style="text-align:center; padding:30px; color:#94a3b8;"><i class="fas fa-spinner fa-spin"></i> Memuatkan data...</td></tr>';
+      tb.innerHTML = '<tr><td colspan="15" style="text-align:center; padding:30px; color:#94a3b8;"><i class="fas fa-spinner fa-spin"></i> Memuatkan data...</td></tr>';
 
       try {
         const res = await fetch(APPS_SCRIPT_URL, {
@@ -556,7 +543,7 @@
     }
 
     // ========================================================
-    // LOGIK MOD KOLUM
+    // LOGIK MOD KOLUM (COLUMN-WISE EDITING)
     // ========================================================
     function buildColumnDataMap() {
       columnDataMap = {};
@@ -710,7 +697,7 @@
     }
 
     // ========================================================
-    // LOGIK MOD BARIS & DROPDOWN DINAMIK UNTUK DATA MURID
+    // LOGIK MOD BARIS & DROPDOWN LENGKAP DATA MURID
     // ========================================================
     function renderRowWiseTable(headers, rows) {
       const th = document.getElementById('tableHead');
@@ -780,7 +767,7 @@
       openModal('crudModal');
     }
 
-    // PEMBINA BORANG PINTAR: DROPDOWN UNTUK TAHUN, KELAS & KOKU
+    // PEMBINA BORANG PINTAR SESUAI LAJUR SEBENAR DATA MURID
     function buildDynamicForm(values = null) {
       const container = document.getElementById('dynamicFormFields');
       container.innerHTML = '';
@@ -791,7 +778,7 @@
 
       currentHeaders.forEach((h, idx) => {
         const val = values ? (values[idx] || '') : '';
-        const hUpper = (h || "").toUpperCase();
+        const hUpper = (h || "").toUpperCase().trim();
         const div = document.createElement('div');
         div.className = 'form-group';
 
@@ -800,14 +787,26 @@
         let sourceLabel = '';
 
         if (isDataMurid) {
-          if (hUpper === "TAHUN" || hUpper.includes("TAHUN")) {
+          if (hUpper === "TAHUN") {
             isDropdown = true;
             optList = globalMuridOptions.tahun || [];
             sourceLabel = '(Data Sekolah)';
-          } else if (hUpper === "KELAS" || hUpper.includes("KELAS")) {
+          } else if (hUpper === "KELAS") {
             isDropdown = true;
             optList = globalMuridOptions.kelas || [];
             sourceLabel = '(Data Sekolah)';
+          } else if (hUpper === "AGAMA") {
+            isDropdown = true;
+            optList = globalMuridOptions.agama || [];
+            sourceLabel = '(Data Sekolah)';
+          } else if (hUpper === "BACAAN") {
+            isDropdown = true;
+            optList = globalMuridOptions.bacaan || [];
+            sourceLabel = '(Data Sekolah - eTasmik)';
+          } else if (hUpper === "NAMA GURU TASMIK" || (hUpper.includes("GURU") && hUpper.includes("TASMIK"))) {
+            isDropdown = true;
+            optList = globalMuridOptions.guruTasmik || [];
+            sourceLabel = '(Data Guru)';
           } else if (hUpper.includes("UNIFORM")) {
             isDropdown = true;
             optList = globalMuridOptions.uniform || [];
@@ -910,7 +909,7 @@
           showToast("Gagal memadam: " + result.message, true);
         }
       } catch (err) {
-        showToast("Ralat sambungan: " + err.toString(), true);
+        showToast("Ralat: " + err.toString(), true);
       }
     }
   </script>
