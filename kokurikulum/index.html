@@ -8,20 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Favicon & Home Screen Icons -->
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-
-<!-- iOS (Apple) -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="SeMaNeS">
-
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#10b981">
-
+  
   <style>
     :root {
       --bg-page: #f8fafc;
@@ -270,7 +257,7 @@
     .btn-download-csv:hover { background: #faf5ff; }
 
     .table-scroll-container {
-      max-height: 290px;
+      max-height: 380px;
       overflow-y: auto;
       border: 1px solid #f1f5f9;
       border-radius: 10px;
@@ -305,6 +292,46 @@
       cursor: pointer;
     }
     .btn-link-file:hover { background: var(--neon-purple); color: #ffffff; }
+
+    .badge-no-fail {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: #f1f5f9;
+      color: #0f172a;
+      font-weight: 700;
+      font-size: 0.75rem;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* KAD STATISTIK GURU */
+    .stat-koko-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .stat-koko-card {
+      background: #faf5ff;
+      border: 1.5px solid #f3e8ff;
+      padding: 14px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stat-koko-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: #ffffff;
+      color: var(--neon-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 10px rgba(168, 85, 247, 0.15);
+    }
 
     /* MODAL */
     .modal-overlay {
@@ -366,7 +393,6 @@
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
     .btn-secondary { padding: 8px 16px; border-radius: 10px; background: #f1f5f9; color: var(--text-muted); border: none; font-weight: 600; cursor: pointer; }
 
-    /* CHECKBOX GROUP GURU PEMBIMBING */
     .checkbox-group-container {
       max-height: 160px;
       overflow-y: auto;
@@ -378,13 +404,7 @@
       grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 6px;
     }
-    .checkbox-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      cursor: pointer;
-    }
+    .checkbox-item { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; cursor: pointer; }
 
     .profile-badge {
       display: inline-block;
@@ -396,26 +416,6 @@
       font-size: 0.78rem;
     }
 
-    /* BAR STICKY KEKAL DI ATAS SEMASA SCROLL */
-    .sticky-bar-top {
-      position: sticky;
-      top: -24px;
-      background: #ffffff;
-      padding: 12px 0;
-      z-index: 10;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1.5px solid var(--border-soft);
-      margin-bottom: 14px;
-    }
-
-    .sticky-bar-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
-
     .printable-report { border: 2px solid #0f172a; padding: 20px; color: #000000; background: #ffffff; line-height: 1.5; }
     .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
     .report-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
@@ -423,14 +423,6 @@
     .report-table th { background: #f1f5f9; width: 30%; text-align: left; }
     .report-images { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
     .report-images img { width: 100%; height: 130px; object-fit: cover; border: 1px solid #ccc; }
-
-    /* PEMBAIKAN CETAKAN: SUPAYA KAD PROFIL TIDAK KOSONG */
-    @media print {
-      body * { visibility: hidden !important; }
-      #studentProfileCardContent, #studentProfileCardContent * { visibility: visible !important; }
-      #studentProfileCardContent { position: absolute; left: 0; top: 0; width: 100%; }
-      .no-print { display: none !important; }
-    }
 
     .toast-msg {
       position: fixed;
@@ -490,14 +482,16 @@
       </div>
     </section>
 
-    <!-- TABS LAPORAN KOKO -->
+    <!-- SUSUNAN TABS KOKO -->
     <section>
       <div class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tabMingguan')"><i class="fas fa-book"></i> Laporan Mingguan</button>
         <button class="tab-btn" onclick="switchTab('tabKehadiranTable')"><i class="fas fa-tasks"></i> Rekod Kehadiran Murid</button>
+        <button class="tab-btn" onclick="switchTab('tabGuru')"><i class="fas fa-chalkboard-teacher"></i> Kehadiran Guru</button>
         <button class="tab-btn" onclick="switchTab('tabPencapaian')"><i class="fas fa-trophy"></i> Laporan Pencapaian</button>
         <button class="tab-btn" onclick="switchTab('tabJawatankuasa')"><i class="fas fa-users-cog"></i> Jawatankuasa Murid</button>
-        <button class="tab-btn" onclick="switchTab('tabGuru')"><i class="fas fa-chalkboard-teacher"></i> Kehadiran Guru</button>
+        <button class="tab-btn" onclick="switchTab('tabFailKOKO')"><i class="fas fa-folder"></i> Fail KOKO</button>
+        <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
       </div>
 
       <!-- TAB 1: LAPORAN MINGGUAN -->
@@ -550,13 +544,13 @@
         </div>
       </div>
 
-      <!-- TAB 2: REKOD KEHADIRAN MURID (JUMLAH KEHADIRAN MENGIKUT KEGIATAN KOKU) -->
+      <!-- TAB 2: REKOD KEHADIRAN MURID -->
       <div id="tabKehadiranTable" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Jadual Rekod Kehadiran Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Memaparkan jumlah kehadiran murid mengikut setiap kegiatan kokurikulum.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Jumlah kehadiran murid mengikut setiap kegiatan kokurikulum.</p>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-download-csv" onclick="downloadAllAttendanceCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
@@ -600,13 +594,75 @@
         </div>
       </div>
 
-      <!-- TAB 3: LAPORAN PENCAPAIAN -->
+      <!-- TAB 3: KEHADIRAN GURU -->
+      <div id="tabGuru" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Log Kehadiran Guru Kokurikulum</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Perekodan status hadir dan sebab ketidakhadiran guru pembimbing.</p>
+            </div>
+            <button class="btn-action-purple" onclick="openModal('modalGuruAtt')">
+              <i class="fas fa-user-clock"></i> Rekod Kehadiran Guru
+            </button>
+          </div>
+
+          <!-- KAD JUMLAH KETIDAKHADIRAN GURU -->
+          <div class="stat-koko-grid">
+            <div class="stat-koko-card">
+              <div class="stat-koko-icon"><i class="fas fa-user-times"></i></div>
+              <div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">JUMLAH KETIDAKHADIRAN GURU</div>
+                <div style="font-size:1.4rem; font-weight:800; color:#dc2626;" id="statTotalGuruTidakHadir">0</div>
+              </div>
+            </div>
+            <div class="stat-koko-card" style="flex:2;">
+              <div class="stat-koko-icon" style="color:#059669;"><i class="fas fa-clipboard-list"></i></div>
+              <div style="width:100%;">
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">PECAHAN TIDAK HADIR</div>
+                <div style="font-size:0.82rem; font-weight:600; color:var(--text-main); margin-top:2px;" id="statPecahanGuruTidakHadir">Tiada rekod ketidakhadiran</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterGuruNama" class="filter-select" onchange="filterGuruTable()">
+              <option value="">Semua Guru</option>
+            </select>
+            <select id="filterGuruStatus" class="filter-select" onchange="filterGuruTable()">
+              <option value="">Semua Status</option>
+              <option value="Hadir">Hadir</option>
+              <option value="Tidak Hadir">Tidak Hadir</option>
+            </select>
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Tarikh</th>
+                  <th>Nama Guru</th>
+                  <th>Aktiviti</th>
+                  <th>Perjumpaan</th>
+                  <th>Status</th>
+                  <th>Sebab / Catatan</th>
+                </tr>
+              </thead>
+              <tbody id="guruTableBody">
+                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 4: LAPORAN PENCAPAIAN -->
       <div id="tabPencapaian" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Rekod Pencapaian & Pertandingan Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Carian peserta satu persatu dari pangkalan DB Sekolah.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Carian peserta dan pengesahan sijil/anugerah pertandingan.</p>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-download-csv" onclick="downloadPencapaianCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
@@ -646,7 +702,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: JAWATANKUASA MURID -->
+      <!-- TAB 5: JAWATANKUASA MURID -->
       <div id="tabJawatankuasa" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -687,32 +743,86 @@
         </div>
       </div>
 
-      <!-- TAB 5: KEHADIRAN GURU -->
-      <div id="tabGuru" class="tab-content">
+      <!-- TAB 6: FAIL KOKO (PARTITION) -->
+      <div id="tabFailKOKO" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
-              <h3 style="font-size:1.1rem; font-weight:800;">Log Kehadiran Guru Kokurikulum</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Pilihan nama guru dari senarai rasmi DB Sekolah.</p>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Fail Kokurikulum (Partition)</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Simpanan fail dokumen mengikut unit KOKO dan nombor fail partition.</p>
             </div>
-            <button class="btn-action-purple" onclick="openModal('modalGuruAtt')">
-              <i class="fas fa-user-clock"></i> Rekod Kehadiran Guru
+            <button class="btn-action-purple" onclick="openModal('modalFailKOKO')">
+              <i class="fas fa-upload"></i> Muat Naik Fail KOKO
             </button>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterFailKokoSesi" class="filter-select" onchange="filterFailKOKOTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterFailKokoUnit" class="filter-select" onchange="filterFailKOKOTable()">
+              <option value="">Semua Unit</option>
+            </select>
+            <input type="text" id="searchFailKOKO" class="search-input" placeholder="Cari nama dokumen..." oninput="filterFailKOKOTable()">
           </div>
 
           <div class="table-scroll-container">
             <table class="custom-table">
               <thead>
                 <tr>
-                  <th>Tarikh</th>
-                  <th>Nama Guru</th>
-                  <th>Aktiviti</th>
-                  <th>Perjumpaan</th>
-                  <th>Status / Catatan</th>
+                  <th>Sesi</th>
+                  <th>Unit KOKO</th>
+                  <th>No Fail</th>
+                  <th>Nama Fail / Dokumen</th>
+                  <th>Kategori</th>
+                  <th>Dimuat Naik Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
                 </tr>
               </thead>
-              <tbody id="guruTableBody">
-                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod...</td></tr>
+              <tbody id="failKokoTableBody">
+                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan fail KOKO...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: FAIL OPR KOKO -->
+      <div id="tabOPR" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Rekod Fail OPR (One Page Report) KOKO</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Arkib laporan satu muka surat aktiviti dan program kokurikulum.</p>
+            </div>
+            <button class="btn-action-purple" onclick="openModal('modalOPR')">
+              <i class="fas fa-file-upload"></i> Muat Naik Fail OPR
+            </button>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterOprSesi" class="filter-select" onchange="filterOPRTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterOprUnit" class="filter-select" onchange="filterOPRTable()">
+              <option value="">Semua Unit</option>
+            </select>
+            <input type="text" id="searchOPR" class="search-input" placeholder="Cari tajuk program..." oninput="filterOPRTable()">
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi Persekolahan</th>
+                  <th>Unit KOKO</th>
+                  <th>Tajuk / Program</th>
+                  <th>Disediakan Oleh</th>
+                  <th style="text-align:center;">Pautan Dokumen</th>
+                </tr>
+              </thead>
+              <tbody id="oprTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod OPR...</td></tr>
               </tbody>
             </table>
           </div>
@@ -721,7 +831,7 @@
     </section>
   </div>
 
-  <!-- MODAL 1: eFail Koko (38 Unit Grid) -->
+  <!-- MODAL: eFail Koko (Grid) -->
   <div class="modal-overlay" id="efailModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -735,19 +845,18 @@
     </div>
   </div>
 
-  <!-- MODAL 2: KAD DATA MURID LENGKAP -->
+  <!-- MODAL: KAD PANGKALAN DATA & PROFIL MURID -->
   <div class="modal-overlay" id="modalProfilMurid">
     <div class="modal-box" style="max-width:750px;">
-      <div class="modal-header no-print">
+      <div class="modal-header">
         <div class="modal-title"><i class="fas fa-id-card" style="color:var(--neon-purple); margin-right:8px;"></i>Pangkalan Data & Profil Murid</div>
         <div style="display:flex; gap:8px;">
-          <button class="btn-action-purple" onclick="window.print()"><i class="fas fa-print"></i> Cetak Profil</button>
+          <button class="btn-action-purple" onclick="printStudentCard()"><i class="fas fa-print"></i> Cetak Profil</button>
           <button class="close-modal-btn" onclick="closeModal('modalProfilMurid')">&times;</button>
         </div>
       </div>
 
-      <!-- PENAPIS TAHUN, KELAS & CARIAN NAMA -->
-      <div class="no-print" style="margin-bottom:16px;">
+      <div style="margin-bottom:16px;">
         <div class="filter-wrapper" style="margin-bottom:8px;">
           <select id="pFilterTahun" class="filter-select" onchange="filterProfileStudentDropdown()">
             <option value="">Semua Tahun</option>
@@ -770,6 +879,7 @@
         </select>
       </div>
 
+      <!-- KANDUNGAN PROFIL MURID -->
       <div id="studentProfileCardContent" class="printable-report" style="display:none;">
         <div class="report-header">
           <h2 style="font-size:1.15rem; text-transform:uppercase;">SEKOLAH KEBANGSAAN MANTIN</h2>
@@ -785,7 +895,6 @@
           <tr><th>RUMAH SUKAN</th><td id="pCardRumah" style="font-weight:600; color:var(--neon-dark);">-</td></tr>
           <tr><th>JAWATANKUASA DISANDANG</th><td id="pCardJw">-</td></tr>
           <tr><th>REKOD PENCAPAIAN</th><td id="pCardPencapaian">-</td></tr>
-          <!-- JUMLAH KEHADIRAN MENGIKUT SETIAP KEGIATAN KOKURIKULUM -->
           <tr>
             <th>JUMLAH KEHADIRAN AKTIVITI</th>
             <td id="pCardKehadiranRingkas" style="font-weight:600;">
@@ -801,65 +910,148 @@
     </div>
   </div>
 
-  <!-- MODAL 3: SISTEM KEHADIRAN MURID DINAMIK (DENGAN BUTANG SIMPAN & MUAT TURUN) -->
-  <div class="modal-overlay" id="kehadiranMuridModal">
-    <div class="modal-box" style="max-width:700px;">
+  <!-- MODAL: BORANG MUAT NAIK FAIL KOKO (PARTITION) -->
+  <div class="modal-overlay" id="modalFailKOKO">
+    <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
-        <div class="modal-title"><i class="fas fa-user-check" style="color:var(--neon-purple); margin-right:8px;"></i>Pengisian Kehadiran Murid</div>
-        <button class="close-modal-btn" onclick="closeModal('kehadiranMuridModal')">&times;</button>
+        <div class="modal-title"><i class="fas fa-folder-plus" style="color:var(--neon-purple); margin-right:8px;"></i>Muat Naik Dokumen Fail KOKO</div>
+        <button class="close-modal-btn" onclick="closeModal('modalFailKOKO')">&times;</button>
       </div>
-      <div class="form-grid">
-        <div class="form-group">
-          <label class="form-label">Sesi Persekolahan</label>
-          <select id="attSesiSelect" class="form-control" onchange="renderAttendanceChecklist()"></select>
+      <form id="formFailKOKO" onsubmit="handleFailKOKOSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="kokoSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit Kokurikulum *</label>
+            <select id="kokoUnit" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">No Fail (Partition) *</label>
+            <input type="text" id="kokoNoFail" class="form-control" list="listNoFailKOKO" placeholder="cth: Fail 01" required>
+            <datalist id="listNoFailKOKO"></datalist>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kategori / Keterangan</label>
+            <input type="text" id="kokoKategori" class="form-control" list="listKategoriKOKO" placeholder="cth: Minit, Takwim, DSKP">
+            <datalist id="listKategoriKOKO"></datalist>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Nama Fail / Dokumen *</label>
+            <input type="text" id="kokoNamaDokumen" class="form-control" list="listNamaDokumenKOKO" placeholder="Nama fail" required>
+            <datalist id="listNamaDokumenKOKO"></datalist>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Dokumen (PDF / Word / Imej)</label>
+            <input type="file" id="kokoFile" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Fail akan automatik disimpan ke dalam Folder Drive Kokurikulum.</small>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Atau Masukkan Pautan Google Drive Sedia Ada</label>
+            <input type="url" id="kokoUrlManual" class="form-control" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Dimuat Naik Oleh *</label>
+            <select id="kokoPelapor" class="form-control" required></select>
+          </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Kategori Kokurikulum</label>
-          <select id="attKategoriSelect" class="form-control" onchange="populateAttUnitSelect()">
-            <option value="">-- Pilih Kategori --</option>
-            <option value="uniform">Badan Beruniform</option>
-            <option value="persatuan">Kelab & Persatuan</option>
-            <option value="sukan">Sukan & Permainan</option>
-            <option value="rumahSukan">Rumah Sukan</option>
-          </select>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalFailKOKO')">Batal</button>
+          <button type="submit" id="btnSubmitFailKOKO" class="btn-action-purple"><i class="fas fa-save"></i> Simpan Dokumen</button>
         </div>
-        <div class="form-group full-width">
-          <label class="form-label">Pilih Unit</label>
-          <select id="attUnitSelect" class="form-control" onchange="renderAttendanceChecklist()">
-            <option value="">-- Pilih Unit --</option>
-          </select>
-        </div>
-      </div>
-
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px;">
-        <span style="font-size:0.85rem; font-weight:700;">Senarai Murid (Tahun & Nama A-Z):</span>
-        <button type="button" class="btn-download-csv" onclick="toggleAllAttendance()"><i class="fas fa-check-double"></i> Pilih / Batal Semua</button>
-      </div>
-
-      <div class="att-list-container" id="attendanceChecklistContainer">
-        <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih kategori dan unit untuk memaparkan murid.</div>
-      </div>
-
-      <div class="att-stat-box" id="attendanceStatBox">
-        <div>Jumlah: <span id="statJumlah">0</span></div>
-        <div>Hadir: <span id="statHadir">0</span></div>
-        <div>Peratus: <span id="statPeratus">0%</span></div>
-      </div>
-
-      <!-- BUTANG SIMPAN & MUAT TURUN BERSEBELAHAN -->
-      <div class="form-actions" style="margin-top:16px;">
-        <button type="button" class="btn-secondary" onclick="closeModal('kehadiranMuridModal')">Tutup</button>
-        <button type="button" id="btnSimpanKehadiranLog" class="btn-action-purple" onclick="saveAttendanceSessionLog()">
-          <i class="fas fa-save"></i> Simpan Kehadiran
-        </button>
-        <button type="button" class="btn-download-csv" onclick="downloadAttendanceSummary()">
-          <i class="fas fa-download"></i> Muat Turun Analisis
-        </button>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- MODAL 4: BORANG LAPORAN MINGGUAN -->
+  <!-- MODAL: BORANG MUAT NAIK OPR KOKO -->
+  <div class="modal-overlay" id="modalOPR">
+    <div class="modal-box" style="max-width:650px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-file-invoice" style="color:var(--neon-purple); margin-right:8px;"></i>Muat Naik Fail OPR KOKO</div>
+        <button class="close-modal-btn" onclick="closeModal('modalOPR')">&times;</button>
+      </div>
+      <form id="formOPRKOKO" onsubmit="handleOPRKOKOSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="oprSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Unit Kokurikulum *</label>
+            <select id="oprUnit" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Tajuk / Program *</label>
+            <input type="text" id="oprTajuk" class="form-control" placeholder="Contoh: OPR - Kejohanan Merentas Desa 2026" required>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Pilih Dokumen OPR (PDF / Word / Imej)</label>
+            <input type="file" id="oprFile" class="form-control" accept=".pdf,.doc,.docx,.png,.jpg,.jpeg">
+            <small style="color:var(--text-muted); font-size:0.75rem;">Fail akan terus disimpan ke Google Drive Kokurikulum.</small>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Atau Pautan Google Drive Sedia Ada</label>
+            <input type="url" id="oprUrlManual" class="form-control" placeholder="https://drive.google.com/...">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Disediakan Oleh *</label>
+            <select id="oprPelapor" class="form-control" required></select>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalOPR')">Batal</button>
+          <button type="submit" id="btnSubmitOPR" class="btn-action-purple"><i class="fas fa-save"></i> Simpan OPR</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: BORANG KEHADIRAN GURU -->
+  <div class="modal-overlay" id="modalGuruAtt">
+    <div class="modal-box" style="max-width:550px;">
+      <div class="modal-header">
+        <div class="modal-title">Log Kehadiran Guru Kokurikulum</div>
+        <button class="close-modal-btn" onclick="closeModal('modalGuruAtt')">&times;</button>
+      </div>
+      <form id="formGuruAtt" onsubmit="handleGuruAttSubmit(event)">
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Sesi Persekolahan *</label>
+          <select id="gaSesi" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Nama Guru (Dari DB Sekolah) *</label>
+          <select id="gaNamaGuru" class="form-control" required></select>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Aktiviti / Unit Koku *</label>
+          <select id="gaAktiviti" class="form-control" required></select>
+        </div>
+        <div class="form-grid" style="margin-bottom:12px;">
+          <div class="form-group">
+            <label class="form-label">Perjumpaan Ke- *</label>
+            <input type="number" id="gaPerjumpaan" class="form-control" placeholder="1" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tarikh *</label>
+            <input type="date" id="gaTarikh" class="form-control" required>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:12px;">
+          <label class="form-label">Status / Sebab Tidak Hadir *</label>
+          <input type="text" id="gaSebab" class="form-control" placeholder="Tulis 'Hadir' jika hadir, atau nyatakan sebab (cth: Cuti Sakit, Kursus)" required>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalGuruAtt')">Batal</button>
+          <button type="submit" id="btnSubmitGa" class="btn-action-purple">
+            <i class="fas fa-check"></i> Rekod Kehadiran
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: BORANG LAPORAN MINGGUAN -->
   <div class="modal-overlay" id="modalMingguan">
     <div class="modal-box">
       <div class="modal-header">
@@ -909,7 +1101,7 @@
             <input type="text" id="mKbat" class="form-control" placeholder="Kemahiran berfikir aras tinggi">
           </div>
           <div class="form-group full-width">
-            <label class="form-label">Guru Pembimbing Yang Hadir (Pilih dari DB Sekolah) *</label>
+            <label class="form-label">Guru Pembimbing Yang Hadir (DB Sekolah) *</label>
             <div class="checkbox-group-container" id="guruPembimbingCheckboxes"></div>
           </div>
           <div class="form-group">
@@ -939,7 +1131,7 @@
     </div>
   </div>
 
-  <!-- MODAL 5: BORANG LAPORAN PENCAPAIAN -->
+  <!-- MODAL: BORANG LAPORAN PENCAPAIAN -->
   <div class="modal-overlay" id="modalPencapaian">
     <div class="modal-box">
       <div class="modal-header">
@@ -967,7 +1159,7 @@
 
           <div class="form-group full-width">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-              <label class="form-label">Pilih Peserta Murid (Dari DB Sekolah) *</label>
+              <label class="form-label">Pilih Peserta Murid (DB Sekolah) *</label>
               <button type="button" class="btn-download-csv" onclick="openModalPilihPeserta()">
                 <i class="fas fa-user-plus"></i> Carian & Pilih Murid
               </button>
@@ -1002,43 +1194,7 @@
     </div>
   </div>
 
-  <!-- MODAL KHAS 1: CARIAN PESERTA PENCAPAIAN (MULTI-CHECKBOX DENGAN BUTANG TUTUP & SELESAI STICKY) -->
-  <div class="modal-overlay" id="modalPilihPeserta">
-    <div class="modal-box" style="max-width:600px;">
-      <div class="sticky-bar-top">
-        <div>
-          <h4 style="font-weight:800; font-size:1rem; color:var(--text-main);">Pilih Peserta Pertandingan</h4>
-          <span style="font-size:0.75rem; color:var(--neon-dark);" id="pesertaCounterLabel">0 murid dipilih</span>
-        </div>
-        <div class="sticky-bar-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal('modalPilihPeserta')">Batal / Tutup</button>
-          <button type="button" class="btn-action-purple" onclick="confirmPesertaSelection()">
-            <i class="fas fa-check-circle"></i> Selesai Memilih
-          </button>
-        </div>
-      </div>
-
-      <div class="filter-wrapper" style="margin-bottom:12px;">
-        <select id="pesertaFilterTahun" class="filter-select" onchange="filterPesertaList()">
-          <option value="">Semua Tahun</option>
-          <option value="1">Tahun 1</option>
-          <option value="2">Tahun 2</option>
-          <option value="3">Tahun 3</option>
-          <option value="4">Tahun 4</option>
-          <option value="5">Tahun 5</option>
-          <option value="6">Tahun 6</option>
-        </select>
-        <select id="pesertaFilterKelas" class="filter-select" onchange="filterPesertaList()">
-          <option value="">Semua Kelas</option>
-        </select>
-        <input type="text" id="pesertaSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama peserta..." oninput="filterPesertaList()">
-      </div>
-
-      <div class="att-list-container" id="pesertaChecklistContainer" style="max-height:360px;"></div>
-    </div>
-  </div>
-
-  <!-- MODAL 6: BORANG JAWATANKUASA MURID -->
+  <!-- MODAL: BORANG JAWATANKUASA MURID -->
   <div class="modal-overlay" id="modalJawatankuasa">
     <div class="modal-box" style="max-width:550px;">
       <div class="modal-header">
@@ -1081,93 +1237,122 @@
     </div>
   </div>
 
-  <!-- MODAL KHAS 2: CARIAN MURID JAWATANKUASA (BERASINGAN - RADIO BUTTON) -->
+  <!-- MODAL: CARIAN PESERTA PENCAPAIAN -->
+  <div class="modal-overlay" id="modalPilihPeserta">
+    <div class="modal-box" style="max-width:600px;">
+      <div class="modal-header">
+        <div>
+          <h4 style="font-weight:800; font-size:1rem; color:var(--text-main);">Pilih Peserta Pertandingan</h4>
+          <span style="font-size:0.75rem; color:var(--neon-dark);" id="pesertaCounterLabel">0 murid dipilih</span>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPilihPeserta')">Batal</button>
+          <button type="button" class="btn-action-purple" onclick="confirmPesertaSelection()"><i class="fas fa-check-circle"></i> Selesai</button>
+        </div>
+      </div>
+      <div class="filter-wrapper" style="margin-bottom:12px;">
+        <select id="pesertaFilterTahun" class="filter-select" onchange="filterPesertaList()">
+          <option value="">Semua Tahun</option>
+          <option value="1">Tahun 1</option><option value="2">Tahun 2</option><option value="3">Tahun 3</option>
+          <option value="4">Tahun 4</option><option value="5">Tahun 5</option><option value="6">Tahun 6</option>
+        </select>
+        <select id="pesertaFilterKelas" class="filter-select" onchange="filterPesertaList()"><option value="">Semua Kelas</option></select>
+        <input type="text" id="pesertaSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama peserta..." oninput="filterPesertaList()">
+      </div>
+      <div class="checkbox-group-container" id="pesertaChecklistContainer" style="max-height:360px;"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: CARIAN MURID JAWATANKUASA -->
   <div class="modal-overlay" id="modalPilihMuridJw">
     <div class="modal-box" style="max-width:600px;">
-      <div class="sticky-bar-top">
+      <div class="modal-header">
         <div>
           <h4 style="font-weight:800; font-size:1rem; color:var(--text-main);">Pilih Murid Jawatankuasa</h4>
           <span style="font-size:0.75rem; color:var(--neon-dark);" id="jwPickedLabel">Pilih seorang murid</span>
         </div>
-        <div class="sticky-bar-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal('modalPilihMuridJw')">Batal / Tutup</button>
-          <button type="button" class="btn-action-purple" onclick="confirmJwStudentSelection()">
-            <i class="fas fa-check-circle"></i> Pilih Murid Ini
-          </button>
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPilihMuridJw')">Batal</button>
+          <button type="button" class="btn-action-purple" onclick="confirmJwStudentSelection()"><i class="fas fa-check-circle"></i> Pilih</button>
         </div>
       </div>
-
       <div class="filter-wrapper" style="margin-bottom:12px;">
         <select id="jwFilterTahun" class="filter-select" onchange="filterJwStudentList()">
           <option value="">Semua Tahun</option>
-          <option value="1">Tahun 1</option>
-          <option value="2">Tahun 2</option>
-          <option value="3">Tahun 3</option>
-          <option value="4">Tahun 4</option>
-          <option value="5">Tahun 5</option>
-          <option value="6">Tahun 6</option>
+          <option value="1">Tahun 1</option><option value="2">Tahun 2</option><option value="3">Tahun 3</option>
+          <option value="4">Tahun 4</option><option value="5">Tahun 5</option><option value="6">Tahun 6</option>
         </select>
-        <select id="jwFilterKelas" class="filter-select" onchange="filterJwStudentList()">
-          <option value="">Semua Kelas</option>
-        </select>
+        <select id="jwFilterKelas" class="filter-select" onchange="filterJwStudentList()"><option value="">Semua Kelas</option></select>
         <input type="text" id="jwSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama murid..." oninput="filterJwStudentList()">
       </div>
-
-      <div class="att-list-container" id="jwRadioContainer" style="max-height:360px;"></div>
+      <div class="checkbox-group-container" id="jwRadioContainer" style="max-height:360px;"></div>
     </div>
   </div>
 
-  <!-- MODAL 7: BORANG KEHADIRAN GURU -->
-  <div class="modal-overlay" id="modalGuruAtt">
-    <div class="modal-box" style="max-width:550px;">
+  <!-- MODAL: SISTEM KEHADIRAN MURID DINAMIK -->
+  <div class="modal-overlay" id="kehadiranMuridModal">
+    <div class="modal-box" style="max-width:700px;">
       <div class="modal-header">
-        <div class="modal-title">Log Kehadiran Guru Kokurikulum</div>
-        <button class="close-modal-btn" onclick="closeModal('modalGuruAtt')">&times;</button>
+        <div class="modal-title"><i class="fas fa-user-check" style="color:var(--neon-purple); margin-right:8px;"></i>Pengisian Kehadiran Murid</div>
+        <button class="close-modal-btn" onclick="closeModal('kehadiranMuridModal')">&times;</button>
       </div>
-      <form id="formGuruAtt" onsubmit="handleGuruAttSubmit(event)">
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Sesi Persekolahan *</label>
-          <select id="gaSesi" class="form-control" required></select>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Sesi Persekolahan</label>
+          <select id="attSesiSelect" class="form-control" onchange="renderAttendanceChecklist()"></select>
         </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Nama Guru (Dari DB Sekolah) *</label>
-          <select id="gaNamaGuru" class="form-control" required></select>
+        <div class="form-group">
+          <label class="form-label">Kategori Kokurikulum</label>
+          <select id="attKategoriSelect" class="form-control" onchange="populateAttUnitSelect()">
+            <option value="">-- Pilih Kategori --</option>
+            <option value="uniform">Badan Beruniform</option>
+            <option value="persatuan">Kelab & Persatuan</option>
+            <option value="sukan">Sukan & Permainan</option>
+            <option value="rumahSukan">Rumah Sukan</option>
+          </select>
         </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Aktiviti / Unit Koku (Mengikut Kategori) *</label>
-          <select id="gaAktiviti" class="form-control" required></select>
+        <div class="form-group full-width">
+          <label class="form-label">Pilih Unit</label>
+          <select id="attUnitSelect" class="form-control" onchange="renderAttendanceChecklist()">
+            <option value="">-- Pilih Unit --</option>
+          </select>
         </div>
-        <div class="form-grid" style="margin-bottom:12px;">
-          <div class="form-group">
-            <label class="form-label">Perjumpaan Ke-</label>
-            <input type="number" id="gaPerjumpaan" class="form-control" placeholder="1" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tarikh</label>
-            <input type="date" id="gaTarikh" class="form-control" required>
-          </div>
-        </div>
-        <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Status / Sebab Tidak Hadir</label>
-          <input type="text" id="gaSebab" class="form-control" placeholder="Hadir / Cuti Sakit / Kursus">
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal('modalGuruAtt')">Batal</button>
-          <button type="submit" id="btnSubmitGa" class="btn-action-purple">
-            <i class="fas fa-check"></i> Rekod Kehadiran
-          </button>
-        </div>
-      </form>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; margin-bottom:8px;">
+        <span style="font-size:0.85rem; font-weight:700;">Senarai Murid:</span>
+        <button type="button" class="btn-download-csv" onclick="toggleAllAttendance()"><i class="fas fa-check-double"></i> Pilih / Batal Semua</button>
+      </div>
+
+      <div class="checkbox-group-container" id="attendanceChecklistContainer" style="max-height:220px;">
+        <div style="text-align:center; color:#94a3b8; font-size:0.85rem; padding:20px;">Sila pilih kategori dan unit.</div>
+      </div>
+
+      <div style="display:flex; gap:16px; margin-top:12px; font-weight:700; font-size:0.85rem; background:#faf5ff; padding:8px 12px; border-radius:8px;">
+        <div>Jumlah: <span id="statJumlah">0</span></div>
+        <div>Hadir: <span id="statHadir" style="color:#059669;">0</span></div>
+        <div>Peratus: <span id="statPeratus" style="color:var(--neon-accent);">0%</span></div>
+      </div>
+
+      <div class="form-actions" style="margin-top:16px;">
+        <button type="button" class="btn-secondary" onclick="closeModal('kehadiranMuridModal')">Tutup</button>
+        <button type="button" id="btnSimpanKehadiranLog" class="btn-action-purple" onclick="saveAttendanceSessionLog()">
+          <i class="fas fa-save"></i> Simpan Kehadiran
+        </button>
+        <button type="button" class="btn-download-csv" onclick="downloadAttendanceSummary()">
+          <i class="fas fa-download"></i> Muat Turun Analisis
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL CETAK ONE-PAGE REPORT (MINGGUAN / PENCAPAIAN) -->
+  <!-- MODAL: CETAK ONE-PAGE REPORT (MINGGUAN / PENCAPAIAN) -->
   <div class="modal-overlay" id="viewReportModal">
     <div class="modal-box" style="max-width:850px;">
-      <div class="modal-header no-print">
+      <div class="modal-header">
         <div class="modal-title" id="rptModalTitle"><i class="fas fa-file-invoice"></i> Paparan Laporan Kokurikulum</div>
         <div style="display:flex; gap:8px;">
-          <button class="btn-action-purple" onclick="window.print()"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
+          <button class="btn-action-purple" onclick="window.print()"><i class="fas fa-print"></i> Cetak PDF</button>
           <button class="close-modal-btn" onclick="closeModal('viewReportModal')">&times;</button>
         </div>
       </div>
@@ -1207,7 +1392,6 @@
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // MASUKKAN URL APPS SCRIPT KOKU ANDA DI SINI:
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1FuFRrtLzVZbmBzJjoeysWlHdFr6wgW1H8M_H3kBMJufEX5zCA918jGEsrPuEirhBfg/exec";
 
     const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
@@ -1233,7 +1417,9 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      event.currentTarget.classList.add('active');
+      
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (activeBtn) activeBtn.classList.add('active');
       document.getElementById(tabId).classList.add('active');
     }
 
@@ -1260,7 +1446,7 @@
 
     window.addEventListener('load', fetchKokoData);
 
-    const CACHE_KEY_LOCAL = "semanes_koko_cache_v5";
+    const CACHE_KEY_LOCAL = "semanes_koko_cache_v6";
 
     async function fetchKokoData() {
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
@@ -1288,17 +1474,57 @@
       }
     }
 
+    // Helper Dropdown Pintar Dinamik
+    function updateDynamicDropdown(elementId, dataset, propertyKey, defaultLabel) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+
+      const uniqueValues = [...new Set(
+        (dataset || [])
+          .map(item => item[propertyKey])
+          .filter(val => val !== undefined && val !== null && String(val).trim() !== '')
+      )].sort();
+
+      if (uniqueValues.length === 0) {
+        el.innerHTML = `<option value="">${defaultLabel} (Tiada Data)</option>`;
+        el.disabled = true;
+        return;
+      }
+
+      el.disabled = false;
+      el.innerHTML = `<option value="">${defaultLabel}</option>`;
+      uniqueValues.forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.innerText = val;
+        el.appendChild(opt);
+      });
+    }
+
     function renderUI(data) {
       renderEFailCards(data.efail);
 
-      populateSelect('filterMingguanSesi', data.options.sesi, "Semua Sesi");
-      populateSelect('filterPencapaianSesi', data.options.sesi, "Semua Sesi");
-      populateSelect('filterPencapaianPeringkat', data.options.peringkat, "Semua Peringkat");
+      // Kemaskini Dropdowns Dinamik untuk Penapis
+      updateDynamicDropdown('filterMingguanSesi', data.laporanMingguan, 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterPencapaianSesi', data.laporanPencapaian, 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterPencapaianPeringkat', data.laporanPencapaian, 'peringkat', 'Semua Peringkat');
+
+      updateDynamicDropdown('filterFailKokoSesi', data.failKOKO, 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterFailKokoUnit', data.failKOKO, 'unit', 'Semua Unit');
+
+      updateDynamicDropdown('filterOprSesi', data.opr, 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterOprUnit', data.opr, 'unit', 'Semua Unit');
+
+      updateDynamicDropdown('filterGuruNama', data.kehadiranGuru, 'namaGuru', 'Semua Guru');
+
+      // Dropdown Borang
       populateSelect('attSesiSelect', data.options.sesi);
       populateSelect('mSesi', data.options.sesi);
       populateSelect('pSesi', data.options.sesi);
       populateSelect('jwSesi', data.options.sesi);
       populateSelect('gaSesi', data.options.sesi);
+      populateSelect('kokoSesi', data.options.sesi);
+      populateSelect('oprSesi', data.options.sesi);
 
       populateSelect('pPeringkat', data.options.peringkat);
       populateSelect('pPencapaian', data.options.pencapaian);
@@ -1308,11 +1534,22 @@
       populateSelect('mPelapor', data.guruMaster);
       populateSelect('pPenyelaras', data.guruMaster);
       populateSelect('gaNamaGuru', data.guruMaster);
+      populateSelect('kokoPelapor', data.guruMaster);
+      populateSelect('oprPelapor', data.guruMaster);
+
+      populateSelect('kokoUnit', data.options.unitKokoSemua || []);
+      populateSelect('oprUnit', data.options.unitKokoSemua || []);
+
+      populateDatalist('listNoFailKOKO', data.options.noFailList || []);
+      populateDatalist('listNamaDokumenKOKO', data.options.namaDokumenList || []);
+      populateDatalist('listKategoriKOKO', data.options.kategoriList || []);
 
       if (activeUser && activeUser.nama) {
         document.getElementById('mPelapor').value = activeUser.nama;
         document.getElementById('pPenyelaras').value = activeUser.nama;
         document.getElementById('gaNamaGuru').value = activeUser.nama;
+        document.getElementById('kokoPelapor').value = activeUser.nama;
+        document.getElementById('oprPelapor').value = activeUser.nama;
       }
 
       populateGroupedUnits('mUnit', data.options.kategoriKoko);
@@ -1325,15 +1562,32 @@
       populateSelect('filterJwUnit', [...new Set(allUnits)], "Semua Unit");
 
       renderGuruCheckboxes(data.guruMaster);
-
       populateKelasFilters(data.muridMaster);
       filterProfileStudentDropdown();
 
+      // Render Jadual
       renderMingguanTable(data.laporanMingguan);
       renderKehadiranMasterTable(data.keahlianMurid);
       renderPencapaianTable(data.laporanPencapaian);
       renderJwTable(data.jawatankuasa);
       renderGuruTable(data.kehadiranGuru);
+      renderFailKOKOTable(data.failKOKO || []);
+      renderOPRTable(data.opr || []);
+
+      // Statistik Guru Tidak Hadir
+      renderStatistikGuru(data.statistikGuru);
+    }
+
+    function renderStatistikGuru(stat) {
+      if (!stat) return;
+      document.getElementById('statTotalGuruTidakHadir').innerText = `${stat.totalTidakHadir || 0} kali`;
+      const pecahan = stat.pecahanGuru || {};
+      const entries = Object.entries(pecahan);
+      if (entries.length === 0) {
+        document.getElementById('statPecahanGuruTidakHadir').innerText = "Tiada ketidakhadiran direkodkan setakat ini.";
+      } else {
+        document.getElementById('statPecahanGuruTidakHadir').innerHTML = entries.map(([g, c]) => `<b>${g}</b>: ${c} kali`).join(' | ');
+      }
     }
 
     function populateSelect(id, items, defaultText = "-- Pilih --") {
@@ -1343,6 +1597,17 @@
       items.forEach(v => {
         const opt = document.createElement('option');
         opt.value = v; opt.innerText = v;
+        el.appendChild(opt);
+      });
+    }
+
+    function populateDatalist(id, items) {
+      const el = document.getElementById(id);
+      if (!el || !items) return;
+      el.innerHTML = '';
+      items.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v;
         el.appendChild(opt);
       });
     }
@@ -1383,7 +1648,7 @@
       populateSelect('jwFilterKelas', kelasArr, "Semua Kelas");
     }
 
-    // --- KAD PANGKALAN DATA & PROFIL MURID ---
+    // --- PROFIL & KAD DATA MURID (DENGAN PEMBAIKAN CETAK) ---
     function filterProfileStudentDropdown() {
       const thn = document.getElementById('pFilterTahun').value;
       const kls = document.getElementById('pFilterKelas').value.toLowerCase();
@@ -1433,7 +1698,6 @@
       document.getElementById('pCardJw').innerText = jwString;
       document.getElementById('pCardPencapaian').innerHTML = pString;
 
-      // Paparkan Jumlah Kehadiran Setiap Kegiatan Kokurikulum
       document.getElementById('pAttUni').innerText = m.attUniform || 0;
       document.getElementById('pAttPer').innerText = m.attPersatuan || 0;
       document.getElementById('pAttSuk').innerText = m.attSukan || 0;
@@ -1443,7 +1707,452 @@
       box.style.display = 'block';
     }
 
-    // --- MODAL KHAS 1: CARIAN PESERTA PENCAPAIAN ---
+    // PEMBAIKAN CETAK PROFIL MURID
+    function printStudentCard() {
+      const card = document.getElementById('studentProfileCardContent');
+      if (!card || card.style.display === 'none') {
+        showToast("Sila pilih seorang murid terlebih dahulu.", true);
+        return;
+      }
+
+      const printWindow = window.open('', '', 'height=650,width=800');
+      printWindow.document.write('<html><head><title>Profil Murid - SK Mantin</title>');
+      printWindow.document.write('<style>');
+      printWindow.document.write(`
+        body { font-family: 'Plus Jakarta Sans', sans-serif; padding: 20px; color: #000; }
+        .printable-report { border: 2px solid #000; padding: 20px; }
+        .report-header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 14px; }
+        .report-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; }
+        .report-table td, .report-table th { border: 1px solid #000; padding: 8px 10px; font-size: 0.9rem; }
+        .report-table th { background: #f1f5f9; width: 30%; text-align: left; }
+      `);
+      printWindow.document.write('</style></head><body>');
+      printWindow.document.write(card.innerHTML);
+      printWindow.document.write('</body></html>');
+      printWindow.document.close();
+      printWindow.focus();
+      setTimeout(() => {
+        printWindow.print();
+        printWindow.close();
+      }, 500);
+    }
+
+    // --- TABEL FAIL KOKO & OPR ---
+    function renderFailKOKOTable(list) {
+      const tb = document.getElementById('failKokoTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod fail disimpan.</td></tr>';
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.sesi || '-'}</td>
+          <td><strong>${r.unit || '-'}</strong></td>
+          <td><span class="badge-no-fail">${r.noFail || '-'}</span></td>
+          <td>${r.namaDokumen || '-'}</td>
+          <td>${r.kategori ? `<span style="font-size:0.8rem; color:var(--text-muted);">${r.kategori}</span>` : '-'}</td>
+          <td>${r.dimuatNaikOleh || '-'}</td>
+          <td style="text-align:center;">
+            ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-external-link-alt"></i> Buka Fail</a>` : '<span style="color:#94a3b8;">-</span>'}
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterFailKOKOTable() {
+      if (!globalKokoData || !globalKokoData.failKOKO) return;
+      const sSesi = document.getElementById('filterFailKokoSesi').value;
+      const sUnit = document.getElementById('filterFailKokoUnit').value;
+      const searchTxt = document.getElementById('searchFailKOKO').value.toLowerCase();
+
+      const filtered = globalKokoData.failKOKO.filter(r => {
+        const matchSesi = !sSesi || r.sesi === sSesi;
+        const matchUnit = !sUnit || r.unit === sUnit;
+        const matchSearch = !searchTxt ||
+          (r.namaDokumen && r.namaDokumen.toLowerCase().includes(searchTxt)) ||
+          (r.noFail && r.noFail.toLowerCase().includes(searchTxt)) ||
+          (r.kategori && r.kategori.toLowerCase().includes(searchTxt));
+        return matchSesi && matchUnit && matchSearch;
+      });
+      renderFailKOKOTable(filtered);
+    }
+
+    function renderOPRTable(list) {
+      const tb = document.getElementById('oprTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod fail OPR dimuat naik.</td></tr>';
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.sesi || '-'}</td>
+          <td><strong style="color:var(--neon-accent);">${r.unit || '-'}</strong></td>
+          <td style="font-weight:600;">${r.tajuk || '-'}</td>
+          <td>${r.disediakanOleh || '-'}</td>
+          <td style="text-align:center;">
+            ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-file-pdf"></i> Buka OPR</a>` : '<span style="color:#94a3b8;">-</span>'}
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterOPRTable() {
+      if (!globalKokoData || !globalKokoData.opr) return;
+      const sSesi = document.getElementById('filterOprSesi').value;
+      const sUnit = document.getElementById('filterOprUnit').value;
+      const searchTxt = document.getElementById('searchOPR').value.toLowerCase();
+
+      const filtered = globalKokoData.opr.filter(r => {
+        const matchSesi = !sSesi || r.sesi === sSesi;
+        const matchUnit = !sUnit || r.unit === sUnit;
+        const matchSearch = !searchTxt || (r.tajuk && r.tajuk.toLowerCase().includes(searchTxt));
+        return matchSesi && matchUnit && matchSearch;
+      });
+      renderOPRTable(filtered);
+    }
+
+    // --- SUBMISSIONS FAIL KOKO & OPR ---
+    async function handleFailKOKOSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitFailKOKO');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      const fileInput = document.getElementById('kokoFile').files[0];
+      const urlManual = document.getElementById('kokoUrlManual').value.trim();
+
+      if (!fileInput && !urlManual) {
+        showToast("Sila pilih fail atau masukkan pautan Drive.", true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Dokumen';
+        return;
+      }
+
+      try {
+        let fileData = fileInput ? await fileToBase64(fileInput) : null;
+        const payload = {
+          action: 'simpan_fail_koko',
+          data: {
+            sesi: document.getElementById('kokoSesi').value,
+            unit: document.getElementById('kokoUnit').value,
+            noFail: document.getElementById('kokoNoFail').value,
+            namaDokumen: document.getElementById('kokoNamaDokumen').value,
+            kategori: document.getElementById('kokoKategori').value,
+            file: fileData,
+            urlManual: urlManual,
+            dimuatNaikOleh: document.getElementById('kokoPelapor').value
+          }
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Dokumen';
+
+        if (result.success) {
+          showToast('Fail KOKO berjaya dimuat naik & direkodkan!');
+          closeModal('modalFailKOKO');
+          document.getElementById('formFailKOKO').reset();
+          fetchKokoData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Dokumen';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    async function handleOPRKOKOSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitOPR');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan OPR...';
+
+      const fileInput = document.getElementById('oprFile').files[0];
+      const urlManual = document.getElementById('oprUrlManual').value.trim();
+
+      if (!fileInput && !urlManual) {
+        showToast("Sila pilih fail atau masukkan pautan Drive.", true);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan OPR';
+        return;
+      }
+
+      try {
+        let fileData = fileInput ? await fileToBase64(fileInput) : null;
+        const payload = {
+          action: 'simpan_opr_koko',
+          data: {
+            sesi: document.getElementById('oprSesi').value,
+            unit: document.getElementById('oprUnit').value,
+            tajuk: document.getElementById('oprTajuk').value,
+            file: fileData,
+            urlManual: urlManual,
+            disediakanOleh: document.getElementById('oprPelapor').value
+          }
+        };
+
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan OPR';
+
+        if (result.success) {
+          showToast('Fail OPR KOKO berjaya dimuat naik!');
+          closeModal('modalOPR');
+          document.getElementById('formOPRKOKO').reset();
+          fetchKokoData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan OPR';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    // --- TABEL KEHADIRAN GURU (DENGAN STATUS HADIR/TIDAK HADIR) ---
+    function renderGuruTable(list) {
+      const tb = document.getElementById('guruTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada log kehadiran guru.</td></tr>';
+        return;
+      }
+      list.forEach(r => {
+        const isHadir = r.statusHadir === 'Hadir';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.tarikh}</td>
+          <td style="font-weight:700;">${r.namaGuru}</td>
+          <td>${r.aktiviti}</td>
+          <td>Ke-${r.perjumpaan}</td>
+          <td>
+            <span class="header-badge" style="background:${isHadir ? '#dcfce7' : '#fee2e2'}; color:${isHadir ? '#15803d' : '#b91c1c'}; padding:2px 8px; font-size:0.75rem;">
+              ${r.statusHadir}
+            </span>
+          </td>
+          <td>${r.sebab}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterGuruTable() {
+      if (!globalKokoData || !globalKokoData.kehadiranGuru) return;
+      const sGuru = document.getElementById('filterGuruNama').value;
+      const sStatus = document.getElementById('filterGuruStatus').value;
+
+      const filtered = globalKokoData.kehadiranGuru.filter(r => {
+        const matchG = !sGuru || r.namaGuru === sGuru;
+        const matchS = !sStatus || r.statusHadir === sStatus;
+        return matchG && matchS;
+      });
+      renderGuruTable(filtered);
+    }
+
+    // --- FUNGSI ASAL LAIN DIKEKALKAN PENUH ---
+    function renderMingguanTable(list) {
+      const tb = document.getElementById('mingguanTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada laporan mingguan.</td></tr>';
+        return;
+      }
+      list.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.tarikh}</td>
+          <td>Ke-${item.perjumpaan}</td>
+          <td><span style="font-weight:700; color:var(--neon-dark);">${item.unit}</span></td>
+          <td style="font-weight:600;">${item.tajuk}</td>
+          <td><span style="font-weight:700; color:#059669;">${item.kehadiran}</span></td>
+          <td>${item.disediakanOleh}</td>
+          <td style="text-align:center;">
+            <button class="btn-link-file" onclick="viewMingguanDetails(${item.id})"><i class="fas fa-eye"></i> Buka / Print</button>
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterMingguanTable() {
+      const sSesi = document.getElementById('filterMingguanSesi').value;
+      const sKat = document.getElementById('filterMingguanKategori').value;
+      const sUnit = document.getElementById('filterMingguanUnit').value;
+
+      let filtered = globalKokoData.laporanMingguan;
+      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
+
+      if (sUnit) {
+        filtered = filtered.filter(r => r.unit == sUnit);
+      } else if (sKat) {
+        const unitsInKat = globalKokoData.options.kategoriKoko[sKat] || [];
+        filtered = filtered.filter(r => unitsInKat.includes(r.unit));
+      }
+
+      renderMingguanTable(filtered);
+    }
+
+    function handleFilterKategoriChange() {
+      const kat = document.getElementById('filterMingguanKategori').value;
+      if (!kat) {
+        const allUnits = [];
+        Object.values(globalKokoData.options.kategoriKoko).forEach(list => allUnits.push(...list));
+        populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
+      } else {
+        const units = globalKokoData.options.kategoriKoko[kat] || [];
+        populateSelect('filterMingguanUnit', units, "Semua Unit dalam Kategori");
+      }
+      filterMingguanTable();
+    }
+
+    function renderKehadiranMasterTable(list) {
+      const tb = document.getElementById('kehadiranMasterTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod data murid.</td></tr>';
+        return;
+      }
+      list.forEach(m => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:700;">${m.nama}</td>
+          <td>${m.tahun} ${m.kelas}</td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attUniform || 0} kali</span></td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attPersatuan || 0} kali</span></td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attSukan || 0} kali</span></td>
+          <td style="text-align:center;"><span class="profile-badge">${m.attRumahSukan || 0} kali</span></td>
+          <td style="text-align:center; font-weight:700; color:var(--neon-accent);">${m.totalHadir || 0}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterKehadiranMuridTable() {
+      const q = document.getElementById('searchKehadiranMurid').value.toLowerCase();
+      const thn = document.getElementById('filterKehadiranTahun').value;
+      let filtered = globalKokoData.keahlianMurid;
+
+      if (thn) filtered = filtered.filter(m => (m.tahun || '').toString().includes(thn));
+      if (q) filtered = filtered.filter(m => m.nama.toLowerCase().includes(q) || (m.kelas || '').toLowerCase().includes(q));
+      renderKehadiranMasterTable(filtered);
+    }
+
+    function downloadAllAttendanceCSV() {
+      let csv = "Nama Murid,Tahun,Kelas,Kehadiran Uniform,Kehadiran Persatuan,Kehadiran Sukan,Kehadiran Rumah Sukan,Jumlah Kehadiran\n";
+      globalKokoData.keahlianMurid.forEach(m => {
+        csv += `"${m.nama}","${m.tahun}","${m.kelas}",${m.attUniform || 0},${m.attPersatuan || 0},${m.attSukan || 0},${m.attRumahSukan || 0},${m.totalHadir || 0}\n`;
+      });
+      downloadCSV(csv, "Rekod_Jumlah_Kehadiran_Kokurikulum_Murid.csv");
+    }
+
+    function renderPencapaianTable(list) {
+      const tb = document.getElementById('pencapaianTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada rekod pencapaian.</td></tr>';
+        return;
+      }
+
+      list.forEach(item => {
+        const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
+        if (muridArr.length === 0) muridArr.push('-');
+
+        muridArr.forEach(namaMurid => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td style="font-weight:700;">${namaMurid}</td>
+            <td>${item.program}</td>
+            <td><span class="header-badge" style="padding:2px 8px; font-size:0.75rem;">${item.peringkat}</span></td>
+            <td style="font-weight:700; color:var(--neon-accent);">${item.pencapaian}</td>
+            <td>${item.penyelaras}</td>
+            <td style="text-align:center;">
+              <button class="btn-link-file" onclick="viewPencapaianDetails(${item.id})"><i class="fas fa-eye"></i> Laporan</button>
+            </td>
+          `;
+          tb.appendChild(tr);
+        });
+      });
+    }
+
+    function filterPencapaianTable() {
+      const q = document.getElementById('searchPesertaInput').value.toLowerCase();
+      const sSesi = document.getElementById('filterPencapaianSesi').value;
+      const sPeringkat = document.getElementById('filterPencapaianPeringkat').value;
+
+      let filtered = globalKokoData.laporanPencapaian;
+      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
+      if (sPeringkat) filtered = filtered.filter(r => r.peringkat == sPeringkat);
+      if (q) filtered = filtered.filter(r => (r.peserta || '').toLowerCase().includes(q) || (r.program || '').toLowerCase().includes(q));
+
+      renderPencapaianTable(filtered);
+    }
+
+    function downloadPencapaianCSV() {
+      let csv = "Nama Murid,Program,Peringkat,Pencapaian,Guru Penyelaras\n";
+      globalKokoData.laporanPencapaian.forEach(item => {
+        const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
+        muridArr.forEach(n => {
+          csv += `"${n}","${item.program}","${item.peringkat}","${item.pencapaian}","${item.penyelaras}"\n`;
+        });
+      });
+      downloadCSV(csv, "Pencapaian_Kokurikulum_SK_Mantin.csv");
+    }
+
+    function renderJwTable(list) {
+      const tb = document.getElementById('jwTableBody');
+      tb.innerHTML = '';
+      if (!list || list.length === 0) {
+        tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod jawatankuasa.</td></tr>';
+        return;
+      }
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span style="font-weight:700; color:var(--neon-dark);">${r.unit}</span></td>
+          <td style="font-weight:700;">${r.jawatan}</td>
+          <td>${r.nama}</td>
+          <td>${r.tahun} ${r.kelas}</td>
+          <td>${r.sesi}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterJwTable() {
+      const sUnit = document.getElementById('filterJwUnit').value;
+      let filtered = globalKokoData.jawatankuasa;
+      if (sUnit) filtered = filtered.filter(r => r.unit == sUnit);
+      renderJwTable(filtered);
+    }
+
+    function downloadJwCSV() {
+      let csv = "Unit,Jawatan,Nama Murid,Tahun,Kelas,Sesi\n";
+      globalKokoData.jawatankuasa.forEach(r => {
+        csv += `"${r.unit}","${r.jawatan}","${r.nama}","${r.tahun}","${r.kelas}","${r.sesi}"\n`;
+      });
+      downloadCSV(csv, "Jawatankuasa_Murid_Kokurikulum.csv");
+    }
+
+    // Modal Helpers
     function openModalPilihPeserta() {
       selectedPesertaSet.clear();
       filterPesertaList();
@@ -1497,7 +2206,6 @@
       closeModal('modalPilihPeserta');
     }
 
-    // --- MODAL KHAS 2: CARIAN MURID JAWATANKUASA ---
     function openModalPilihMuridJw() {
       selectedJwStudent = null;
       document.getElementById('jwPickedLabel').innerText = "Pilih seorang murid";
@@ -1556,7 +2264,6 @@
       }
     }
 
-    // --- CHECKLIST KEHADIRAN DINAMIK MODAL ---
     function populateAttUnitSelect() {
       const kat = document.getElementById('attKategoriSelect').value;
       const unitSelect = document.getElementById('attUnitSelect');
@@ -1591,7 +2298,6 @@
         return;
       }
 
-      // Tapis murid mengikut unit kokurikulum yang dipilih
       let matched = globalKokoData.keahlianMurid.filter(m => (m[kat] || '').trim().toLowerCase() === unit.trim().toLowerCase());
       matched.sort((a, b) => {
         if (a.tahun !== b.tahun) return a.tahun.localeCompare(b.tahun);
@@ -1665,7 +2371,6 @@
         return;
       }
 
-      // Senaraikan murid yang ditanda hadir
       const senaraiMuridHadir = Object.values(attendanceState).filter(s => s.hadir).map(s => s.nama);
 
       btn.disabled = true;
@@ -1689,8 +2394,8 @@
         btn.innerHTML = '<i class="fas fa-save"></i> Simpan Kehadiran';
 
         if (result.success) {
-          showToast('Kehadiran berjaya disimpan dan dikemas kini!');
-          fetchKokoData(); // Segarkan data kiraan kehadiran
+          showToast('Kehadiran berjaya disimpan!');
+          fetchKokoData();
         } else {
           showToast('Ralat: ' + result.message, true);
         }
@@ -1722,215 +2427,6 @@
       downloadCSV(csv, `Analisis_Kehadiran_${unit}.csv`);
     }
 
-    // --- REKOD KEHADIRAN MURID (JUMLAH KEHADIRAN MENGIKUT KEGIATAN KOKU) ---
-    function renderKehadiranMasterTable(list) {
-      const tb = document.getElementById('kehadiranMasterTableBody');
-      tb.innerHTML = '';
-      if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod data murid.</td></tr>';
-        return;
-      }
-      list.forEach(m => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td style="font-weight:700;">${m.nama}</td>
-          <td>${m.tahun} ${m.kelas}</td>
-          <td style="text-align:center;"><span class="profile-badge">${m.attUniform || 0} kali</span></td>
-          <td style="text-align:center;"><span class="profile-badge">${m.attPersatuan || 0} kali</span></td>
-          <td style="text-align:center;"><span class="profile-badge">${m.attSukan || 0} kali</span></td>
-          <td style="text-align:center;"><span class="profile-badge">${m.attRumahSukan || 0} kali</span></td>
-          <td style="text-align:center; font-weight:700; color:var(--neon-accent);">${m.totalHadir || 0}</td>
-        `;
-        tb.appendChild(tr);
-      });
-    }
-
-    function filterKehadiranMuridTable() {
-      const q = document.getElementById('searchKehadiranMurid').value.toLowerCase();
-      const thn = document.getElementById('filterKehadiranTahun').value;
-      let filtered = globalKokoData.keahlianMurid;
-
-      if (thn) filtered = filtered.filter(m => (m.tahun || '').toString().includes(thn));
-      if (q) filtered = filtered.filter(m => m.nama.toLowerCase().includes(q) || (m.kelas || '').toLowerCase().includes(q));
-      renderKehadiranMasterTable(filtered);
-    }
-
-    function downloadAllAttendanceCSV() {
-      let csv = "Nama Murid,Tahun,Kelas,Kehadiran Uniform,Kehadiran Persatuan,Kehadiran Sukan,Kehadiran Rumah Sukan,Jumlah Kehadiran\n";
-      globalKokoData.keahlianMurid.forEach(m => {
-        csv += `"${m.nama}","${m.tahun}","${m.kelas}",${m.attUniform || 0},${m.attPersatuan || 0},${m.attSukan || 0},${m.attRumahSukan || 0},${m.totalHadir || 0}\n`;
-      });
-      downloadCSV(csv, "Rekod_Jumlah_Kehadiran_Kokurikulum_Murid.csv");
-    }
-
-    // --- TABEL LAPORAN MINGGUAN & PENAPIS BERTINGKAT ---
-    function handleFilterKategoriChange() {
-      const kat = document.getElementById('filterMingguanKategori').value;
-      if (!kat) {
-        const allUnits = [];
-        Object.values(globalKokoData.options.kategoriKoko).forEach(list => allUnits.push(...list));
-        populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
-      } else {
-        const units = globalKokoData.options.kategoriKoko[kat] || [];
-        populateSelect('filterMingguanUnit', units, "Semua Unit dalam Kategori");
-      }
-      filterMingguanTable();
-    }
-
-    function renderMingguanTable(list) {
-      const tb = document.getElementById('mingguanTableBody');
-      tb.innerHTML = '';
-      if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada laporan mingguan.</td></tr>';
-        return;
-      }
-      list.forEach(item => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${item.tarikh}</td>
-          <td>Ke-${item.perjumpaan}</td>
-          <td><span style="font-weight:700; color:var(--neon-dark);">${item.unit}</span></td>
-          <td style="font-weight:600;">${item.tajuk}</td>
-          <td><span style="font-weight:700; color:#059669;">${item.kehadiran}</span></td>
-          <td>${item.disediakanOleh}</td>
-          <td style="text-align:center;">
-            <button class="btn-link-file" onclick="viewMingguanDetails(${item.id})"><i class="fas fa-eye"></i> Buka / Print</button>
-          </td>
-        `;
-        tb.appendChild(tr);
-      });
-    }
-
-    function filterMingguanTable() {
-      const sSesi = document.getElementById('filterMingguanSesi').value;
-      const sKat = document.getElementById('filterMingguanKategori').value;
-      const sUnit = document.getElementById('filterMingguanUnit').value;
-
-      let filtered = globalKokoData.laporanMingguan;
-      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
-
-      if (sUnit) {
-        filtered = filtered.filter(r => r.unit == sUnit);
-      } else if (sKat) {
-        const unitsInKat = globalKokoData.options.kategoriKoko[sKat] || [];
-        filtered = filtered.filter(r => unitsInKat.includes(r.unit));
-      }
-
-      renderMingguanTable(filtered);
-    }
-
-    // --- TABEL PENCAPAIAN ---
-    function renderPencapaianTable(list) {
-      const tb = document.getElementById('pencapaianTableBody');
-      tb.innerHTML = '';
-      if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada rekod pencapaian.</td></tr>';
-        return;
-      }
-
-      list.forEach(item => {
-        const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
-        if (muridArr.length === 0) muridArr.push('-');
-
-        muridArr.forEach(namaMurid => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = `
-            <td style="font-weight:700;">${namaMurid}</td>
-            <td>${item.program}</td>
-            <td><span class="header-badge" style="padding:2px 8px; font-size:0.75rem;">${item.peringkat}</span></td>
-            <td style="font-weight:700; color:var(--neon-accent);">${item.pencapaian}</td>
-            <td>${item.penyelaras}</td>
-            <td style="text-align:center;">
-              <button class="btn-link-file" onclick="viewPencapaianDetails(${item.id})"><i class="fas fa-eye"></i> Laporan</button>
-            </td>
-          `;
-          tb.appendChild(tr);
-        });
-      });
-    }
-
-    function filterPencapaianTable() {
-      const q = document.getElementById('searchPesertaInput').value.toLowerCase();
-      const sSesi = document.getElementById('filterPencapaianSesi').value;
-      const sPeringkat = document.getElementById('filterPencapaianPeringkat').value;
-
-      let filtered = globalKokoData.laporanPencapaian;
-      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
-      if (sPeringkat) filtered = filtered.filter(r => r.peringkat == sPeringkat);
-      if (q) filtered = filtered.filter(r => (r.peserta || '').toLowerCase().includes(q) || (r.program || '').toLowerCase().includes(q));
-
-      renderPencapaianTable(filtered);
-    }
-
-    function downloadPencapaianCSV() {
-      let csv = "Nama Murid,Program,Peringkat,Pencapaian,Guru Penyelaras\n";
-      globalKokoData.laporanPencapaian.forEach(item => {
-        const muridArr = (item.peserta || '').split(/,|\n/).map(s => s.trim()).filter(s => s !== '');
-        muridArr.forEach(n => {
-          csv += `"${n}","${item.program}","${item.peringkat}","${item.pencapaian}","${item.penyelaras}"\n`;
-        });
-      });
-      downloadCSV(csv, "Pencapaian_Kokurikulum_SK_Mantin.csv");
-    }
-
-    // --- TABEL JAWATANKUASA ---
-    function renderJwTable(list) {
-      const tb = document.getElementById('jwTableBody');
-      tb.innerHTML = '';
-      if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod jawatankuasa.</td></tr>';
-        return;
-      }
-      list.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><span style="font-weight:700; color:var(--neon-dark);">${r.unit}</span></td>
-          <td style="font-weight:700;">${r.jawatan}</td>
-          <td>${r.nama}</td>
-          <td>${r.tahun} ${r.kelas}</td>
-          <td>${r.sesi}</td>
-        `;
-        tb.appendChild(tr);
-      });
-    }
-
-    function filterJwTable() {
-      const sUnit = document.getElementById('filterJwUnit').value;
-      let filtered = globalKokoData.jawatankuasa;
-      if (sUnit) filtered = filtered.filter(r => r.unit == sUnit);
-      renderJwTable(filtered);
-    }
-
-    function downloadJwCSV() {
-      let csv = "Unit,Jawatan,Nama Murid,Tahun,Kelas,Sesi\n";
-      globalKokoData.jawatankuasa.forEach(r => {
-        csv += `"${r.unit}","${r.jawatan}","${r.nama}","${r.tahun}","${r.kelas}","${r.sesi}"\n`;
-      });
-      downloadCSV(csv, "Jawatankuasa_Murid_Kokurikulum.csv");
-    }
-
-    // --- TABEL KEHADIRAN GURU ---
-    function renderGuruTable(list) {
-      const tb = document.getElementById('guruTableBody');
-      tb.innerHTML = '';
-      if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada log kehadiran guru.</td></tr>';
-        return;
-      }
-      list.forEach(r => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.tarikh}</td>
-          <td style="font-weight:700;">${r.namaGuru}</td>
-          <td>${r.aktiviti}</td>
-          <td>Ke-${r.perjumpaan}</td>
-          <td><span class="header-badge" style="padding:2px 8px; font-size:0.75rem;">${r.sebab}</span></td>
-        `;
-        tb.appendChild(tr);
-      });
-    }
-
-    // --- SUBMISSION FORMS ---
     async function handleMingguanSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitMingguan');
@@ -2113,7 +2609,7 @@
       }
     }
 
-    // --- CETAK LAPORAN ONE-PAGE REPORT ---
+    // Cetakan Laporan
     function viewMingguanDetails(id) {
       const item = globalKokoData.laporanMingguan.find(m => m.id === id);
       if (!item) return;
