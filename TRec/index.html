@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>eTasmik - SK Mantin (SeMaNeS)</title>
+  <title>TRec - SK Mantin (SeMaNeS)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+  <!-- Favicon & Mobile Web App Icons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#10b981">
@@ -32,30 +34,51 @@
     body { background-color: var(--bg-page); color: var(--text-main); padding: 18px 14px; min-height: 100vh; }
     .container { max-width: 1200px; margin: 0 auto; }
 
+    /* BAR NAVIGASI ATAS DENGAN BUTANG KEMBALI KE HOMEPAGE */
     .top-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 22px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-soft);
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--border-soft);
     }
 
-    .btn-back {
+    .btn-back-home {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 8px 14px;
+      gap: 8px;
+      padding: 10px 16px;
       background: #ffffff;
       color: var(--neon-accent);
       border: 1.5px solid var(--neon-green);
       border-radius: 12px;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       text-decoration: none;
-      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+      transition: all 0.25s ease;
     }
-    .btn-back:hover { background: var(--neon-green); color: #ffffff; box-shadow: 0 0 14px var(--neon-green-glow); }
+
+    .btn-back-home:hover {
+      background: var(--neon-green);
+      color: #ffffff;
+      box-shadow: 0 0 16px var(--neon-green-glow);
+      transform: translateY(-2px);
+    }
+
+    .user-info-pill {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--neon-accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--neon-subtle);
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(16, 185, 129, 0.25);
+    }
 
     .app-title-box { margin-bottom: 22px; }
     .app-badge {
@@ -70,7 +93,7 @@
       border: 1px solid rgba(16, 185, 129, 0.3);
       box-shadow: 0 0 10px rgba(16, 185, 129, 0.15);
     }
-    .app-title { font-size: 1.75rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+    .app-title { font-size: 1.8rem; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
 
     /* PANEL TAPISAN */
     .filter-card {
@@ -360,18 +383,19 @@
 <body>
 
   <div class="container">
+    <!-- BAR NAVIGASI ATAS: BUTANG KEMBALI KE HOMEPAGE & INFO PENGGUNA -->
     <div class="top-header">
-      <a href="./index.html" class="btn-back">
-        <i class="fas fa-arrow-left"></i> Menu Utama
+      <a href="../index.html" class="btn-back-home">
+        <i class="fas fa-home"></i> Kembali ke Homepage
       </a>
-      <div style="font-size:0.85rem; font-weight:700; color:var(--neon-accent);">
+      <div class="user-info-pill">
         <i class="fas fa-user-circle"></i> <span id="currentTeacherLabel">Memuatkan...</span>
       </div>
     </div>
 
     <div class="app-title-box">
-      <span class="app-badge">MODUL PENDIDIKAN ISLAM</span>
-      <h1 class="app-title">Sistem TRec SK Mantin</h1>
+      <span class="app-badge">SISTEM TRec PENDIDIKAN ISLAM</span>
+      <h1 class="app-title">Rekod Bacaan Tasmik SK Mantin</h1>
     </div>
 
     <!-- PANEL TAPISAN -->
@@ -472,7 +496,7 @@
 
   <script>
     // MASUKKAN URL STANDALONE APPS SCRIPT eTASMIK DI SINI:
-    const ETASMIK_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzf4c8BVEj6ZE2_7B2QejfNyqaZi7GS7_aqQnOTcwwFoGyAR5DYsFzlCNJYBhFWIbY/exec";
+    const ETASMIK_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
     let allStudents = [];
     let dropdownData = {};
@@ -529,18 +553,21 @@
       const fKelas = document.getElementById('filterKelas');
       const fGuru = document.getElementById('filterGuru');
 
+      fTahun.innerHTML = '<option value="">Semua Tahun</option>';
       dropdownData.tahun.forEach(t => {
         const opt = document.createElement('option');
         opt.value = t; opt.innerText = "Tahun " + t;
         fTahun.appendChild(opt);
       });
 
+      fKelas.innerHTML = '<option value="">Semua Kelas</option>';
       dropdownData.kelas.forEach(k => {
         const opt = document.createElement('option');
         opt.value = k; opt.innerText = k;
         fKelas.appendChild(opt);
       });
 
+      fGuru.innerHTML = '<option value="">Semua Guru Tasmik</option>';
       dropdownData.guruTasmik.forEach(g => {
         const opt = document.createElement('option');
         opt.value = g; opt.innerText = g;
