@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TRec - SK Mantin (SeMaNeS)</title>
+  <title>TRec (eTasmik) - SK Mantin (SeMaNeS)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -16,6 +16,17 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#10b981">
+
+  <script>
+    // ==========================================
+    // SISTEM KESELAMATAN (AUTH GUARD PANTAS)
+    // ==========================================
+    const sessionUserData = sessionStorage.getItem("semanes_user");
+    if (!sessionUserData) {
+      alert("Sila log masuk terlebih dahulu untuk mengakses sistem TRec.");
+      window.location.replace("../login.html");
+    }
+  </script>
 
   <style>
     :root {
@@ -34,7 +45,7 @@
     body { background-color: var(--bg-page); color: var(--text-main); padding: 18px 14px; min-height: 100vh; }
     .container { max-width: 1200px; margin: 0 auto; }
 
-    /* BAR NAVIGASI ATAS DENGAN BUTANG KEMBALI KE HOMEPAGE */
+    /* BAR NAVIGASI ATAS */
     .top-header {
       display: flex;
       justify-content: space-between;
@@ -133,6 +144,26 @@
       background: #ffffff;
       border-color: var(--neon-green);
       box-shadow: 0 0 12px var(--neon-green-glow);
+    }
+
+    .btn-sync {
+      padding: 10px 14px;
+      background: #ffffff;
+      color: var(--text-muted);
+      border: 1.5px solid var(--border-soft);
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 18px;
+      transition: all 0.2s;
+    }
+    .btn-sync:hover {
+      border-color: var(--neon-green);
+      color: var(--neon-accent);
     }
 
     .summary-bar {
@@ -383,7 +414,7 @@
 <body>
 
   <div class="container">
-    <!-- BAR NAVIGASI ATAS: BUTANG KEMBALI KE HOMEPAGE & INFO PENGGUNA -->
+    <!-- BAR NAVIGASI ATAS: BUTANG KEMBALI & PROFIL GURU -->
     <div class="top-header">
       <a href="../index.html" class="btn-back-home">
         <i class="fas fa-home"></i> Kembali ke Homepage
@@ -425,6 +456,10 @@
         <label class="filter-label">Cari Nama Murid:</label>
         <input type="text" id="filterSearch" class="search-box" placeholder="Menaip nama murid..." oninput="applyFilters()">
       </div>
+
+      <button type="button" class="btn-sync" onclick="refreshData(true)" title="Segarkan Cache Data">
+        <i class="fas fa-sync-alt" id="syncIcon"></i> Segar
+      </button>
     </div>
 
     <div class="summary-bar">
@@ -495,8 +530,12 @@
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // MASUKKAN URL STANDALONE APPS SCRIPT eTASMIK DI SINI:
+    // MASUKKAN URL STANDALONE APPS SCRIPT eTASMIK ANDA DI SINI:
     const ETASMIK_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
+
+    const CLIENT_CACHE_KEY = "trec_client_cache_v1";
+    const CLIENT_CACHE_TIME_KEY = "trec_client_cache_time";
+    const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 Minit client cache
 
     let allStudents = [];
     let dropdownData = {};
@@ -515,18 +554,48 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     window.addEventListener('load', () => {
+      // Dapatkan maklumat sesi guru yang disahkan
       const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
       if (activeUser && activeUser.nama) {
         activeLoggedInTeacher = activeUser.nama;
         document.getElementById('currentTeacherLabel').innerText = activeLoggedInTeacher;
-      } else {
-        document.getElementById('currentTeacherLabel').innerText = "Guru Tetamu";
       }
 
-      loadEtasmikData();
+      // 1. Semak cache pelayar terlebih dahulu untuk paparan instant (0 saat)
+      const cachedTime = localStorage.getItem(CLIENT_CACHE_TIME_KEY);
+      const cachedPayload = localStorage.getItem(CLIENT_CACHE_KEY);
+      const isFresh = cachedTime && (Date.now() - parseInt(cachedTime)) < CACHE_DURATION_MS;
+
+      if (cachedPayload && isFresh) {
+        try {
+          const parsed = JSON.parse(cachedPayload);
+          allStudents = parsed.murid;
+          dropdownData = parsed.dropdown;
+          populateFilters();
+          applyFilters();
+          // Segarkan data di latar belakang secara senyap
+          fetchBackendData(false);
+          return;
+        } catch(e) {}
+      }
+
+      // Jika tiada cache atau cache tamat tempoh, muat turun biasa
+      fetchBackendData(true);
     });
 
-    async function loadEtasmikData() {
+    async function fetchBackendData(showLoading = false) {
+      const syncIcon = document.getElementById('syncIcon');
+      if (syncIcon) syncIcon.classList.add('fa-spin');
+
+      if (showLoading && allStudents.length === 0) {
+        document.getElementById('studentGrid').innerHTML = `
+          <div style="grid-column: 1/-1; text-align:center; padding:40px; color:#94a3b8;">
+            <i class="fas fa-spinner fa-spin fa-2x" style="color:var(--neon-green);"></i>
+            <p style="margin-top:10px;">Sedang memuatkan data murid dari Google Sheets...</p>
+          </div>
+        `;
+      }
+
       try {
         const res = await fetch(ETASMIK_APPS_SCRIPT_URL, {
           method: 'POST',
@@ -538,14 +607,30 @@
         if (data.success) {
           allStudents = data.murid;
           dropdownData = data.dropdown;
+
+          // Simpan ke Cache Pelayar
+          localStorage.setItem(CLIENT_CACHE_KEY, JSON.stringify(data));
+          localStorage.setItem(CLIENT_CACHE_TIME_KEY, Date.now().toString());
+
           populateFilters();
           applyFilters();
         } else {
           showToast("Gagal memuatkan data: " + data.message, true);
         }
       } catch (err) {
-        showToast("Ralat sambungan: " + err.toString(), true);
+        if (allStudents.length === 0) {
+          showToast("Ralat sambungan: " + err.toString(), true);
+        }
+      } finally {
+        if (syncIcon) syncIcon.classList.remove('fa-spin');
       }
+    }
+
+    function refreshData(manual = true) {
+      if (manual) showToast("Menyegarkan data terkini dari pangkalan data...");
+      localStorage.removeItem(CLIENT_CACHE_KEY);
+      localStorage.removeItem(CLIENT_CACHE_TIME_KEY);
+      fetchBackendData(true);
     }
 
     function populateFilters() {
@@ -553,25 +638,33 @@
       const fKelas = document.getElementById('filterKelas');
       const fGuru = document.getElementById('filterGuru');
 
+      const curTahun = fTahun.value;
+      const curKelas = fKelas.value;
+      const curGuru = fGuru.value;
+
       fTahun.innerHTML = '<option value="">Semua Tahun</option>';
-      dropdownData.tahun.forEach(t => {
+      (dropdownData.tahun || []).forEach(t => {
         const opt = document.createElement('option');
         opt.value = t; opt.innerText = "Tahun " + t;
+        if (t === curTahun) opt.selected = true;
         fTahun.appendChild(opt);
       });
 
       fKelas.innerHTML = '<option value="">Semua Kelas</option>';
-      dropdownData.kelas.forEach(k => {
+      (dropdownData.kelas || []).forEach(k => {
         const opt = document.createElement('option');
         opt.value = k; opt.innerText = k;
+        if (k === curKelas) opt.selected = true;
         fKelas.appendChild(opt);
       });
 
       fGuru.innerHTML = '<option value="">Semua Guru Tasmik</option>';
-      dropdownData.guruTasmik.forEach(g => {
+      (dropdownData.guruTasmik || []).forEach(g => {
         const opt = document.createElement('option');
         opt.value = g; opt.innerText = g;
-        if (activeLoggedInTeacher && g.toLowerCase().includes(activeLoggedInTeacher.toLowerCase())) {
+        if (curGuru) {
+          if (g === curGuru) opt.selected = true;
+        } else if (activeLoggedInTeacher && g.toLowerCase().includes(activeLoggedInTeacher.toLowerCase())) {
           opt.selected = true;
         }
         fGuru.appendChild(opt);
@@ -617,7 +710,7 @@
       grid.innerHTML = '';
 
       if (students.length === 0) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#94a3b8;">Tiada murid Islam dijumpai untuk kriteria ini.</div>';
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding:40px; color:#94a3b8;">Tiada rekod murid Islam yang sepadan dengan tapisan ini.</div>';
         return;
       }
 
@@ -679,7 +772,7 @@
 
       const mBacaan = document.getElementById('mBacaan');
       mBacaan.innerHTML = '<option value="">-- Pilih Bacaan --</option>';
-      dropdownData.bacaan.forEach(b => {
+      (dropdownData.bacaan || []).forEach(b => {
         const opt = document.createElement('option');
         opt.value = b; opt.innerText = b;
         if (student.bacaan && student.bacaan.toLowerCase() === b.toLowerCase()) opt.selected = true;
@@ -688,7 +781,7 @@
 
       const mGuru = document.getElementById('mGuruTasmik');
       mGuru.innerHTML = '<option value="">-- Pilih Guru Tasmik --</option>';
-      dropdownData.guruTasmik.forEach(g => {
+      (dropdownData.guruTasmik || []).forEach(g => {
         const opt = document.createElement('option');
         opt.value = g; opt.innerText = g;
         if (student.guruTasmik && student.guruTasmik.toLowerCase() === g.toLowerCase()) {
@@ -769,6 +862,7 @@
           showToast("Rekod tasmik berjaya dikemas kini!");
           closeModal('tasmikModal');
 
+          // Kemas kini paparan aktif tempatan serta-merta
           const target = allStudents.find(s => s.rowIndex === rowIndex);
           if (target) {
             target.bacaan = bacaan;
@@ -779,6 +873,10 @@
             const now = new Date();
             target.tarikhKemaskini = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth()+1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
           }
+
+          // Segarkan data simpanan cache pelayar tempatan
+          localStorage.setItem(CLIENT_CACHE_KEY, JSON.stringify({ murid: allStudents, dropdown: dropdownData }));
+
           applyFilters();
         } else {
           showToast("Ralat: " + result.message, true);
