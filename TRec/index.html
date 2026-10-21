@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN untuk Carta Donut & Bar Analisis -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <!-- Favicon & Mobile Web App Icons -->
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -125,7 +127,7 @@
       flex-direction: column;
       gap: 4px;
       flex: 1;
-      min-width: 150px;
+      min-width: 140px;
     }
 
     .filter-label { font-size: 0.78rem; font-weight: 700; color: var(--text-muted); }
@@ -166,14 +168,59 @@
       color: var(--neon-accent);
     }
 
+    /* BAR RINGKASAN & BUTANG TINDAKAN */
     .summary-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
       margin-bottom: 16px;
       font-size: 0.85rem;
       color: var(--text-muted);
       font-weight: 600;
+    }
+
+    .action-btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-chart {
+      background: #eff6ff;
+      color: #2563eb;
+      border-color: #93c5fd;
+    }
+    .btn-chart:hover {
+      background: #2563eb;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
+    }
+
+    .btn-download {
+      background: #f0fdf4;
+      color: var(--neon-accent);
+      border-color: var(--neon-green);
+    }
+    .btn-download:hover {
+      background: var(--neon-green);
+      color: #ffffff;
+      box-shadow: 0 0 12px var(--neon-green-glow);
     }
 
     .checkbox-my-students {
@@ -303,7 +350,7 @@
       box-shadow: 0 6px 18px rgba(16, 185, 129, 0.6);
     }
 
-    /* MODAL */
+    /* MODAL UMUM */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
@@ -326,9 +373,26 @@
       padding: 26px;
       box-shadow: 0 25px 50px rgba(0,0,0,0.15), 0 0 25px rgba(16, 185, 129, 0.2);
       border: 1px solid var(--border-soft);
+      animation: modalFade 0.25s ease-out;
     }
 
-    .modal-title { font-size: 1.25rem; font-weight: 800; margin-bottom: 16px; color: #0f172a; }
+    .modal-card-large {
+      max-width: 800px;
+    }
+
+    @keyframes modalFade { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
+
+    .modal-header-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .modal-title { font-size: 1.25rem; font-weight: 800; color: #0f172a; }
+    .close-modal-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
     
     .form-group { margin-bottom: 14px; text-align: left; }
     .form-label { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); display: block; margin-bottom: 5px; }
@@ -394,6 +458,41 @@
       cursor: pointer;
     }
 
+    /* KAD ANALISIS & CARTA */
+    .analysis-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-box {
+      background: #f8fafc;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      text-align: center;
+    }
+    .stat-num { font-size: 1.6rem; font-weight: 800; color: var(--neon-accent); }
+    .stat-lbl { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); margin-top: 2px; }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: center;
+    }
+    @media (max-width: 700px) {
+      .charts-grid { grid-template-columns: 1fr; }
+    }
+    .chart-container-box {
+      background: #f8fafc;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid var(--border-soft);
+      text-align: center;
+    }
+    .chart-title { font-size: 0.85rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+
     .toast-msg {
       position: fixed;
       bottom: 25px;
@@ -414,7 +513,7 @@
 <body>
 
   <div class="container">
-    <!-- BAR NAVIGASI ATAS: BUTANG KEMBALI & PROFIL GURU -->
+    <!-- BAR NAVIGASI ATAS -->
     <div class="top-header">
       <a href="../index.html" class="btn-back-home">
         <i class="fas fa-home"></i> Kembali ke Homepage
@@ -429,7 +528,7 @@
       <h1 class="app-title">Rekod Bacaan Tasmik SK Mantin</h1>
     </div>
 
-    <!-- PANEL TAPISAN -->
+    <!-- PANEL TAPISAN LENGKAP -->
     <div class="filter-card">
       <div class="filter-item">
         <label class="filter-label">Tahun:</label>
@@ -442,6 +541,14 @@
         <label class="filter-label">Kelas:</label>
         <select id="filterKelas" class="filter-select" onchange="applyFilters()">
           <option value="">Semua Kelas</option>
+        </select>
+      </div>
+
+      <!-- FILTER TAHAP / BACAAN BAHARU -->
+      <div class="filter-item">
+        <label class="filter-label">Tahap / Bacaan:</label>
+        <select id="filterBacaan" class="filter-select" onchange="applyFilters()">
+          <option value="">Semua Bacaan</option>
         </select>
       </div>
 
@@ -462,11 +569,25 @@
       </button>
     </div>
 
+    <!-- BAR RINGKASAN & BUTANG ANALISIS / EXPORT -->
     <div class="summary-bar">
-      <div>Memaparkan: <strong id="studentCount" style="color:var(--neon-accent);">0</strong> murid (Agama Islam)</div>
       <div>
-        <label class="checkbox-my-students">
-          <input type="checkbox" id="checkOnlyMyStudents" onchange="toggleMyStudentsFilter()"> Tunjuk Murid Bawah Saya Sahaja
+        Memaparkan: <strong id="studentCount" style="color:var(--neon-accent);">0</strong> murid (Agama Islam)
+      </div>
+
+      <div class="action-btn-group">
+        <!-- BUTANG BUKA CARTA ANALISIS -->
+        <button type="button" class="btn-action-pill btn-chart" onclick="openAnalysisModal()">
+          <i class="fas fa-chart-pie"></i> Analisis Bacaan
+        </button>
+
+        <!-- BUTANG MUAT TURUN SENARAI MENGIKUT FILTER -->
+        <button type="button" class="btn-action-pill btn-download" onclick="exportFilteredStudentsCSV()">
+          <i class="fas fa-file-excel"></i> Muat Turun Senarai
+        </button>
+
+        <label class="checkbox-my-students" style="margin-left: 6px;">
+          <input type="checkbox" id="checkOnlyMyStudents" onchange="toggleMyStudentsFilter()"> Murid Saya Sahaja
         </label>
       </div>
     </div>
@@ -483,7 +604,10 @@
   <!-- MODAL KEMASKINI TASMIK -->
   <div class="modal-overlay" id="tasmikModal">
     <div class="modal-card">
-      <h2 class="modal-title" id="mStudentName">Nama Murid</h2>
+      <div class="modal-header-line">
+        <h2 class="modal-title" id="mStudentName" style="font-size:1.15rem;">Nama Murid</h2>
+        <button class="close-modal-btn" onclick="closeModal('tasmikModal')">&times;</button>
+      </div>
 
       <!-- PENGURUSAN FOTO KAMERA -->
       <div class="photo-section">
@@ -527,20 +651,81 @@
     </div>
   </div>
 
+  <!-- MODAL ANALISIS BACAAN (CARTA DONUT & CARTA BAR) -->
+  <div class="modal-overlay" id="analysisModal">
+    <div class="modal-card modal-card-large">
+      <div class="modal-header-line">
+        <div>
+          <h2 class="modal-title"><i class="fas fa-chart-pie" style="color:var(--neon-green); margin-right:8px;"></i>Analisis Bacaan Tasmik Murid</h2>
+          <p id="analysisFilterDesc" style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">Statistik berdasarkan tapisan semasa</p>
+        </div>
+        <button class="close-modal-btn" onclick="closeModal('analysisModal')">&times;</button>
+      </div>
+
+      <!-- KAD STATISTIK PANTAS -->
+      <div class="analysis-stats-grid">
+        <div class="stat-box">
+          <div class="stat-num" id="statTotalFiltered">0</div>
+          <div class="stat-lbl">Jumlah Murid Terpilih</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:#0284c7;" id="statTotalIqra">0</div>
+          <div class="stat-lbl">Tahap Iqra' (1-6)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:#10b981;" id="statTotalQuran">0</div>
+          <div class="stat-lbl">Tahap Al-Quran / Khatam</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:#f59e0b;" id="statPctQuran">0%</div>
+          <div class="stat-lbl">Kadar Capai Al-Quran</div>
+        </div>
+      </div>
+
+      <!-- KOTAK CARTA (DONUT & BAR) -->
+      <div class="charts-grid">
+        <div class="chart-container-box">
+          <div class="chart-title"><i class="fas fa-chart-pie"></i> Taburan Tahap Bacaan (Donut)</div>
+          <div style="position:relative; height:240px;">
+            <canvas id="donutChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-container-box">
+          <div class="chart-title"><i class="fas fa-chart-bar"></i> Bilangan Murid Mengikut Tahap (Bar)</div>
+          <div style="position:relative; height:240px;">
+            <canvas id="barChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions" style="margin-top:20px;">
+        <button type="button" class="btn-action-pill btn-download" onclick="exportFilteredStudentsCSV()">
+          <i class="fas fa-file-excel"></i> Muat Turun Senarai Murid (.CSV)
+        </button>
+        <button type="button" class="btn-cancel" onclick="closeModal('analysisModal')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // MASUKKAN URL STANDALONE APPS SCRIPT eTASMIK ANDA DI SINI:
+    // URL STANDALONE APPS SCRIPT eTASMIK:
     const ETASMIK_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzf4c8BVEj6ZE2_7B2QejfNyqaZi7GS7_aqQnOTcwwFoGyAR5DYsFzlCNJYBhFWIbY/exec";
 
     const CLIENT_CACHE_KEY = "trec_client_cache_v1";
     const CLIENT_CACHE_TIME_KEY = "trec_client_cache_time";
-    const CACHE_DURATION_MS = 10 * 60 * 1000; // 10 Minit client cache
+    const CACHE_DURATION_MS = 10 * 60 * 1000;
 
     let allStudents = [];
+    let currentFilteredStudents = [];
     let dropdownData = {};
     let activeLoggedInTeacher = "";
     let capturedBase64 = null;
+
+    let donutChartInstance = null;
+    let barChartInstance = null;
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -554,14 +739,12 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
     window.addEventListener('load', () => {
-      // Dapatkan maklumat sesi guru yang disahkan
       const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
       if (activeUser && activeUser.nama) {
         activeLoggedInTeacher = activeUser.nama;
         document.getElementById('currentTeacherLabel').innerText = activeLoggedInTeacher;
       }
 
-      // 1. Semak cache pelayar terlebih dahulu untuk paparan instant (0 saat)
       const cachedTime = localStorage.getItem(CLIENT_CACHE_TIME_KEY);
       const cachedPayload = localStorage.getItem(CLIENT_CACHE_KEY);
       const isFresh = cachedTime && (Date.now() - parseInt(cachedTime)) < CACHE_DURATION_MS;
@@ -573,13 +756,11 @@
           dropdownData = parsed.dropdown;
           populateFilters();
           applyFilters();
-          // Segarkan data di latar belakang secara senyap
           fetchBackendData(false);
           return;
         } catch(e) {}
       }
 
-      // Jika tiada cache atau cache tamat tempoh, muat turun biasa
       fetchBackendData(true);
     });
 
@@ -608,7 +789,6 @@
           allStudents = data.murid;
           dropdownData = data.dropdown;
 
-          // Simpan ke Cache Pelayar
           localStorage.setItem(CLIENT_CACHE_KEY, JSON.stringify(data));
           localStorage.setItem(CLIENT_CACHE_TIME_KEY, Date.now().toString());
 
@@ -636,12 +816,15 @@
     function populateFilters() {
       const fTahun = document.getElementById('filterTahun');
       const fKelas = document.getElementById('filterKelas');
+      const fBacaan = document.getElementById('filterBacaan');
       const fGuru = document.getElementById('filterGuru');
 
       const curTahun = fTahun.value;
       const curKelas = fKelas.value;
+      const curBacaan = fBacaan.value;
       const curGuru = fGuru.value;
 
+      // 1. Tahun
       fTahun.innerHTML = '<option value="">Semua Tahun</option>';
       (dropdownData.tahun || []).forEach(t => {
         const opt = document.createElement('option');
@@ -650,6 +833,7 @@
         fTahun.appendChild(opt);
       });
 
+      // 2. Kelas
       fKelas.innerHTML = '<option value="">Semua Kelas</option>';
       (dropdownData.kelas || []).forEach(k => {
         const opt = document.createElement('option');
@@ -658,6 +842,21 @@
         fKelas.appendChild(opt);
       });
 
+      // 3. Bacaan / Tahap (Termasuk Pilihan Belum Ditentukan)
+      fBacaan.innerHTML = '<option value="">Semua Bacaan</option>';
+      (dropdownData.bacaan || []).forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b; opt.innerText = b;
+        if (b === curBacaan) opt.selected = true;
+        fBacaan.appendChild(opt);
+      });
+      const optBelum = document.createElement('option');
+      optBelum.value = "BELUM";
+      optBelum.innerText = "Belum Ditentukan";
+      if (curBacaan === "BELUM") optBelum.selected = true;
+      fBacaan.appendChild(optBelum);
+
+      // 4. Guru Tasmik
       fGuru.innerHTML = '<option value="">Semua Guru Tasmik</option>';
       (dropdownData.guruTasmik || []).forEach(g => {
         const opt = document.createElement('option');
@@ -688,21 +887,32 @@
     }
 
     function applyFilters() {
-      const tahun = document.getElementById('filterTahun').value.toLowerCase();
-      const kelas = document.getElementById('filterKelas').value.toLowerCase();
-      const guru = document.getElementById('filterGuru').value.toLowerCase();
-      const search = document.getElementById('filterSearch').value.toLowerCase();
+      const tahun = document.getElementById('filterTahun').value.toLowerCase().trim();
+      const kelas = document.getElementById('filterKelas').value.toLowerCase().trim();
+      const bacaan = document.getElementById('filterBacaan').value.toLowerCase().trim();
+      const guru = document.getElementById('filterGuru').value.toLowerCase().trim();
+      const search = document.getElementById('filterSearch').value.toLowerCase().trim();
 
-      const filtered = allStudents.filter(m => {
-        const matchTahun = !tahun || m.tahun.toLowerCase() === tahun;
-        const matchKelas = !kelas || m.kelas.toLowerCase() === kelas;
+      currentFilteredStudents = allStudents.filter(m => {
+        const matchTahun = !tahun || (m.tahun || '').toLowerCase().trim() === tahun;
+        const matchKelas = !kelas || (m.kelas || '').toLowerCase().trim() === kelas;
+        
+        let matchBacaan = true;
+        if (bacaan) {
+          if (bacaan === "belum") {
+            matchBacaan = !m.bacaan || m.bacaan.trim() === "";
+          } else {
+            matchBacaan = (m.bacaan || '').toLowerCase().trim() === bacaan;
+          }
+        }
+
         const matchGuru = !guru || (m.guruTasmik && m.guruTasmik.toLowerCase().includes(guru));
-        const matchSearch = !search || m.nama.toLowerCase().includes(search);
-        return matchTahun && matchKelas && matchGuru && matchSearch;
+        const matchSearch = !search || (m.nama || '').toLowerCase().includes(search);
+        return matchTahun && matchKelas && matchBacaan && matchGuru && matchSearch;
       });
 
-      document.getElementById('studentCount').innerText = filtered.length;
-      renderStudentsGrid(filtered);
+      document.getElementById('studentCount').innerText = currentFilteredStudents.length;
+      renderStudentsGrid(currentFilteredStudents);
     }
 
     function renderStudentsGrid(students) {
@@ -759,6 +969,167 @@
       });
     }
 
+    // ========================================================
+    // LOGIK MODAL ANALISIS & CARTA (DONUT & BAR)
+    // ========================================================
+    function openAnalysisModal() {
+      const fTahun = document.getElementById('filterTahun').value;
+      const fKelas = document.getElementById('filterKelas').value;
+      const fBacaan = document.getElementById('filterBacaan').value;
+      const fGuru = document.getElementById('filterGuru').value;
+
+      let desc = [];
+      if (fTahun) desc.push(`Tahun ${fTahun}`);
+      if (fKelas) desc.push(`Kelas ${fKelas}`);
+      if (fBacaan) desc.push(`Tahap ${fBacaan}`);
+      if (fGuru) desc.push(`Guru: ${fGuru}`);
+      document.getElementById('analysisFilterDesc').innerText = desc.length > 0 ? `Tapisan Aktif: ${desc.join(' | ')}` : 'Memaparkan keseluruhan murid Islam';
+
+      // Kira Taburan Tahap Bacaan
+      const counts = {};
+      const knownLevels = (dropdownData.bacaan && dropdownData.bacaan.length > 0)
+        ? [...dropdownData.bacaan]
+        : ["IQRA' 1", "IQRA' 2", "IQRA' 3", "IQRA' 4", "IQRA' 5", "IQRA' 6", "AL-QURAN", "KHATAM"];
+
+      knownLevels.forEach(lvl => counts[lvl] = 0);
+      counts["Belum Ditentukan"] = 0;
+
+      let totalFiltered = currentFilteredStudents.length;
+      let totalIqra = 0;
+      let totalQuranKhatam = 0;
+
+      currentFilteredStudents.forEach(s => {
+        const b = (s.bacaan || "").trim().toUpperCase();
+        if (!b) {
+          counts["Belum Ditentukan"]++;
+        } else {
+          // Cari tahap yang sepadan
+          const matched = knownLevels.find(k => k.toUpperCase() === b);
+          if (matched) {
+            counts[matched]++;
+          } else {
+            counts[b] = (counts[b] || 0) + 1;
+          }
+
+          if (b.includes("IQRA")) totalIqra++;
+          if (b.includes("QURAN") || b.includes("KHATAM")) totalQuranKhatam++;
+        }
+      });
+
+      // Kemaskini Kad Statistik
+      document.getElementById('statTotalFiltered').innerText = totalFiltered;
+      document.getElementById('statTotalIqra').innerText = totalIqra;
+      document.getElementById('statTotalQuran').innerText = totalQuranKhatam;
+      const pct = totalFiltered > 0 ? Math.round((totalQuranKhatam / totalFiltered) * 100) : 0;
+      document.getElementById('statPctQuran').innerText = `${pct}%`;
+
+      // Bina / Kemaskini Carta Chart.js
+      renderAnalysisCharts(counts);
+
+      openModal('analysisModal');
+    }
+
+    function renderAnalysisCharts(countsMap) {
+      const labels = Object.keys(countsMap).filter(k => countsMap[k] > 0 || k !== "Belum Ditentukan");
+      const dataValues = labels.map(k => countsMap[k] || 0);
+
+      // Skema warna harmoni
+      const colorPalette = [
+        '#0284c7', '#0ea5e9', '#38bdf8', '#7dd3fc', '#0d9488', '#14b8a6',
+        '#10b981', '#059669', '#f59e0b', '#94a3b8'
+      ];
+
+      // 1. Carta Donut
+      const ctxDonut = document.getElementById('donutChart').getContext('2d');
+      if (donutChartInstance) donutChartInstance.destroy();
+      donutChartInstance = new Chart(ctxDonut, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: dataValues,
+            backgroundColor: colorPalette.slice(0, labels.length),
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 12, font: { family: 'Plus Jakarta Sans', size: 11 } } }
+          }
+        }
+      });
+
+      // 2. Carta Bar
+      const ctxBar = document.getElementById('barChart').getContext('2d');
+      if (barChartInstance) barChartInstance.destroy();
+      barChartInstance = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Bilangan Murid',
+            data: dataValues,
+            backgroundColor: '#10b981',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: { beginAtZero: true, ticks: { precision: 0 } },
+            x: { ticks: { font: { family: 'Plus Jakarta Sans', size: 10 } } }
+          }
+        }
+      });
+    }
+
+    // ========================================================
+    // FUNGSI MUAT TURUN SENARAI MURID (EXPORT CSV / EXCEL)
+    // ========================================================
+    function exportFilteredStudentsCSV() {
+      if (currentFilteredStudents.length === 0) {
+        showToast("Tiada data murid untuk dimuat turun.", true);
+        return;
+      }
+
+      const headers = ["Bil", "Nama Murid", "Tahun", "Kelas", "Tahap Bacaan", "Muka Surat / Ayat", "Guru Tasmik", "Catatan", "Tarikh Kemaskini"];
+      const rows = currentFilteredStudents.map((s, idx) => [
+        idx + 1,
+        `"${(s.nama || '').replace(/"/g, '""')}"`,
+        s.tahun || '',
+        s.kelas || '',
+        `"${(s.bacaan || 'Belum Ditentukan').replace(/"/g, '""')}"`,
+        `"${(s.mukaSurat || '-').replace(/"/g, '""')}"`,
+        `"${(s.guruTasmik || 'Belum Diagihkan').replace(/"/g, '""')}"`,
+        `"${(s.catatan || '').replace(/"/g, '""')}"`,
+        `"${(s.tarikhKemaskini || '').replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
+        + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      const timeStamp = new Date().toISOString().slice(0, 10);
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Senarai_Tasmik_SKMantin_${timeStamp}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      showToast("Senarai murid berjaya dimuat turun!");
+    }
+
+    // ========================================================
+    // BORANG KEMASKINI & KAMERA
+    // ========================================================
     function openUpdateModal(rowIndex) {
       const student = allStudents.find(s => s.rowIndex === rowIndex);
       if (!student) return;
@@ -862,7 +1233,6 @@
           showToast("Rekod tasmik berjaya dikemas kini!");
           closeModal('tasmikModal');
 
-          // Kemas kini paparan aktif tempatan serta-merta
           const target = allStudents.find(s => s.rowIndex === rowIndex);
           if (target) {
             target.bacaan = bacaan;
@@ -874,9 +1244,7 @@
             target.tarikhKemaskini = `${String(now.getDate()).padStart(2, '0')}/${String(now.getMonth()+1).padStart(2, '0')}/${now.getFullYear()} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
           }
 
-          // Segarkan data simpanan cache pelayar tempatan
           localStorage.setItem(CLIENT_CACHE_KEY, JSON.stringify({ murid: allStudents, dropdown: dropdownData }));
-
           applyFilters();
         } else {
           showToast("Ralat: " + result.message, true);
