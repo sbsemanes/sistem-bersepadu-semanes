@@ -199,7 +199,7 @@
       border: 1px solid var(--neon-green); box-shadow: 0 0 30px var(--neon-green-glow);
       padding: 24px; animation: modalFadeIn 0.25s ease-out; max-height: 90vh; overflow-y: auto;
     }
-    .modal-box-large { max-width: 1050px; }
+    .modal-box-large { max-width: 1100px; }
     @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px; }
     .modal-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
@@ -225,12 +225,32 @@
     .murid-filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
     .table-scroll-wrap { overflow-x: auto; max-height: 480px; border: 1px solid var(--border-soft); border-radius: 12px; }
     .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-    .data-table th { background: #0f172a; color: #ffffff; padding: 10px 12px; text-align: left; position: sticky; top: 0; z-index: 2; }
-    .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-soft); }
+    .data-table th { background: #0f172a; color: #ffffff; padding: 10px 12px; text-align: left; position: sticky; top: 0; z-index: 2; white-space: nowrap; }
+    .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-soft); white-space: nowrap; }
     .data-table tr:hover { background: #f0fdf4; }
     .btn-action-sm { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: 1px solid transparent; }
     .btn-edit-sm { background: #e0f2fe; color: #0284c7; border-color: #38bdf8; margin-right: 4px; }
     .btn-del-sm { background: #fee2e2; color: #dc2626; border-color: #ef4444; }
+
+    .murid-thumb {
+      width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid var(--neon-green); display: block;
+    }
+    .murid-no-thumb {
+      width: 38px; height: 38px; border-radius: 50%; background: #e2e8f0; color: #94a3b8; display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+    }
+
+    /* KAWASAN FOTO & KAMERA */
+    .photo-input-container {
+      display: flex; gap: 12px; align-items: center; padding: 10px; background: #f8fafc; border-radius: 10px; border: 1px dashed var(--border-soft);
+    }
+    .preview-box {
+      width: 70px; height: 70px; border-radius: 12px; border: 2px solid var(--neon-green); background: #ffffff; overflow: hidden; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+    .camera-live-box {
+      width: 100%; max-width: 360px; border-radius: 12px; overflow: hidden; background: #000; margin: 10px auto; display: none; text-align: center;
+    }
+    .camera-live-box video { width: 100%; display: block; }
 
     .toast-msg {
       position: fixed; bottom: 25px; right: 25px; padding: 14px 22px;
@@ -298,19 +318,11 @@
       </div>
     </section>
 
-    <!-- 3. DASHBOARDS -->
+    <!-- 3. DASHBOARDS (MODUL PENGURUSAN ASAL) -->
     <section>
       <h2 class="section-title">Aplikasi & Modul Pengurusan</h2>
       <div class="dashboard-grid" id="dashboardContainer">
-        <!-- Kad Data Murid (Hanya Admin / Guru Kelas) -->
-        <div id="cardAksesDataMurid" class="dash-card" onclick="openMuridManagerModal()" style="display:none; border:1.5px solid #10b981;">
-          <div class="icon-wrapper" style="background:#dcfce7; color:#047857;">
-            <i class="fas fa-user-graduate"></i>
-          </div>
-          <div class="dash-card-title">Data Murid</div>
-          <div class="dash-card-desc">Pengurusan pendaftaran, maklumat kelas, tasmik & koko murid</div>
-        </div>
-        <div id="dashboardLoading" style="color:#94a3b8; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Memuatkan modul dashboard...</div>
+        <div style="color:#94a3b8; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Memuatkan modul dashboard...</div>
       </div>
     </section>
 
@@ -451,7 +463,7 @@
     </div>
   </div>
 
-  <!-- 7. SUB-MODAL FORM TAMBAH / EDIT DATA MURID -->
+  <!-- 7. SUB-MODAL FORM TAMBAH / EDIT DATA MURID + FOTO & KAMERA -->
   <div class="modal-overlay" id="muridFormModal" style="z-index: 1100;">
     <div class="modal-box">
       <div class="modal-header">
@@ -489,21 +501,17 @@
     const isAdmin = userPeranan.toLowerCase() === "admin";
     const isGuruKelas = userJawatan.toLowerCase().includes("guru kelas") || isAdmin;
 
-    // Paparan maklumat guru
     if (activeUser && activeUser.nama) {
       document.getElementById("userNameLabel").innerText = activeUser.nama;
       document.getElementById("userRoleBadge").innerText = `${userPeranan || 'Guru'}${userJawatan ? ' | ' + userJawatan : ''}`;
     }
 
-    // 1. Tunjuk butang admin jika peranan = Admin
+    // Butang navigasi atas
     if (isAdmin) {
       document.getElementById("btnAksesAdmin").style.display = "inline-flex";
     }
-
-    // 2. Tunjuk butang dan kad Data Murid jika Admin ATAU Guru Kelas
     if (isGuruKelas) {
       document.getElementById("btnAksesDataMurid").style.display = "inline-flex";
-      document.getElementById("cardAksesDataMurid").style.display = "flex";
     }
 
     function handleLogout() {
@@ -523,7 +531,6 @@
     let currentCalDate = new Date();
     let selectedDateStr = formatDateKey(new Date());
 
-    // Jam
     function updateClock() {
       const now = new Date();
       const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
@@ -551,7 +558,7 @@
     }
 
     // --------------------------------------------------------
-    // AMBIL DATA HOMEPAGE & TEMPAHAN
+    // AMBIL DATA HOMEPAGE & DASHBOARDS
     // --------------------------------------------------------
     const CACHE_KEY_LOCAL = "semanes_home_cache";
     window.addEventListener('load', fetchAllData);
@@ -605,12 +612,13 @@
         });
       }
 
-      // Dashboard
+      // Dashboard Cards (KOSONGKAN DAHULU SUPAYA TIDAK JADI DOUBLE)
       const dContainer = document.getElementById('dashboardContainer');
-      const loadEl = document.getElementById('dashboardLoading');
-      if (loadEl) loadEl.remove();
+      dContainer.innerHTML = '';
 
-      if (data.dashboards) {
+      if (!data.dashboards || data.dashboards.length === 0) {
+        dContainer.innerHTML = '<p style="color:#94a3b8; font-size:0.85rem;">Tiada modul dashboard tersedia.</p>';
+      } else {
         data.dashboards.forEach(modul => {
           const a = document.createElement('a');
           a.className = 'dash-card';
@@ -664,7 +672,7 @@
     }
 
     // --------------------------------------------------------
-    // BORANG TEMPAHAN BILIK KHAS & VALIDASI BERTINDIH
+    // BORANG TEMPAHAN BILIK KHAS
     // --------------------------------------------------------
     function openBookingModal() {
       document.getElementById('formTarikh').value = selectedDateStr;
@@ -838,12 +846,13 @@
     }
 
     // ========================================================
-    // MODUL PENGURUSAN DATA MURID (MODAL, FILTER & CRUD)
+    // MODUL DATA MURID: JADUAL, FILTER & FOTO / KAMERA
     // ========================================================
     let muridHeaders = [];
     let muridRows = [];
     let muridDropdownOptions = {};
     let isEditingMurid = false;
+    let cameraStream = null;
 
     function openMuridManagerModal() {
       if (!isGuruKelas) {
@@ -856,10 +865,12 @@
 
     function closeMuridManagerModal() {
       document.getElementById('muridManagerModal').style.display = 'none';
+      stopCamera();
     }
 
     function closeMuridFormModal() {
       document.getElementById('muridFormModal').style.display = 'none';
+      stopCamera();
     }
 
     async function fetchMuridData() {
@@ -883,7 +894,6 @@
           muridRows = data.rows || [];
           muridDropdownOptions = data.dropdownOptions || data.muridOptions || {};
 
-          // Isi Filter Dropdown Tahun & Kelas
           const fTahun = document.getElementById('filterMuridTahun');
           const fKelas = document.getElementById('filterMuridKelas');
           fTahun.innerHTML = '<option value="">Semua Tahun</option>';
@@ -949,16 +959,29 @@
         return;
       }
 
+      const colGambarIdx = headers.findIndex(h => (h || '').toUpperCase().trim() === 'GAMBAR');
+
       rows.forEach(r => {
         const tr = document.createElement('tr');
         headers.forEach((h, idx) => {
-          const val = r.values[idx] !== undefined ? r.values[idx] : '';
-          tr.innerHTML += `<td>${val}</td>`;
+          let val = r.values[idx] !== undefined ? r.values[idx] : '';
+          
+          // Paparan visual jika kolum Gambar
+          if (idx === colGambarIdx) {
+            if (val && (val.startsWith('http') || val.startsWith('data:image'))) {
+              tr.innerHTML += `<td><img src="${val}" class="murid-thumb" alt="Foto Murid"></td>`;
+            } else {
+              tr.innerHTML += `<td><div class="murid-no-thumb"><i class="fas fa-user"></i></div></td>`;
+            }
+          } else {
+            tr.innerHTML += `<td>${val}</td>`;
+          }
         });
+
         tr.innerHTML += `
           <td style="text-align:center; white-space:nowrap;">
-            <button class="btn-action-sm btn-edit-sm" onclick="openEditMuridForm(${r.rowIndex})"><i class="fas fa-edit"></i></button>
-            <button class="btn-action-sm btn-del-sm" onclick="handleDeleteMuridRow(${r.rowIndex})"><i class="fas fa-trash"></i></button>
+            <button class="btn-action-sm btn-edit-sm" onclick="openEditMuridForm(${r.rowIndex})"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn-action-sm btn-del-sm" onclick="handleDeleteMuridRow(${r.rowIndex})"><i class="fas fa-trash"></i> Padam</button>
           </td>
         `;
         tb.appendChild(tr);
@@ -985,6 +1008,7 @@
     function buildMuridFormFields(values = null) {
       const container = document.getElementById('dynamicMuridFormFields');
       container.innerHTML = '';
+      stopCamera();
 
       muridHeaders.forEach((h, idx) => {
         const val = values ? (values[idx] || '') : '';
@@ -993,6 +1017,50 @@
         div.className = 'form-group';
         if (hUpper.includes("NAMA MURID")) div.className = 'form-group full-width';
 
+        // 1. Khas untuk Kolum GAMBAR: Muat Naik Fail & Tangkap Kamera Langsung
+        if (hUpper === "GAMBAR") {
+          div.className = 'form-group full-width';
+          div.innerHTML = `
+            <label class="form-label">Foto Murid (Muat Naik Fail / Tangkap Kamera)</label>
+            <div class="photo-input-container">
+              <div class="preview-box" id="muridPhotoPreview">
+                ${val ? `<img src="${val}" alt="Foto">` : '<i class="fas fa-user fa-2x" style="color:#94a3b8;"></i>'}
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:6px;">
+                <input type="hidden" id="muridPhotoValue" class="murid-crud-input" data-col="${idx}" value="${val}">
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <label class="btn-action-sm btn-edit-sm" style="display:inline-flex; align-items:center; gap:5px; cursor:pointer; padding:6px 12px;">
+                    <i class="fas fa-folder-open"></i> Pilih Fail
+                    <input type="file" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+                  </label>
+                  <button type="button" class="btn-action-sm" style="background:#dcfce7; color:#065f46; border:1px solid #10b981; padding:6px 12px;" onclick="startCamera()">
+                    <i class="fas fa-camera"></i> Guna Kamera
+                  </button>
+                  <button type="button" class="btn-action-sm btn-del-sm" style="padding:6px 10px;" onclick="clearPhoto()">
+                    <i class="fas fa-times"></i> Buang
+                  </button>
+                </div>
+                <span style="font-size:0.75rem; color:var(--text-muted);">Format imej: JPEG/PNG atau tangkap terus kamera peranti.</span>
+              </div>
+            </div>
+            <!-- Paparan Live Kamera -->
+            <div class="camera-live-box" id="cameraBox">
+              <video id="cameraVideo" autoplay playsinline></video>
+              <div style="padding:8px; background:#0f172a; display:flex; justify-content:center; gap:10px;">
+                <button type="button" class="btn-submit" style="padding:6px 14px; font-size:0.8rem;" onclick="captureCameraPhoto()">
+                  <i class="fas fa-circle-dot"></i> Ambil Gambar
+                </button>
+                <button type="button" class="btn-secondary" style="padding:6px 14px; font-size:0.8rem;" onclick="stopCamera()">
+                  Tutup Kamera
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(div);
+          return;
+        }
+
+        // 2. Dropdown bagi data rujukan
         let isDropdown = false;
         let optList = [];
 
@@ -1040,6 +1108,104 @@
       });
     }
 
+    // Pemprosesan Gambar: Muat Naik Fail & Pemampatan (Compress ke Base64)
+    function handlePhotoUpload(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        compressImage(event.target.result, 320, 0.75, function(compressedData) {
+          setPhotoPreview(compressedData);
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Pemprosesan Gambar: Kamera Peranti
+    async function startCamera() {
+      const box = document.getElementById('cameraBox');
+      const video = document.getElementById('cameraVideo');
+      box.style.display = 'block';
+
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false
+        });
+        video.srcObject = cameraStream;
+      } catch (err) {
+        box.style.display = 'none';
+        showToast("Gagal mengakses kamera: " + err.message, true);
+      }
+    }
+
+    function captureCameraPhoto() {
+      const video = document.getElementById('cameraVideo');
+      const canvas = document.createElement('canvas');
+      canvas.width = 320;
+      canvas.height = 320;
+      const ctx = canvas.getContext('2d');
+
+      // Ambil keratan tengah segi empat sama
+      const minDim = Math.min(video.videoWidth, video.videoHeight);
+      const startX = (video.videoWidth - minDim) / 2;
+      const startY = (video.videoHeight - minDim) / 2;
+      ctx.drawImage(video, startX, startY, minDim, minDim, 0, 0, 320, 320);
+
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.8);
+      setPhotoPreview(dataUrl);
+      stopCamera();
+    }
+
+    function stopCamera() {
+      const box = document.getElementById('cameraBox');
+      if (box) box.style.display = 'none';
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+    }
+
+    function setPhotoPreview(url) {
+      document.getElementById('muridPhotoValue').value = url;
+      document.getElementById('muridPhotoPreview').innerHTML = `<img src="${url}" alt="Foto Murid">`;
+    }
+
+    function clearPhoto() {
+      document.getElementById('muridPhotoValue').value = '';
+      document.getElementById('muridPhotoPreview').innerHTML = '<i class="fas fa-user fa-2x" style="color:#94a3b8;"></i>';
+      stopCamera();
+    }
+
+    function compressImage(base64Str, maxWidth, quality, callback) {
+      const img = new Image();
+      img.src = base64Str;
+      img.onload = function() {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+        } else {
+          if (height > maxWidth) {
+            width = Math.round((width * maxWidth) / height);
+            height = maxWidth;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL('image/jpeg', quality));
+      };
+    }
+
+    // Simpan Borang Murid (Add / Update)
     async function handleMuridFormSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSaveMurid');
@@ -1081,6 +1247,7 @@
       }
     }
 
+    // Padam Murid
     async function handleDeleteMuridRow(rowIndex) {
       if (!confirm(`Adakah anda pasti ingin memadam rekod murid pada baris ${rowIndex}?`)) return;
 
