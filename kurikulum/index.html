@@ -602,7 +602,7 @@
             </button>
           </div>
           <table class="custom-table">
-            <thead><tr><th>No</th><th>Tahun</th><th>Pautan / Fail</th></tr></thead>
+            <thead><tr><th>No</th><th>Sesi / Tahun</th><th>Pautan / Fail</th></tr></thead>
             <tbody id="pelanTableBody"></tbody>
           </table>
         </div>
@@ -621,7 +621,7 @@
             </button>
           </div>
           <table class="custom-table">
-            <thead><tr><th>No</th><th>Tahun</th><th>Pautan / Fail</th></tr></thead>
+            <thead><tr><th>No</th><th>Sesi / Tahun</th><th>Pautan / Fail</th></tr></thead>
             <tbody id="cartaTableBody"></tbody>
           </table>
         </div>
@@ -640,7 +640,7 @@
             </button>
           </div>
           <table class="custom-table">
-            <thead><tr><th>Bilangan</th><th>Tahun</th><th>Perkara</th><th>Pautan / Fail</th></tr></thead>
+            <thead><tr><th>Bilangan</th><th>Sesi / Tahun</th><th>Perkara</th><th>Pautan / Fail</th></tr></thead>
             <tbody id="minitTableBody"></tbody>
           </table>
         </div>
@@ -909,8 +909,8 @@
       <form id="formUpload" onsubmit="handleUploadSubmit(event)">
         <input type="hidden" id="uploadTargetSheet">
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Tahun / Sesi *</label>
-          <input type="text" id="uploadTahun" class="form-control" placeholder="Contoh: 2026" required>
+          <label class="form-label">Sesi Persekolahan / Tahun *</label>
+          <select id="uploadTahun" class="form-control" required></select>
         </div>
         <div class="form-group" id="groupPerkaraMinit" style="margin-bottom:12px; display:none;">
           <label class="form-label">Perkara / Tajuk Mesyuarat *</label>
@@ -1003,7 +1003,6 @@
 
     let globalKurikulumData = null;
 
-    // FUNGSI TUKAR URL DRIVE KEPADA THUMBNAIL LANGSUNG (UNTUK GAMBAR & PRINT)
     function formatIconUrl(url) {
       if (!url) return '';
       if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
@@ -1200,7 +1199,8 @@
       // 7. Jadual Laporan Program
       renderLaporanTable(data.laporan);
 
-      // 8. Muatkan Pilihan Borang Laporan & OPR
+      // 8. Muatkan Pilihan Dropdown Sesi/Tahun & Borang
+      // Pilihan Sesi Persekolahan untuk Laporan, OPR, Fail Partition & Dokumen Induk (Pelan/Carta/Minit)
       populateSelect('formSesi', data.options.sesi);
       populateSelect('formPeringkat', data.options.peringkat);
       populateSelect('formPelapor', data.options.guru);
@@ -1209,6 +1209,9 @@
 
       populateSelect('oprSesi', data.options.sesi);
       populateSelect('oprPelapor', data.options.guru);
+
+      // Pilihan Sesi/Tahun untuk Dokumen Induk (Pelan Strategik, Carta Organisasi, Minit Mesyuarat)
+      populateSelect('uploadTahun', data.options.sesi, '-- Pilih Sesi / Tahun --');
 
       const optUnit = document.getElementById('optUnitGroup');
       const oprOptUnit = document.getElementById('oprOptUnit');
@@ -1632,6 +1635,12 @@
       document.getElementById('uploadTargetSheet').value = sheetName;
       document.getElementById('uploadModalTitle').innerText = `Muat Naik Fail: ${sheetName}`;
       document.getElementById('groupPerkaraMinit').style.display = (sheetName === 'Minit Mesyuarat') ? 'block' : 'none';
+      
+      // Pastikan pilihan sesi terkini dimuatkan ke dropdown
+      if (globalKurikulumData && globalKurikulumData.options && globalKurikulumData.options.sesi) {
+        populateSelect('uploadTahun', globalKurikulumData.options.sesi, '-- Pilih Sesi / Tahun --');
+      }
+
       openModal('uploadModal');
     }
 
