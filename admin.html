@@ -341,7 +341,7 @@
       <h1 class="header-title">Pengurusan Data SeMaNeS</h1>
     </header>
 
-    <!-- PANEL PEMILIHAN DATA -->
+    <!-- PANEL PEMILIHAN DATA & PENAPIS -->
     <div class="control-panel">
       <div class="selector-group">
         <div>
@@ -358,6 +358,21 @@
         <div>
           <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Pilih Data:</label>
           <select id="sheetSelector" class="form-select" onchange="fetchCurrentSheetData()"></select>
+        </div>
+
+        <!-- FILTER KHAS DATA MURID (TAHUN & KELAS) -->
+        <div id="filterTahunWrapper" style="display:none;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Filter Tahun:</label>
+          <select id="filterTahun" class="form-select" onchange="handleSearch()">
+            <option value="">Semua Tahun</option>
+          </select>
+        </div>
+
+        <div id="filterKelasWrapper" style="display:none;">
+          <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:4px;">Filter Kelas:</label>
+          <select id="filterKelas" class="form-select" onchange="handleSearch()">
+            <option value="">Semua Kelas</option>
+          </select>
         </div>
 
         <div>
@@ -456,7 +471,11 @@
     let isEditing = false;
     let isColumnWise = false;
     let columnDataMap = {};
-    let globalMuridOptions = { tahun: [], kelas: [], agama: [], bacaan: [], guruTasmik: [], uniform: [], persatuan: [], sukan: [], rumahSukan: [] };
+    let globalDropdownOptions = {
+      tahun: [], kelas: [], agama: [], bacaan: [], guruTasmik: [],
+      uniform: [], persatuan: [], sukan: [], rumahSukan: [],
+      jawatankuasaKelas: [], jawatanKoko: [], peranan: ["Guru", "Admin"]
+    };
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -505,8 +524,8 @@
 
           currentHeaders = data.headers;
           currentRows = data.rows;
-          if (data.muridOptions) {
-            globalMuridOptions = data.muridOptions;
+          if (data.dropdownOptions || data.muridOptions) {
+            globalDropdownOptions = Object.assign(globalDropdownOptions, data.dropdownOptions || data.muridOptions);
           }
 
           const cleanSheetName = (data.currentSheet || "").toLowerCase().trim();
@@ -514,6 +533,10 @@
 
           const modeIndicator = document.getElementById('modeIndicator');
           const btnAddRow = document.getElementById('btnAddRowBtn');
+
+          // Kawal paparan Filter Khas Data Murid (Tahun & Kelas)
+          const isDataMurid = (dbKey === "db_sekolah" && cleanSheetName === "data murid");
+          setupMuridFilters(isDataMurid);
 
           if (isColumnWise) {
             modeIndicator.innerHTML = '<i class="fas fa-columns"></i> Mod Kolum (Column-wise)';
@@ -540,6 +563,37 @@
       } catch (err) {
         showToast("Ralat sambungan: " + err.toString(), true);
       }
+    }
+
+    // Persediaan Filter Dropdown untuk Data Murid
+    function setupMuridFilters(show) {
+      const fTahunWrap = document.getElementById('filterTahunWrapper');
+      const fKelasWrap = document.getElementById('filterKelasWrapper');
+      const fTahun = document.getElementById('filterTahun');
+      const fKelas = document.getElementById('filterKelas');
+
+      if (!show) {
+        fTahunWrap.style.display = 'none';
+        fKelasWrap.style.display = 'none';
+        fTahun.value = '';
+        fKelas.value = '';
+        return;
+      }
+
+      fTahunWrap.style.display = 'block';
+      fKelasWrap.style.display = 'block';
+
+      // Isi pilihan Tahun
+      fTahun.innerHTML = '<option value="">Semua Tahun</option>';
+      (globalDropdownOptions.tahun || []).forEach(t => {
+        fTahun.innerHTML += `<option value="${t}">${t}</option>`;
+      });
+
+      // Isi pilihan Kelas
+      fKelas.innerHTML = '<option value="">Semua Kelas</option>';
+      (globalDropdownOptions.kelas || []).forEach(k => {
+        fKelas.innerHTML += `<option value="${k}">${k}</option>`;
+      });
     }
 
     // ========================================================
@@ -697,7 +751,7 @@
     }
 
     // ========================================================
-    // LOGIK MOD BARIS & DROPDOWN LENGKAP DATA MURID
+    // LOGIK MOD BARIS & CARIAN DENGAN FILTER
     // ========================================================
     function renderRowWiseTable(headers, rows) {
       const th = document.getElementById('tableHead');
@@ -737,15 +791,36 @@
     }
 
     function handleSearch() {
-      const q = document.getElementById('searchInput').value.trim();
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
       if (isColumnWise) {
         renderColumnWiseGrid(q);
       } else {
-        if (!q) {
-          renderRowWiseTable(currentHeaders, currentRows);
-          return;
+        const dbKey = document.getElementById('dbSelector').value;
+        const sheetName = (document.getElementById('sheetSelector').value || "").toLowerCase().trim();
+        const isDataMurid = (dbKey === "db_sekolah" && sheetName === "data murid");
+
+        let filtered = currentRows;
+
+        // Penapis Tahun & Kelas untuk Data Murid
+        if (isDataMurid) {
+          const selTahun = document.getElementById('filterTahun').value.trim().toLowerCase();
+          const selKelas = document.getElementById('filterKelas').value.trim().toLowerCase();
+          const colTahunIdx = currentHeaders.findIndex(h => (h || '').toUpperCase().trim() === 'TAHUN');
+          const colKelasIdx = currentHeaders.findIndex(h => (h || '').toUpperCase().trim() === 'KELAS');
+
+          if (selTahun && colTahunIdx !== -1) {
+            filtered = filtered.filter(r => (r.values[colTahunIdx] || '').toString().toLowerCase().trim() === selTahun);
+          }
+          if (selKelas && colKelasIdx !== -1) {
+            filtered = filtered.filter(r => (r.values[colKelasIdx] || '').toString().toLowerCase().trim() === selKelas);
+          }
         }
-        const filtered = currentRows.filter(r => r.values.some(v => v.toString().toLowerCase().includes(q.toLowerCase())));
+
+        // Carian teks umum
+        if (q) {
+          filtered = filtered.filter(r => r.values.some(v => v.toString().toLowerCase().includes(q)));
+        }
+
         renderRowWiseTable(currentHeaders, filtered);
       }
     }
@@ -767,14 +842,19 @@
       openModal('crudModal');
     }
 
-    // PEMBINA BORANG PINTAR SESUAI LAJUR SEBENAR DATA MURID
+    // ========================================================
+    // PEMBINA BORANG DINAMIK (DATA GURU, DATA MURID & HEM)
+    // ========================================================
     function buildDynamicForm(values = null) {
       const container = document.getElementById('dynamicFormFields');
       container.innerHTML = '';
       
       const dbKey = document.getElementById('dbSelector').value;
       const sheetName = (document.getElementById('sheetSelector').value || "").toLowerCase().trim();
+      
       const isDataMurid = (dbKey === "db_sekolah" && sheetName === "data murid");
+      const isDataGuru = (dbKey === "db_sekolah" && sheetName === "data guru");
+      const isJawatankuasaKelas = (dbKey === "hem" && sheetName === "jawatankuasa kelas");
 
       currentHeaders.forEach((h, idx) => {
         const val = values ? (values[idx] || '') : '';
@@ -786,46 +866,71 @@
         let optList = [];
         let sourceLabel = '';
 
+        // A. Pengendalian Borang Data Murid
         if (isDataMurid) {
           if (hUpper === "TAHUN") {
-            isDropdown = true;
-            optList = globalMuridOptions.tahun || [];
-            sourceLabel = '(Data Sekolah)';
+            isDropdown = true; optList = globalDropdownOptions.tahun || []; sourceLabel = '(Data Sekolah)';
           } else if (hUpper === "KELAS") {
-            isDropdown = true;
-            optList = globalMuridOptions.kelas || [];
-            sourceLabel = '(Data Sekolah)';
+            isDropdown = true; optList = globalDropdownOptions.kelas || []; sourceLabel = '(Data Sekolah)';
           } else if (hUpper === "AGAMA") {
-            isDropdown = true;
-            optList = globalMuridOptions.agama || [];
-            sourceLabel = '(Data Sekolah)';
+            isDropdown = true; optList = globalDropdownOptions.agama || []; sourceLabel = '(Data Sekolah)';
           } else if (hUpper === "BACAAN") {
-            isDropdown = true;
-            optList = globalMuridOptions.bacaan || [];
-            sourceLabel = '(Data Sekolah - eTasmik)';
+            isDropdown = true; optList = globalDropdownOptions.bacaan || []; sourceLabel = '(Data Sekolah - eTasmik)';
           } else if (hUpper === "NAMA GURU TASMIK" || (hUpper.includes("GURU") && hUpper.includes("TASMIK"))) {
-            isDropdown = true;
-            optList = globalMuridOptions.guruTasmik || [];
-            sourceLabel = '(Data Guru)';
+            isDropdown = true; optList = globalDropdownOptions.guruTasmik || []; sourceLabel = '(Data Guru)';
           } else if (hUpper.includes("UNIFORM")) {
-            isDropdown = true;
-            optList = globalMuridOptions.uniform || [];
-            sourceLabel = '(Data KOKO)';
+            isDropdown = true; optList = globalDropdownOptions.uniform || []; sourceLabel = '(Data KOKO)';
           } else if (hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) {
-            isDropdown = true;
-            optList = globalMuridOptions.persatuan || [];
-            sourceLabel = '(Data KOKO)';
+            isDropdown = true; optList = globalDropdownOptions.persatuan || []; sourceLabel = '(Data KOKO)';
           } else if (hUpper.includes("SUKAN") && !hUpper.includes("RUMAH")) {
-            isDropdown = true;
-            optList = globalMuridOptions.sukan || [];
-            sourceLabel = '(Data KOKO)';
+            isDropdown = true; optList = globalDropdownOptions.sukan || []; sourceLabel = '(Data KOKO)';
           } else if (hUpper.includes("RUMAH")) {
-            isDropdown = true;
-            optList = globalMuridOptions.rumahSukan || [];
-            sourceLabel = '(Data KOKO)';
+            isDropdown = true; optList = globalDropdownOptions.rumahSukan || []; sourceLabel = '(Data KOKO)';
           }
         }
 
+        // B. Pengendalian Borang Data Guru (Kekalkan asal + Dropdown tambahan KOKO)
+        else if (isDataGuru) {
+          if (hUpper.includes("PERANAN")) {
+            isDropdown = true; optList = globalDropdownOptions.peranan || ["Guru", "Admin"]; sourceLabel = '(Sistem)';
+          } else if (hUpper.includes("UNIFORM")) {
+            isDropdown = true; optList = globalDropdownOptions.uniform || []; sourceLabel = '(Data KOKO)';
+          } else if (hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) {
+            isDropdown = true; optList = globalDropdownOptions.persatuan || []; sourceLabel = '(Data KOKO)';
+          } else if (hUpper.includes("SUKAN") && !hUpper.includes("RUMAH")) {
+            isDropdown = true; optList = globalDropdownOptions.sukan || []; sourceLabel = '(Data KOKO)';
+          } else if (hUpper.includes("RUMAH")) {
+            isDropdown = true; optList = globalDropdownOptions.rumahSukan || []; sourceLabel = '(Data KOKO)';
+          }
+        }
+
+        // C. Pengendalian Sheet Jawatankuasa Kelas (DB HEM)
+        else if (isJawatankuasaKelas) {
+          if (hUpper === "JAWATAN" || hUpper.includes("JAWATANKUASA")) {
+            isDropdown = true; optList = globalDropdownOptions.jawatankuasaKelas || []; sourceLabel = '(Data HEM)';
+          } else if (hUpper === "TAHUN") {
+            isDropdown = true; optList = globalDropdownOptions.tahun || []; sourceLabel = '(Data Sekolah)';
+          } else if (hUpper === "KELAS") {
+            isDropdown = true; optList = globalDropdownOptions.kelas || []; sourceLabel = '(Data Sekolah)';
+          }
+        }
+
+        // D. Dropdown Umum Berdasarkan Tajuk Kolum Lain
+        else {
+          if (hUpper.includes("UNIFORM") && globalDropdownOptions.uniform.length > 0) {
+            isDropdown = true; optList = globalDropdownOptions.uniform; sourceLabel = '(Data KOKO)';
+          } else if ((hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) && globalDropdownOptions.persatuan.length > 0) {
+            isDropdown = true; optList = globalDropdownOptions.persatuan; sourceLabel = '(Data KOKO)';
+          } else if (hUpper.includes("SUKAN") && !hUpper.includes("RUMAH") && globalDropdownOptions.sukan.length > 0) {
+            isDropdown = true; optList = globalDropdownOptions.sukan; sourceLabel = '(Data KOKO)';
+          } else if (hUpper.includes("RUMAH") && globalDropdownOptions.rumahSukan.length > 0) {
+            isDropdown = true; optList = globalDropdownOptions.rumahSukan; sourceLabel = '(Data KOKO)';
+          } else if (hUpper.includes("JAWATANKUASA KELAS") && globalDropdownOptions.jawatankuasaKelas.length > 0) {
+            isDropdown = true; optList = globalDropdownOptions.jawatankuasaKelas; sourceLabel = '(Data HEM)';
+          }
+        }
+
+        // Jana Elemen Borang: Dropdown atau Input Teks
         if (isDropdown && optList.length > 0) {
           let optionsHtml = '<option value="">-- Pilih --</option>';
           optList.forEach(opt => {
