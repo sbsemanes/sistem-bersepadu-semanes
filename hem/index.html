@@ -8,19 +8,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <!-- Favicon & Home Screen Icons -->
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-
-<!-- iOS (Apple) -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="SeMaNeS">
-
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#10b981">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#10b981">
 
   <style>
     :root {
@@ -251,7 +246,7 @@
     .btn-action-red:hover { background: var(--neon-accent); transform: translateY(-2px); }
 
     .table-scroll-container {
-      max-height: 380px;
+      max-height: 420px;
       overflow-y: auto;
       border: 1px solid #f1f5f9;
       border-radius: 10px;
@@ -267,8 +262,9 @@
       text-align: left;
       border-bottom: 2px solid var(--border-soft);
       z-index: 2;
+      white-space: nowrap;
     }
-    .custom-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); }
+    .custom-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); white-space: nowrap; }
     .custom-table tr:hover { background: #fff1f2; }
 
     .btn-link-file {
@@ -357,7 +353,7 @@
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     .btn-secondary { padding: 9px 16px; border-radius: 10px; background: #f1f5f9; color: var(--text-muted); border: none; font-weight: 600; cursor: pointer; }
 
-    /* GAYA SENARAI & TAG PILIHAN BERGANDA MURID */
+    /* PILIHAN BERGANDA MURID (SALAH LAKU) */
     .selected-tags-box {
       display: flex;
       flex-wrap: wrap;
@@ -423,13 +419,14 @@
     .report-table td, .report-table th { border: 1px solid #000; padding: 6px 10px; font-size: 0.85rem; }
     .report-table th { background: #f1f5f9; width: 28%; text-align: left; }
     .report-images { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
-    .report-images img { width: 100%; height: 140px; object-fit: cover; border: 1px solid #ccc; }
+    .report-images img { width: 100%; height: 160px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px; display: block; }
 
     @media print {
       body * { visibility: hidden; }
       #printableArea, #printableArea * { visibility: visible; }
       #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
       .no-print { display: none !important; }
+      .report-images img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
 
     .toast-msg {
@@ -488,6 +485,8 @@
         <button class="tab-btn" onclick="switchTab('tabFailHEM')"><i class="fas fa-folder"></i> Fail HEM</button>
         <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
         <button class="tab-btn" onclick="switchTab('tabSalahLaku')"><i class="fas fa-user-slash"></i> Laporan Salah Laku</button>
+        <!-- TAB BARU JAWATANKUASA KELAS SELEPAS SALAH LAKU -->
+        <button class="tab-btn" onclick="switchTab('tabJKKelas')"><i class="fas fa-users-cog"></i> Jawatankuasa Kelas</button>
         <button class="tab-btn" onclick="switchTab('tabUnit')"><i class="fas fa-file-alt"></i> Laporan Unit HEM</button>
       </div>
 
@@ -504,7 +503,6 @@
             </button>
           </div>
 
-          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterBertugasSesi" class="filter-select" onchange="filterBertugasTable()">
               <option value="">Semua Sesi</option>
@@ -547,7 +545,6 @@
             </button>
           </div>
 
-          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterJadualMinggu" class="filter-select" onchange="filterJadualTable()">
               <option value="">Semua Minggu</option>
@@ -586,7 +583,6 @@
             </button>
           </div>
 
-          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterFailHemSesi" class="filter-select" onchange="filterFailHEMTable()">
               <option value="">Semua Sesi</option>
@@ -631,7 +627,6 @@
             </button>
           </div>
 
-          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterOprSesi" class="filter-select" onchange="filterOPRTable()">
               <option value="">Semua Sesi</option>
@@ -694,20 +689,69 @@
         </div>
       </div>
 
-      <!-- TAB 6: LAPORAN UNIT HEM -->
+      <!-- TAB 6: JAWATANKUASA KELAS (BAHARU) -->
+      <div id="tabJKKelas" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Jawatankuasa Kelas</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Senarai Ketua Kelas, Penolong Ketua Kelas & Ahli Jawatankuasa Kelas.</p>
+            </div>
+            <button class="btn-action-red" onclick="openModal('modalJKKelas')">
+              <i class="fas fa-plus-circle"></i> Tambah Jawatankuasa
+            </button>
+          </div>
+
+          <!-- FILTERS JAWATANKUASA KELAS -->
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterJKSesi" class="filter-select" onchange="filterJKKelasTable()">
+              <option value="">Semua Sesi</option>
+            </select>
+            <select id="filterJKTahun" class="filter-select" onchange="filterJKKelasTable()">
+              <option value="">Semua Tahun</option>
+            </select>
+            <select id="filterJKKelas" class="filter-select" onchange="filterJKKelasTable()">
+              <option value="">Semua Kelas</option>
+            </select>
+            <select id="filterJKJawatan" class="filter-select" onchange="filterJKKelasTable()">
+              <option value="">Semua Jawatan</option>
+            </select>
+            <input type="text" id="searchJKNama" class="filter-input" placeholder="Cari nama murid..." oninput="filterJKKelasTable()">
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Sesi</th>
+                  <th>Jawatan</th>
+                  <th>Tahun</th>
+                  <th>Kelas</th>
+                  <th>Nama Murid</th>
+                  <th>Tarikh Direkod</th>
+                </tr>
+              </thead>
+              <tbody id="jkKelasTableBody">
+                <tr><td colspan="6" style="text-align:center; color:#94a3b8;">Memuatkan senarai jawatankuasa kelas...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 7: LAPORAN UNIT HEM -->
       <div id="tabUnit" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Program Unit HEM</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Laporan aktiviti unit HEM.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Laporan aktiviti unit HEM berserta gambar aktiviti.</p>
             </div>
             <button class="btn-action-red" onclick="openModal('modalLaporanUnit')">
               <i class="fas fa-plus-circle"></i> Tambah Laporan Unit
             </button>
           </div>
 
-          <!-- FILTERS DINAMIK -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterUnitSelect" class="filter-select" onchange="filterUnitTable()">
               <option value="">Semua Unit HEM</option>
@@ -733,7 +777,6 @@
           </div>
         </div>
       </div>
-
     </section>
   </div>
 
@@ -969,7 +1012,7 @@
         </div>
         <div class="form-group" style="margin-bottom:12px;">
           <label class="form-label">Fail Jadual (PDF / Gambar) *</label>
-          <input type="file" id="jFile" class="form-control" accept="application/pdf,image/*" required>
+          <input type="file" id="jFile" class="form-control" accept="application/pdf,image/*" capture="environment" required>
         </div>
         <div class="form-actions">
           <button type="button" class="btn-secondary" onclick="closeModal('modalUploadJadual')">Batal</button>
@@ -1011,7 +1054,6 @@
                 <i class="fas fa-user-plus"></i> Pilih / Tambah Murid
               </button>
             </div>
-            <!-- Senarai Tag Murid yang Dipilih -->
             <div id="slSelectedContainer" class="selected-tags-box">
               <span id="slPlaceholderTag" style="color:#94a3b8; font-size:0.82rem;">Belum ada murid dipilih. Sila klik butang di atas.</span>
             </div>
@@ -1048,7 +1090,7 @@
     </div>
   </div>
 
-  <!-- MODAL KHAS: PILIH BEBERAPA ORANG MURID DARI DB SEKOLAH (DENGAN CHECKBOX & CARIAN) -->
+  <!-- MODAL KHAS: PILIH BEBERAPA ORANG MURID DARI DB SEKOLAH -->
   <div class="modal-overlay" id="modalPilihMurid" style="z-index: 1050;">
     <div class="modal-box" style="max-width:560px;">
       <div class="modal-header">
@@ -1056,7 +1098,6 @@
         <button class="close-modal-btn" onclick="closeModal('modalPilihMurid')">&times;</button>
       </div>
 
-      <!-- Ruang Carian & Aksi Cepat -->
       <div>
         <label class="form-label">Cari Nama Murid atau Kelas</label>
         <input type="text" id="pickerSearchInput" class="form-control" placeholder="Taip nama atau kelas untuk tapis..." oninput="renderMuridPickerList()">
@@ -1067,14 +1108,53 @@
         <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;" onclick="selectAllFilteredMurid()">Pilih Semua Yang Ditapis</button>
       </div>
 
-      <div class="murid-picker-list" id="pickerContainerList">
-        <!-- Senarai murid dijana dengan checkbox -->
-      </div>
+      <div class="murid-picker-list" id="pickerContainerList"></div>
 
       <div class="form-actions" style="margin-top:16px;">
         <button type="button" class="btn-secondary" onclick="closeModal('modalPilihMurid')">Batal</button>
         <button type="button" class="btn-action-red" onclick="applySelectedMurid()"><i class="fas fa-check-double"></i> Sahkan Pilihan</button>
       </div>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: JAWATANKUASA KELAS (BAHARU) -->
+  <div class="modal-overlay" id="modalJKKelas">
+    <div class="modal-box" style="max-width:600px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-users-cog" style="color:var(--neon-red); margin-right:8px;"></i>Borang Jawatankuasa Kelas</div>
+        <button class="close-modal-btn" onclick="closeModal('modalJKKelas')">&times;</button>
+      </div>
+      <form id="formJKKelas" onsubmit="handleJKKelasSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">Sesi Persekolahan *</label>
+            <select id="jkSesi" class="form-control" required></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tahun *</label>
+            <select id="jkTahun" class="form-control" required onchange="filterMuridDropdownByTahunKelas()"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kelas *</label>
+            <select id="jkKelas" class="form-control" required onchange="filterMuridDropdownByTahunKelas()"></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Jawatan *</label>
+            <select id="jkJawatan" class="form-control" required></select>
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">Nama Murid *</label>
+            <select id="jkNamaMurid" class="form-control" required>
+              <option value="">-- Pilih Murid --</option>
+            </select>
+            <small style="color:var(--text-muted); font-size:0.75rem;">Senarai murid disaring mengikut Tahun & Kelas di atas.</small>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalJKKelas')">Batal</button>
+          <button type="submit" id="btnSubmitJK" class="btn-action-red"><i class="fas fa-save"></i> Simpan Jawatankuasa</button>
+        </div>
+      </form>
     </div>
   </div>
 
@@ -1139,18 +1219,21 @@
             <label class="form-label">Pautan Bahan (Google Drive)</label>
             <input type="url" id="uBahan" class="form-control" placeholder="https://drive.google.com/...">
           </div>
+
+          <!-- INPUT GAMBAR (MENYOKONG PILIHAN KAMERA TELEFON) -->
           <div class="form-group">
-            <label class="form-label">Muat Naik Gambar 1</label>
-            <input type="file" id="uG1" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 1 (Kamera / Fail)</label>
+            <input type="file" id="uG1" class="form-control" accept="image/*" capture="environment">
           </div>
           <div class="form-group">
-            <label class="form-label">Muat Naik Gambar 2</label>
-            <input type="file" id="uG2" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 2 (Kamera / Fail)</label>
+            <input type="file" id="uG2" class="form-control" accept="image/*" capture="environment">
           </div>
           <div class="form-group full-width">
-            <label class="form-label">Muat Naik Gambar 3</label>
-            <input type="file" id="uG3" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 3 (Kamera / Fail)</label>
+            <input type="file" id="uG3" class="form-control" accept="image/*" capture="environment">
           </div>
+
           <div class="form-group full-width">
             <label class="form-label">Laporan Disediakan Oleh *</label>
             <select id="uPelapor" class="form-control" required></select>
@@ -1166,7 +1249,7 @@
     </div>
   </div>
 
-  <!-- MODAL PAPARAN CETAK / ONE-PAGE REPORT (BERTUGAS / UNIT) -->
+  <!-- MODAL PAPARAN CETAK / ONE-PAGE REPORT -->
   <div class="modal-overlay" id="viewReportModal">
     <div class="modal-box" style="max-width:850px;">
       <div class="modal-header no-print">
@@ -1222,10 +1305,20 @@
     }
 
     let globalHemData = null;
-
-    // Simpanan ID indeks murid yang dipilih
     let selectedMuridIndexes = new Set();
     let tempPickerSelection = new Set();
+
+    // Helper format URL Google Drive kepada Thumbnail Resolusi Tinggi (Supaya keluar bila Print)
+    function formatDriveThumbnail(url) {
+      if (!url) return '';
+      if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+        const match = url.match(/[-\w]{25,}/);
+        if (match) {
+          return `https://drive.google.com/thumbnail?id=${match[0]}&sz=w1000`;
+        }
+      }
+      return url;
+    }
 
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
@@ -1248,7 +1341,7 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openEFailModal() { openModal('efailModal'); }
 
-    // --- PENGENDALIAN PILIHAN BERGANDA MURID (MULTIPLE SELECTION) ---
+    // --- PENGENDALIAN PILIHAN BERGANDA MURID (SALAH LAKU) ---
     function openPilihMuridModal() {
       tempPickerSelection = new Set(selectedMuridIndexes);
       const searchInput = document.getElementById('pickerSearchInput');
@@ -1360,7 +1453,6 @@
         }
       });
 
-      // Kemaskini ruang Tahun & Kelas secara gabungan pintar
       document.getElementById('slTahun').value = Array.from(tahunSet).sort().join(', ');
       document.getElementById('slKelas').value = Array.from(kelasSet).sort().join(', ');
     }
@@ -1446,7 +1538,7 @@
       // 1. Render eFail HEM Grid
       const efailBox = document.getElementById('efailCardsContainer');
       efailBox.innerHTML = '';
-      data.efail.forEach(item => {
+      (data.efail || []).forEach(item => {
         const a = document.createElement('a');
         a.className = 'sub-card';
         a.href = item.link || '#';
@@ -1514,6 +1606,24 @@
       // Tetapkan Guru Pelapor
       populateSelect('slPelapor', data.options.guru);
 
+      // 5. Persediaan Dropdown Jawatankuasa Kelas (Data dari DB Sekolah & Data HEM)
+      populateSelect('jkSesi', data.options.sesiPersekolahan);
+      populateSelect('filterJKSesi', data.options.sesiPersekolahan, 'Semua Sesi');
+
+      // Ambil senarai unik Tahun & Kelas dari senarai murid DB Sekolah
+      const allMurid = data.options.murid || [];
+      const tahunList = [...new Set(allMurid.map(m => m.tahun).filter(v => v))].sort();
+      const kelasList = [...new Set(allMurid.map(m => m.kelas).filter(v => v))].sort();
+      
+      populateSelect('jkTahun', tahunList, '-- Pilih Tahun --');
+      populateSelect('jkKelas', kelasList, '-- Pilih Kelas --');
+      populateSelect('filterJKTahun', tahunList, 'Semua Tahun');
+      populateSelect('filterJKKelas', kelasList, 'Semua Kelas');
+
+      // Pilihan Jawatan dari sheet Data HEM (DB HEM)
+      populateSelect('jkJawatan', data.options.jawatanKelas || []);
+      populateSelect('filterJKJawatan', data.options.jawatanKelas || [], 'Semua Jawatan');
+
       if (activeUser && activeUser.nama) {
         document.getElementById('bPelapor').value = activeUser.nama;
         document.getElementById('uPelapor').value = activeUser.nama;
@@ -1522,11 +1632,12 @@
         document.getElementById('oprPelapor').value = activeUser.nama;
       }
 
-      // 5. Render Jadual-Jadual Lain
+      // 6. Render Jadual
       renderBertugasTable(data.laporanBertugas);
       renderUnitTable(data.laporanUnit);
       renderJadualTable(data.jadualBertugas);
       renderSalahLakuTable(data.salahLaku);
+      renderJKKelasTable(data.jawatankuasaKelas || []);
     }
 
     function populateSelect(id, items, defaultText = "-- Pilih --") {
@@ -1549,6 +1660,112 @@
         opt.value = v;
         el.appendChild(opt);
       });
+    }
+
+    // --- TAB JAWATANKUASA KELAS ---
+    function filterMuridDropdownByTahunKelas() {
+      const selTahun = document.getElementById('jkTahun').value;
+      const selKelas = document.getElementById('jkKelas').value;
+      const muridSelect = document.getElementById('jkNamaMurid');
+      muridSelect.innerHTML = '<option value="">-- Pilih Murid --</option>';
+
+      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) return;
+
+      const filtered = globalHemData.options.murid.filter(m => {
+        const matchTahun = !selTahun || m.tahun == selTahun;
+        const matchKelas = !selKelas || m.kelas.toLowerCase() == selKelas.toLowerCase();
+        return matchTahun && matchKelas;
+      });
+
+      filtered.forEach(m => {
+        const opt = document.createElement('option');
+        opt.value = m.nama;
+        opt.innerText = `${m.nama} (${m.tahun} ${m.kelas})`;
+        muridSelect.appendChild(opt);
+      });
+    }
+
+    function renderJKKelasTable(list) {
+      const tb = document.getElementById('jkKelasTableBody');
+      tb.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Tiada rekod jawatankuasa kelas dijumpai.</td></tr>`;
+        return;
+      }
+
+      list.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.sesiPersekolahan || '-'}</td>
+          <td><strong style="color:var(--neon-accent);">${r.jawatan || '-'}</strong></td>
+          <td>${r.tahun || '-'}</td>
+          <td>${r.kelas || '-'}</td>
+          <td style="font-weight:700;">${r.nama || '-'}</td>
+          <td style="font-size:0.8rem; color:var(--text-muted);">${r.timestamp || '-'}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterJKKelasTable() {
+      if (!globalHemData || !globalHemData.jawatankuasaKelas) return;
+
+      const sSesi = document.getElementById('filterJKSesi').value;
+      const sTahun = document.getElementById('filterJKTahun').value;
+      const sKelas = document.getElementById('filterJKKelas').value.toLowerCase();
+      const sJawatan = document.getElementById('filterJKJawatan').value.toLowerCase();
+      const q = document.getElementById('searchJKNama').value.toLowerCase().trim();
+
+      const filtered = globalHemData.jawatankuasaKelas.filter(r => {
+        const matchSesi = !sSesi || r.sesiPersekolahan == sSesi;
+        const matchTahun = !sTahun || r.tahun == sTahun;
+        const matchKelas = !sKelas || (r.kelas && r.kelas.toLowerCase() == sKelas);
+        const matchJawatan = !sJawatan || (r.jawatan && r.jawatan.toLowerCase() == sJawatan);
+        const matchNama = !q || (r.nama && r.nama.toLowerCase().includes(q));
+        return matchSesi && matchTahun && matchKelas && matchJawatan && matchNama;
+      });
+
+      renderJKKelasTable(filtered);
+    }
+
+    async function handleJKKelasSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSubmitJK');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      const formData = {
+        sesiPersekolahan: document.getElementById('jkSesi').value,
+        jawatan: document.getElementById('jkJawatan').value,
+        tahun: document.getElementById('jkTahun').value,
+        kelas: document.getElementById('jkKelas').value,
+        nama: document.getElementById('jkNamaMurid').value
+      };
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'simpan_jawatankuasa_kelas', formData })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Jawatankuasa';
+
+        if (result.success) {
+          showToast('Jawatankuasa Kelas berjaya disimpan!');
+          closeModal('modalJKKelas');
+          document.getElementById('formJKKelas').reset();
+          fetchHemData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Jawatankuasa';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
     }
 
     // --- RENDERING & FILTERS JADUAL FAIL HEM & OPR ---
@@ -1631,7 +1848,6 @@
       renderOPRTable(filtered);
     }
 
-    // --- RENDERING JADUAL-JADUAL LAIN ---
     function renderBertugasTable(list) {
       const tb = document.getElementById('bertugasTableBody');
       tb.innerHTML = '';
@@ -1748,7 +1964,7 @@
       });
     }
 
-    // --- PENGHANTARAN BORANG (FORM SUBMISSIONS) ---
+    // --- PENGHANTARAN BORANG ---
     async function handleFailHEMSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitFailHEM');
@@ -2018,7 +2234,6 @@
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
 
-      // Kumpul nama murid
       const namaList = [];
       selectedMuridIndexes.forEach(idx => {
         const m = globalHemData.options.murid[idx];
@@ -2065,7 +2280,7 @@
       }
     }
 
-    // --- CETAK LAPORAN (ONE PAGE REPORT) ---
+    // --- CETAK LAPORAN (ONE PAGE REPORT) DENGAN PENGESAHAN FORMAT THUMBNAIL GAMBAR ---
     function viewBertugasDetails(id) {
       const item = globalHemData.laporanBertugas.find(b => b.id === id);
       if (!item) return;
@@ -2116,11 +2331,16 @@
       const imgBox = document.getElementById('rptImagesContainer');
       imgBox.innerHTML = '';
       const imgs = [item.gambar1, item.gambar2, item.gambar3].filter(g => g && g.startsWith('http'));
+
       if (imgs.length > 0) {
         document.getElementById('rptImagesWrap').style.display = 'block';
         imgs.forEach(url => {
+          const directImgUrl = formatDriveThumbnail(url);
           const im = document.createElement('img');
-          im.src = url;
+          im.src = directImgUrl;
+          im.alt = "Foto Laporan Aktiviti";
+          im.crossOrigin = "anonymous";
+          im.referrerPolicy = "no-referrer";
           imgBox.appendChild(im);
         });
       } else {
