@@ -9,6 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
+  <!-- Favicon & Home Screen Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#10b981">
+
   <style>
     :root {
       --bg-page: #f8fafc;
@@ -257,7 +265,7 @@
     .btn-download-csv:hover { background: #faf5ff; }
 
     .table-scroll-container {
-      max-height: 380px;
+      max-height: 400px;
       overflow-y: auto;
       border: 1px solid #f1f5f9;
       border-radius: 10px;
@@ -273,8 +281,9 @@
       text-align: left;
       border-bottom: 2px solid var(--border-soft);
       z-index: 2;
+      white-space: nowrap;
     }
-    .custom-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); }
+    .custom-table td { padding: 10px 12px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); white-space: nowrap; }
     .custom-table tr:hover { background: #faf5ff; }
 
     .btn-link-file {
@@ -365,27 +374,6 @@
     .modal-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
     .close-modal-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
 
-    /* KATEGORI E-FAIL STYLING */
-    .efail-category-section {
-      margin-bottom: 20px;
-    }
-
-    .efail-category-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--neon-dark);
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 1.5px dashed #e9d5ff;
-      padding-bottom: 5px;
-    }
-
-    .efail-category-title i {
-      color: var(--neon-purple);
-    }
-
     .submodal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
     .sub-card {
       background: #f8fafc;
@@ -404,13 +392,7 @@
     .sub-card-icon { width: 42px; height: 42px; border-radius: 10px; background: #f3e8ff; color: var(--neon-dark); display: flex; align-items: center; justify-content: center; font-size: 1.25rem; margin-bottom: 8px; }
     .sub-card-title { font-size: 0.8rem; font-weight: 700; line-height: 1.3; }
 
-    .category-pills-bar {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
-
+    .category-pills-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
     .cat-pill-btn {
       padding: 5px 12px;
       border-radius: 20px;
@@ -422,12 +404,7 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-
-    .cat-pill-btn:hover, .cat-pill-btn.active {
-      background: var(--neon-purple);
-      color: #ffffff;
-      border-color: var(--neon-purple);
-    }
+    .cat-pill-btn:hover, .cat-pill-btn.active { background: var(--neon-purple); color: #ffffff; border-color: var(--neon-purple); }
 
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
@@ -468,7 +445,15 @@
     .report-table td, .report-table th { border: 1px solid #000; padding: 6px 8px; font-size: 0.82rem; }
     .report-table th { background: #f1f5f9; width: 30%; text-align: left; }
     .report-images { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
-    .report-images img { width: 100%; height: 130px; object-fit: cover; border: 1px solid #ccc; }
+    .report-images img { width: 100%; height: 150px; object-fit: cover; border: 1px solid #ccc; border-radius: 4px; display: block; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printableArea, #printableArea * { visibility: visible; }
+      #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+      .no-print { display: none !important; }
+      .report-images img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
 
     .toast-msg {
       position: fixed;
@@ -518,7 +503,7 @@
         <div class="menu-card" onclick="openModal('modalProfilMurid')">
           <div class="icon-box"><i class="fas fa-id-card"></i></div>
           <div class="menu-card-title">Pangkalan Data Murid</div>
-          <div class="menu-card-desc">Semak profil koku, keahlian, pencapaian & kehadiran</div>
+          <div class="menu-card-desc">Semak profil koku, keahlian, pencapaian & kehadiran mengikut sesi</div>
         </div>
         <div class="menu-card" onclick="openModal('kehadiranMuridModal')">
           <div class="icon-box"><i class="fas fa-user-check"></i></div>
@@ -540,13 +525,13 @@
         <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
       </div>
 
-      <!-- TAB 1: LAPORAN MINGGUAN -->
+      <!-- TAB 1: LAPORAN MINGGUAN (PENAPIS BERTINGKAT) -->
       <div id="tabMingguan" class="tab-content active">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Rekod Laporan Mingguan Perjumpaan</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Tapis mengikut kategori kokurikulum atau unit pilihan.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Tapis bertingkat mengikut Sesi, Kategori, atau Unit.</p>
             </div>
             <button class="btn-action-purple" onclick="openModal('modalMingguan')">
               <i class="fas fa-edit"></i> Isi Laporan Mingguan
@@ -554,7 +539,7 @@
           </div>
 
           <div class="filter-wrapper" style="margin-bottom:14px;">
-            <select id="filterMingguanSesi" class="filter-select" onchange="filterMingguanTable()">
+            <select id="filterMingguanSesi" class="filter-select" onchange="handleFilterSesiChange()">
               <option value="">Semua Sesi</option>
             </select>
             <select id="filterMingguanKategori" class="filter-select" onchange="handleFilterKategoriChange()">
@@ -590,13 +575,13 @@
         </div>
       </div>
 
-      <!-- TAB 2: REKOD KEHADIRAN MURID -->
+      <!-- TAB 2: REKOD KEHADIRAN MURID (DILENGKAPI FILTER KELAS & SESI) -->
       <div id="tabKehadiranTable" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
             <div>
               <h3 style="font-size:1.1rem; font-weight:800;">Jadual Rekod Kehadiran Murid</h3>
-              <p style="font-size:0.82rem; color:var(--text-muted);">Jumlah kehadiran murid mengikut setiap kegiatan kokurikulum.</p>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Jumlah kehadiran murid mengikut sesi dan kegiatan kokurikulum.</p>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn-download-csv" onclick="downloadAllAttendanceCSV()"><i class="fas fa-file-csv"></i> Muat Turun Data</button>
@@ -607,16 +592,17 @@
           </div>
 
           <div class="filter-wrapper" style="margin-bottom:14px;">
-            <input type="text" id="searchKehadiranMurid" class="search-input" placeholder="Cari nama murid..." oninput="filterKehadiranMuridTable()">
+            <select id="filterKehadiranSesi" class="filter-select" onchange="filterKehadiranMuridTable()">
+              <option value="">Semua Sesi</option>
+            </select>
             <select id="filterKehadiranTahun" class="filter-select" onchange="filterKehadiranMuridTable()">
               <option value="">Semua Tahun</option>
-              <option value="1">Tahun 1</option>
-              <option value="2">Tahun 2</option>
-              <option value="3">Tahun 3</option>
-              <option value="4">Tahun 4</option>
-              <option value="5">Tahun 5</option>
-              <option value="6">Tahun 6</option>
             </select>
+            <!-- FILTER KELAS BARU -->
+            <select id="filterKehadiranKelas" class="filter-select" onchange="filterKehadiranMuridTable()">
+              <option value="">Semua Kelas</option>
+            </select>
+            <input type="text" id="searchKehadiranMurid" class="search-input" placeholder="Cari nama murid..." oninput="filterKehadiranMuridTable()">
           </div>
 
           <div class="table-scroll-container">
@@ -624,6 +610,7 @@
               <thead>
                 <tr>
                   <th>Nama Murid</th>
+                  <th>Sesi</th>
                   <th>Kelas</th>
                   <th style="text-align:center;">Hadir Uniform</th>
                   <th style="text-align:center;">Hadir Persatuan</th>
@@ -633,14 +620,14 @@
                 </tr>
               </thead>
               <tbody id="kehadiranMasterTableBody">
-                <tr><td colspan="7" style="text-align:center; color:#94a3b8;">Memuatkan data murid...</td></tr>
+                <tr><td colspan="8" style="text-align:center; color:#94a3b8;">Memuatkan data murid...</td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- TAB 3: KEHADIRAN GURU -->
+      <!-- TAB 3: KEHADIRAN GURU (DENGAN STATISTIK GURU TERPILIH & MODAL JADUAL) -->
       <div id="tabGuru" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -648,25 +635,28 @@
               <h3 style="font-size:1.1rem; font-weight:800;">Log Kehadiran Guru Kokurikulum</h3>
               <p style="font-size:0.82rem; color:var(--text-muted);">Perekodan status hadir dan sebab ketidakhadiran guru pembimbing.</p>
             </div>
-            <button class="btn-action-purple" onclick="openModal('modalGuruAtt')">
-              <i class="fas fa-user-clock"></i> Rekod Kehadiran Guru
-            </button>
+            <div style="display:flex; gap:8px;">
+              <button class="btn-download-csv" onclick="openModal('modalPecahanGuru')"><i class="fas fa-list-ol"></i> Senarai Guru Tidak Hadir</button>
+              <button class="btn-action-purple" onclick="openModal('modalGuruAtt')">
+                <i class="fas fa-user-clock"></i> Rekod Kehadiran Guru
+              </button>
+            </div>
           </div>
 
-          <!-- KAD STATISTIK GURU -->
+          <!-- KAD STATISTIK GURU TERPILIH -->
           <div class="stat-koko-grid">
             <div class="stat-koko-card">
               <div class="stat-koko-icon"><i class="fas fa-user-times"></i></div>
               <div>
-                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">JUMLAH KETIDAKHADIRAN GURU</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">JUMLAH KETIDAKHADIRAN (<span id="statLabelGuruTerpilih">Semua Guru</span>)</div>
                 <div style="font-size:1.4rem; font-weight:800; color:#dc2626;" id="statTotalGuruTidakHadir">0</div>
               </div>
             </div>
             <div class="stat-koko-card" style="flex:2;">
               <div class="stat-koko-icon" style="color:#059669;"><i class="fas fa-clipboard-list"></i></div>
               <div style="width:100%;">
-                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">PECAHAN TIDAK HADIR</div>
-                <div style="font-size:0.82rem; font-weight:600; color:var(--text-main); margin-top:2px;" id="statPecahanGuruTidakHadir">Tiada rekod ketidakhadiran</div>
+                <div style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">STATUS REKOD</div>
+                <div style="font-size:0.82rem; font-weight:600; color:var(--text-main); margin-top:2px;" id="statPecahanGuruTidakHadir">Memaparkan rekod terkini.</div>
               </div>
             </div>
           </div>
@@ -702,7 +692,7 @@
         </div>
       </div>
 
-      <!-- TAB 4: LAPORAN PENCAPAIAN -->
+      <!-- TAB 4: LAPORAN PENCAPAIAN (MENYOKONG FOTO TELEFON & CETAKAN) -->
       <div id="tabPencapaian" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -877,7 +867,7 @@
     </section>
   </div>
 
-  <!-- MODAL: eFail Koko (DIPERBAIKI DENGAN KATEGORI KOKURIKULUM) -->
+  <!-- MODAL: eFail Koko (KATEGORI KOKURIKULUM) -->
   <div class="modal-overlay" id="efailModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -885,7 +875,6 @@
         <button class="close-modal-btn" onclick="closeModal('efailModal')">&times;</button>
       </div>
 
-      <!-- BAR PENAPIS KATEGORI CEPAT -->
       <div class="category-pills-bar" id="efailCatPills">
         <button type="button" class="cat-pill-btn active" onclick="setEFailCategoryFilter('ALL', this)">Semua Kategori</button>
         <button type="button" class="cat-pill-btn" onclick="setEFailCategoryFilter('1. INDUK', this)">Fail Induk</button>
@@ -900,12 +889,11 @@
         <input type="text" id="searchEFailInput" class="search-input" style="width:100%;" placeholder="Cari nama unit..." oninput="filterEFailModal()">
       </div>
 
-      <!-- CONTAINER BERKATEGORI -->
       <div id="efailCardsContainer"></div>
     </div>
   </div>
 
-  <!-- MODAL: KAD PANGKALAN DATA & PROFIL MURID -->
+  <!-- MODAL: KAD PANGKALAN DATA & PROFIL MURID (DILENGKAPI FILTER SESI) -->
   <div class="modal-overlay" id="modalProfilMurid">
     <div class="modal-box" style="max-width:750px;">
       <div class="modal-header">
@@ -918,14 +906,12 @@
 
       <div style="margin-bottom:16px;">
         <div class="filter-wrapper" style="margin-bottom:8px;">
+          <!-- FILTER SESI BARU -->
+          <select id="pFilterSesi" class="filter-select" onchange="filterProfileStudentDropdown()">
+            <option value="">Semua Sesi</option>
+          </select>
           <select id="pFilterTahun" class="filter-select" onchange="filterProfileStudentDropdown()">
             <option value="">Semua Tahun</option>
-            <option value="1">Tahun 1</option>
-            <option value="2">Tahun 2</option>
-            <option value="3">Tahun 3</option>
-            <option value="4">Tahun 4</option>
-            <option value="5">Tahun 5</option>
-            <option value="6">Tahun 6</option>
           </select>
           <select id="pFilterKelas" class="filter-select" onchange="filterProfileStudentDropdown()">
             <option value="">Semua Kelas</option>
@@ -947,6 +933,7 @@
 
         <table class="report-table">
           <tr><th>NAMA MURID</th><td id="pCardNama" style="font-weight:700;">-</td></tr>
+          <tr><th>SESI PERSEKOLAHAN</th><td id="pCardSesi">-</td></tr>
           <tr><th>TAHUN / KELAS</th><td id="pCardKelas">-</td></tr>
           <tr><th>BADAN BERUNIFORM</th><td id="pCardUniform" style="font-weight:600; color:var(--neon-dark);">-</td></tr>
           <tr><th>KELAB & PERSATUAN</th><td id="pCardPersatuan" style="font-weight:600; color:var(--neon-dark);">-</td></tr>
@@ -961,7 +948,7 @@
               Persatuan: <b id="pAttPer">0</b> kali | 
               Sukan: <b id="pAttSuk">0</b> kali | 
               Rumah Sukan: <b id="pAttRum">0</b> kali
-              <div style="margin-top:4px; color:var(--neon-accent);">Keseluruhan: <b id="pAttTotal">0</b> kehadiran</div>
+              <div style="margin-top:4px; color:var(--neon-accent);">Keseluruhan Sesi: <b id="pAttTotal">0</b> kehadiran</div>
             </td>
           </tr>
         </table>
@@ -969,7 +956,37 @@
     </div>
   </div>
 
-  <!-- MODAL: BORANG MUAT NAIK FAIL KOKO (PARTITION) -->
+  <!-- MODAL: SENARAI GURU TIDAK HADIR (BERBENTUK JADUAL) -->
+  <div class="modal-overlay" id="modalPecahanGuru">
+    <div class="modal-box" style="max-width:700px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-user-times" style="color:#dc2626; margin-right:8px;"></i>Senarai Rekod Ketidakhadiran Guru</div>
+        <button class="close-modal-btn" onclick="closeModal('modalPecahanGuru')">&times;</button>
+      </div>
+
+      <div class="table-scroll-container" style="max-height:360px;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Nama Guru</th>
+              <th style="text-align:center;">Jumlah Tidak Hadir</th>
+              <th>Tarikh & Perjumpaan Terkini</th>
+              <th>Sebab Utama</th>
+            </tr>
+          </thead>
+          <tbody id="pecahanGuruTableBody">
+            <tr><td colspan="4" style="text-align:center; color:#94a3b8;">Tiada rekod ketidakhadiran.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="form-actions" style="margin-top:14px;">
+        <button type="button" class="btn-secondary" onclick="closeModal('modalPecahanGuru')">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: BORANG MUAT NAIK FAIL KOKO -->
   <div class="modal-overlay" id="modalFailKOKO">
     <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
@@ -1128,8 +1145,8 @@
             <input type="number" id="mPerjumpaan" class="form-control" placeholder="1, 2, 3..." required>
           </div>
           <div class="form-group full-width">
-            <label class="form-label">Unit Kokurikulum (Mengikut Kategori) *</label>
-            <select id="mUnit" class="form-control" required></select>
+            <label class="form-label">Unit Kokurikulum *</label>
+            <select id="mUnit" class="form-control" required onchange="handleMingguanUnitChange()"></select>
           </div>
           <div class="form-group">
             <label class="form-label">Tarikh Perjumpaan *</label>
@@ -1159,22 +1176,30 @@
             <label class="form-label">Penilaian KBAT</label>
             <input type="text" id="mKbat" class="form-control" placeholder="Kemahiran berfikir aras tinggi">
           </div>
+
+          <!-- GURU PEMBIMBING DITAPIS IKUT UNIT KOKURIKULUM -->
           <div class="form-group full-width">
-            <label class="form-label">Guru Pembimbing Yang Hadir (DB Sekolah) *</label>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label class="form-label">Guru Pembimbing Yang Hadir (Ditapis mengikut Unit di atas) *</label>
+              <button type="button" class="btn-download-csv" onclick="toggleAllGuruCheckboxes()">Tanda / Nyah-tanda Semua</button>
+            </div>
             <div class="checkbox-group-container" id="guruPembimbingCheckboxes"></div>
           </div>
+
+          <!-- INPUT GAMBAR (KAMERA TELEFON & GALERI) -->
           <div class="form-group">
-            <label class="form-label">Muat Naik Gambar 1</label>
-            <input type="file" id="mG1" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 1 (Kamera / Fail)</label>
+            <input type="file" id="mG1" class="form-control" accept="image/*" capture="environment">
           </div>
           <div class="form-group">
-            <label class="form-label">Muat Naik Gambar 2</label>
-            <input type="file" id="mG2" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 2 (Kamera / Fail)</label>
+            <input type="file" id="mG2" class="form-control" accept="image/*" capture="environment">
           </div>
           <div class="form-group full-width">
-            <label class="form-label">Muat Naik Gambar 3</label>
-            <input type="file" id="mG3" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 3 (Kamera / Fail)</label>
+            <input type="file" id="mG3" class="form-control" accept="image/*" capture="environment">
           </div>
+
           <div class="form-group full-width">
             <label class="form-label">Laporan Disediakan Oleh *</label>
             <select id="mPelapor" class="form-control" required></select>
@@ -1190,7 +1215,7 @@
     </div>
   </div>
 
-  <!-- MODAL: BORANG LAPORAN PENCAPAIAN -->
+  <!-- MODAL: BORANG LAPORAN PENCAPAIAN (MENYOKONG FOTO KAMERA) -->
   <div class="modal-overlay" id="modalPencapaian">
     <div class="modal-box">
       <div class="modal-header">
@@ -1226,18 +1251,20 @@
             <textarea id="pPeserta" class="form-control" rows="3" placeholder="Murid yang dipilih akan dipaparkan di sini..." required readonly></textarea>
           </div>
 
+          <!-- INPUT GAMBAR PENCAPAIAN (KAMERA TELEFON & FAIL) -->
           <div class="form-group">
-            <label class="form-label">Muat Naik Gambar 1</label>
-            <input type="file" id="pG1" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 1 (Kamera / Fail)</label>
+            <input type="file" id="pG1" class="form-control" accept="image/*" capture="environment">
           </div>
           <div class="form-group">
-            <label class="form-label">Muat Naik Gambar 2</label>
-            <input type="file" id="pG2" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 2 (Kamera / Fail)</label>
+            <input type="file" id="pG2" class="form-control" accept="image/*" capture="environment">
           </div>
           <div class="form-group full-width">
-            <label class="form-label">Muat Naik Gambar 3</label>
-            <input type="file" id="pG3" class="form-control" accept="image/*">
+            <label class="form-label">Muat Naik Gambar 3 (Kamera / Fail)</label>
+            <input type="file" id="pG3" class="form-control" accept="image/*" capture="environment">
           </div>
+
           <div class="form-group full-width">
             <label class="form-label">Guru Penyelaras / Pembimbing *</label>
             <select id="pPenyelaras" class="form-control" required></select>
@@ -1266,7 +1293,7 @@
           <select id="jwSesi" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
-          <label class="form-label">Unit Kokurikulum (Mengikut Kategori) *</label>
+          <label class="form-label">Unit Kokurikulum *</label>
           <select id="jwUnit" class="form-control" required></select>
         </div>
         <div class="form-group" style="margin-bottom:12px;">
@@ -1312,8 +1339,6 @@
       <div class="filter-wrapper" style="margin-bottom:12px;">
         <select id="pesertaFilterTahun" class="filter-select" onchange="filterPesertaList()">
           <option value="">Semua Tahun</option>
-          <option value="1">Tahun 1</option><option value="2">Tahun 2</option><option value="3">Tahun 3</option>
-          <option value="4">Tahun 4</option><option value="5">Tahun 5</option><option value="6">Tahun 6</option>
         </select>
         <select id="pesertaFilterKelas" class="filter-select" onchange="filterPesertaList()"><option value="">Semua Kelas</option></select>
         <input type="text" id="pesertaSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama peserta..." oninput="filterPesertaList()">
@@ -1338,8 +1363,6 @@
       <div class="filter-wrapper" style="margin-bottom:12px;">
         <select id="jwFilterTahun" class="filter-select" onchange="filterJwStudentList()">
           <option value="">Semua Tahun</option>
-          <option value="1">Tahun 1</option><option value="2">Tahun 2</option><option value="3">Tahun 3</option>
-          <option value="4">Tahun 4</option><option value="5">Tahun 5</option><option value="6">Tahun 6</option>
         </select>
         <select id="jwFilterKelas" class="filter-select" onchange="filterJwStudentList()"><option value="">Semua Kelas</option></select>
         <input type="text" id="jwSearchInput" class="search-input" style="flex:1;" placeholder="Cari nama murid..." oninput="filterJwStudentList()">
@@ -1408,7 +1431,7 @@
   <!-- MODAL: CETAK ONE-PAGE REPORT (MINGGUAN / PENCAPAIAN) -->
   <div class="modal-overlay" id="viewReportModal">
     <div class="modal-box" style="max-width:850px;">
-      <div class="modal-header">
+      <div class="modal-header no-print">
         <div class="modal-title" id="rptModalTitle"><i class="fas fa-file-invoice"></i> Paparan Laporan Kokurikulum</div>
         <div style="display:flex; gap:8px;">
           <button class="btn-action-purple" onclick="window.print()"><i class="fas fa-print"></i> Cetak PDF</button>
@@ -1466,6 +1489,17 @@
     let selectedJwStudent = null;
     let activeEFailCategory = 'ALL';
 
+    function formatDriveThumbnail(url) {
+      if (!url) return '';
+      if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
+        const match = url.match(/[-\w]{25,}/);
+        if (match) {
+          return `https://drive.google.com/thumbnail?id=${match[0]}&sz=w1000`;
+        }
+      }
+      return url;
+    }
+
     function showToast(msg, isError = false) {
       const t = document.getElementById('toastNotification');
       t.innerText = msg;
@@ -1506,7 +1540,7 @@
 
     window.addEventListener('load', fetchKokoData);
 
-    const CACHE_KEY_LOCAL = "semanes_koko_cache_v6";
+    const CACHE_KEY_LOCAL = "semanes_koko_cache_v8";
 
     async function fetchKokoData() {
       const localSaved = localStorage.getItem(CACHE_KEY_LOCAL);
@@ -1563,18 +1597,24 @@
     function renderUI(data) {
       renderCategorizedEFailCards(data.efail);
 
-      updateDynamicDropdown('filterMingguanSesi', data.laporanMingguan, 'sesi', 'Semua Sesi');
-      updateDynamicDropdown('filterPencapaianSesi', data.laporanPencapaian, 'sesi', 'Semua Sesi');
-      updateDynamicDropdown('filterPencapaianPeringkat', data.laporanPencapaian, 'peringkat', 'Semua Peringkat');
+      // Sesi Persekolahan
+      updateDynamicDropdown('filterMingguanSesi', data.options.sesi ? data.options.sesi.map(s => ({ sesi: s })) : [], 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterPencapaianSesi', data.options.sesi ? data.options.sesi.map(s => ({ sesi: s })) : [], 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterFailKokoSesi', data.options.sesi ? data.options.sesi.map(s => ({ sesi: s })) : [], 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterOprSesi', data.options.sesi ? data.options.sesi.map(s => ({ sesi: s })) : [], 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('filterKehadiranSesi', data.options.sesi ? data.options.sesi.map(s => ({ sesi: s })) : [], 'sesi', 'Semua Sesi');
+      updateDynamicDropdown('pFilterSesi', data.options.sesi ? data.options.sesi.map(s => ({ sesi: s })) : [], 'sesi', 'Semua Sesi');
 
-      updateDynamicDropdown('filterFailKokoSesi', data.failKOKO, 'sesi', 'Semua Sesi');
-      updateDynamicDropdown('filterFailKokoUnit', data.failKOKO, 'unit', 'Semua Unit');
+      // Tetapkan lalai sesi semasa pada Pangkalan Data Murid
+      const pSesiEl = document.getElementById('pFilterSesi');
+      if (pSesiEl && data.currentSesi) pSesiEl.value = data.currentSesi;
 
-      updateDynamicDropdown('filterOprSesi', data.opr, 'sesi', 'Semua Sesi');
-      updateDynamicDropdown('filterOprUnit', data.opr, 'unit', 'Semua Unit');
+      updateDynamicDropdown('filterPencapaianPeringkat', data.options.peringkat ? data.options.peringkat.map(p => ({ peringkat: p })) : [], 'peringkat', 'Semua Peringkat');
+      updateDynamicDropdown('filterFailKokoUnit', data.options.unitKokoSemua ? data.options.unitKokoSemua.map(u => ({ unit: u })) : [], 'unit', 'Semua Unit');
+      updateDynamicDropdown('filterOprUnit', data.options.unitKokoSemua ? data.options.unitKokoSemua.map(u => ({ unit: u })) : [], 'unit', 'Semua Unit');
+      updateDynamicDropdown('filterGuruNama', data.guruMaster ? data.guruMaster.map(g => ({ namaGuru: g })) : [], 'namaGuru', 'Semua Guru');
 
-      updateDynamicDropdown('filterGuruNama', data.kehadiranGuru, 'namaGuru', 'Semua Guru');
-
+      // Dropdown Borang
       populateSelect('attSesiSelect', data.options.sesi);
       populateSelect('mSesi', data.options.sesi);
       populateSelect('pSesi', data.options.sesi);
@@ -1618,8 +1658,8 @@
       populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
       populateSelect('filterJwUnit', [...new Set(allUnits)], "Semua Unit");
 
-      renderGuruCheckboxes(data.guruMaster);
-      populateKelasFilters(data.muridMaster);
+      // Isi penapis Tahun & Kelas untuk Rekod Kehadiran Murid & Profil
+      populateTahunDanKelasFilters(data.muridMaster);
       filterProfileStudentDropdown();
 
       renderMingguanTable(data.laporanMingguan);
@@ -1630,19 +1670,246 @@
       renderFailKOKOTable(data.failKOKO || []);
       renderOPRTable(data.opr || []);
 
-      renderStatistikGuru(data.statistikGuru);
+      renderStatistikGuru();
+      renderPecahanGuruModalTable();
     }
 
-    function renderStatistikGuru(stat) {
-      if (!stat) return;
-      document.getElementById('statTotalGuruTidakHadir').innerText = `${stat.totalTidakHadir || 0} kali`;
-      const pecahan = stat.pecahanGuru || {};
-      const entries = Object.entries(pecahan);
-      if (entries.length === 0) {
-        document.getElementById('statPecahanGuruTidakHadir').innerText = "Tiada ketidakhadiran direkodkan setakat ini.";
+    function populateTahunDanKelasFilters(muridList) {
+      const tahunSet = new Set();
+      const kelasSet = new Set();
+      (muridList || []).forEach(m => {
+        if (m.tahun) tahunSet.add(m.tahun);
+        if (m.kelas) kelasSet.add(m.kelas);
+      });
+
+      const thnArr = Array.from(tahunSet).sort();
+      const klsArr = Array.from(kelasSet).sort();
+
+      populateSelect('filterKehadiranTahun', thnArr, "Semua Tahun");
+      populateSelect('filterKehadiranKelas', klsArr, "Semua Kelas");
+      populateSelect('pFilterTahun', thnArr, "Semua Tahun");
+      populateSelect('pFilterKelas', klsArr, "Semua Kelas");
+      populateSelect('pesertaFilterTahun', thnArr, "Semua Tahun");
+      populateSelect('pesertaFilterKelas', klsArr, "Semua Kelas");
+      populateSelect('jwFilterTahun', thnArr, "Semua Tahun");
+      populateSelect('jwFilterKelas', klsArr, "Semua Kelas");
+    }
+
+    // --- KEPERLUAN 8: GURU PEMBIMBING MENGIKUT UNIT KOKURIKULUM ---
+    function handleMingguanUnitChange() {
+      const unit = document.getElementById('mUnit').value.trim();
+      const container = document.getElementById('guruPembimbingCheckboxes');
+      container.innerHTML = '';
+
+      if (!globalKokoData) return;
+
+      // Ambil guru yang ditugaskan untuk unit ini dari pemetaan Data Guru
+      let targetedGuru = (globalKokoData.guruUnitMapping && globalKokoData.guruUnitMapping[unit]) ? globalKokoData.guruUnitMapping[unit] : [];
+
+      // Jika tiada senarai pemetaan khas, paparkan senarai semua guru sebagai sandaran
+      const listToDisplay = (targetedGuru.length > 0) ? targetedGuru : (globalKokoData.guruMaster || []);
+
+      listToDisplay.forEach(g => {
+        const label = document.createElement('label');
+        label.className = 'checkbox-item';
+        label.innerHTML = `<input type="checkbox" value="${g}"> ${g}`;
+        container.appendChild(label);
+      });
+    }
+
+    function toggleAllGuruCheckboxes() {
+      const checkboxes = document.querySelectorAll('#guruPembimbingCheckboxes input[type="checkbox"]');
+      const allChecked = Array.from(checkboxes).every(c => c.checked);
+      checkboxes.forEach(c => c.checked = !allChecked);
+    }
+
+    // --- KEPERLUAN 4: HIERARKI PENAPIS BERTINGKAT LAPORAN MINGGUAN ---
+    function handleFilterSesiChange() {
+      filterMingguanTable();
+    }
+
+    function handleFilterKategoriChange() {
+      const kat = document.getElementById('filterMingguanKategori').value;
+      const unitSelect = document.getElementById('filterMingguanUnit');
+
+      if (!kat) {
+        const allUnits = [];
+        Object.values(globalKokoData.options.kategoriKoko).forEach(list => allUnits.push(...list));
+        populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
       } else {
-        document.getElementById('statPecahanGuruTidakHadir').innerHTML = entries.map(([g, c]) => `<b>${g}</b>: ${c} kali`).join(' | ');
+        const units = globalKokoData.options.kategoriKoko[kat] || [];
+        populateSelect('filterMingguanUnit', units, "Semua Unit dalam Kategori");
       }
+      filterMingguanTable();
+    }
+
+    function filterMingguanTable() {
+      if (!globalKokoData || !globalKokoData.laporanMingguan) return;
+
+      const sSesi = document.getElementById('filterMingguanSesi').value.trim();
+      const sKat = document.getElementById('filterMingguanKategori').value.trim();
+      const sUnit = document.getElementById('filterMingguanUnit').value.trim();
+
+      let filtered = globalKokoData.laporanMingguan;
+
+      if (sSesi) {
+        filtered = filtered.filter(r => (r.sesi || '').toString().trim() === sSesi);
+      }
+
+      if (sUnit && !sUnit.startsWith("Semua")) {
+        filtered = filtered.filter(r => (r.unit || '').trim().toLowerCase() === sUnit.toLowerCase());
+      } else if (sKat && !sKat.startsWith("Semua")) {
+        const unitsInKat = (globalKokoData.options.kategoriKoko[sKat] || []).map(u => u.trim().toLowerCase());
+        filtered = filtered.filter(r => unitsInKat.includes((r.unit || '').trim().toLowerCase()));
+      }
+
+      renderMingguanTable(filtered);
+    }
+
+    // --- KEPERLUAN 6: STATISTIK & MODAL KETIDAKHADIRAN GURU ---
+    function renderStatistikGuru() {
+      if (!globalKokoData || !globalKokoData.kehadiranGuru) return;
+      const sGuru = document.getElementById('filterGuruNama').value.trim();
+
+      const labelEl = document.getElementById('statLabelGuruTerpilih');
+      const countEl = document.getElementById('statTotalGuruTidakHadir');
+
+      if (!sGuru) {
+        labelEl.innerText = "Semua Guru";
+        countEl.innerText = `${(globalKokoData.statistikGuru && globalKokoData.statistikGuru.totalTidakHadirKeseluruhan) || 0} kali`;
+      } else {
+        labelEl.innerText = sGuru;
+        const count = (globalKokoData.statistikGuru && globalKokoData.statistikGuru.pecahanGuru && globalKokoData.statistikGuru.pecahanGuru[sGuru]) ? globalKokoData.statistikGuru.pecahanGuru[sGuru] : 0;
+        countEl.innerText = `${count} kali`;
+      }
+    }
+
+    function renderPecahanGuruModalTable() {
+      const tb = document.getElementById('pecahanGuruTableBody');
+      if (!tb || !globalKokoData) return;
+      tb.innerHTML = '';
+
+      const pecahan = (globalKokoData.statistikGuru && globalKokoData.statistikGuru.pecahanGuru) || {};
+      const senarai = (globalKokoData.statistikGuru && globalKokoData.statistikGuru.senaraiTidakHadir) || [];
+      const entries = Object.entries(pecahan);
+
+      if (entries.length === 0) {
+        tb.innerHTML = '<tr><td colspan="4" style="text-align:center; color:#94a3b8; padding:20px;">Tiada rekod ketidakhadiran guru direkodkan.</td></tr>';
+        return;
+      }
+
+      entries.sort((a, b) => b[1] - a[1]); // Susun bilangan tidak hadir tertinggi dahulu
+
+      entries.forEach(([namaGuru, count]) => {
+        const logs = senarai.filter(l => l.namaGuru === namaGuru);
+        const lastLog = logs.length > 0 ? logs[logs.length - 1] : {};
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-weight:700;">${namaGuru}</td>
+          <td style="text-align:center;"><span class="header-badge" style="background:#fee2e2; color:#b91c1c;">${count} kali</span></td>
+          <td>${lastLog.tarikh || '-'} (Ke-${lastLog.perjumpaan || 1} - ${lastLog.aktiviti || '-'})</td>
+          <td>${lastLog.sebab || '-'}</td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterGuruTable() {
+      if (!globalKokoData || !globalKokoData.kehadiranGuru) return;
+      const sGuru = document.getElementById('filterGuruNama').value.trim();
+      const sStatus = document.getElementById('filterGuruStatus').value.trim();
+
+      renderStatistikGuru();
+
+      const filtered = globalKokoData.kehadiranGuru.filter(r => {
+        const matchG = !sGuru || r.namaGuru === sGuru;
+        const matchS = !sStatus || r.statusHadir === sStatus;
+        return matchG && matchS;
+      });
+      renderGuruTable(filtered);
+    }
+
+    // --- KEPERLUAN 2, 3 & 5: REKOD KEHADIRAN & PANGKALAN DATA MURID ---
+    function filterKehadiranMuridTable() {
+      if (!globalKokoData || !globalKokoData.keahlianMurid) return;
+
+      const sesi = document.getElementById('filterKehadiranSesi').value.trim();
+      const thn = document.getElementById('filterKehadiranTahun').value.trim();
+      const kls = document.getElementById('filterKehadiranKelas').value.trim().toLowerCase();
+      const q = document.getElementById('searchKehadiranMurid').value.trim().toLowerCase();
+
+      let filtered = globalKokoData.keahlianMurid;
+
+      if (sesi) filtered = filtered.filter(m => (m.sesi || '').toString().trim() === sesi);
+      if (thn) filtered = filtered.filter(m => (m.tahun || '').toString().trim() === thn);
+      if (kls) filtered = filtered.filter(m => (m.kelas || '').toString().trim().toLowerCase() === kls);
+      if (q) filtered = filtered.filter(m => (m.nama || '').toLowerCase().includes(q));
+
+      renderKehadiranMasterTable(filtered);
+    }
+
+    function filterProfileStudentDropdown() {
+      if (!globalKokoData || !globalKokoData.keahlianMurid) return;
+
+      const sesi = document.getElementById('pFilterSesi').value.trim();
+      const thn = document.getElementById('pFilterTahun').value.trim();
+      const kls = document.getElementById('pFilterKelas').value.trim().toLowerCase();
+      const q = document.getElementById('pSearchNama').value.trim().toLowerCase();
+      const sel = document.getElementById('profileMuridSelect');
+      sel.innerHTML = '<option value="">-- Pilih Murid --</option>';
+
+      globalKokoData.keahlianMurid.forEach((m, idx) => {
+        const matchSesi = !sesi || (m.sesi || '').toString().trim() === sesi;
+        const matchThn = !thn || (m.tahun || '').toString().trim() === thn;
+        const matchKls = !kls || (m.kelas || '').toString().trim().toLowerCase() === kls;
+        const matchQ = !q || (m.nama || '').toLowerCase().includes(q);
+
+        if (matchSesi && matchThn && matchKls && matchQ) {
+          const opt = document.createElement('option');
+          opt.value = idx;
+          opt.innerText = `${m.nama} (${m.tahun} ${m.kelas}) - Sesi ${m.sesi || ''}`;
+          sel.appendChild(opt);
+        }
+      });
+
+      renderStudentProfileCard();
+    }
+
+    function renderStudentProfileCard() {
+      const idx = document.getElementById('profileMuridSelect').value;
+      const box = document.getElementById('studentProfileCardContent');
+      if (idx === "" || !globalKokoData) {
+        box.style.display = 'none';
+        return;
+      }
+
+      const m = globalKokoData.keahlianMurid[idx];
+      const nama = m.nama.trim().toLowerCase();
+
+      const jwMurid = globalKokoData.jawatankuasa.filter(j => j.nama.trim().toLowerCase() === nama);
+      const jwString = jwMurid.length > 0 ? jwMurid.map(j => `${j.jawatan} (${j.unit})`).join(', ') : 'Tiada';
+
+      const pMurid = globalKokoData.laporanPencapaian.filter(p => (p.peserta || '').toLowerCase().includes(nama));
+      const pString = pMurid.length > 0 ? pMurid.map(p => `${p.pencapaian} - ${p.program} (${p.peringkat})`).join('<br>') : 'Tiada penyertaan direkodkan';
+
+      document.getElementById('pCardNama').innerText = m.nama;
+      document.getElementById('pCardSesi').innerText = m.sesi || '-';
+      document.getElementById('pCardKelas').innerText = `${m.tahun} ${m.kelas}`;
+      document.getElementById('pCardUniform').innerText = m.uniform || '-';
+      document.getElementById('pCardPersatuan').innerText = m.persatuan || '-';
+      document.getElementById('pCardSukan').innerText = m.sukan || '-';
+      document.getElementById('pCardRumah').innerText = m.rumahSukan || '-';
+      document.getElementById('pCardJw').innerText = jwString;
+      document.getElementById('pCardPencapaian').innerHTML = pString;
+
+      document.getElementById('pAttUni').innerText = m.attUniform || 0;
+      document.getElementById('pAttPer').innerText = m.attPersatuan || 0;
+      document.getElementById('pAttSuk').innerText = m.attSukan || 0;
+      document.getElementById('pAttRum').innerText = m.attRumahSukan || 0;
+      document.getElementById('pAttTotal').innerText = m.totalHadir || 0;
+
+      box.style.display = 'block';
     }
 
     function populateSelect(id, items, defaultText = "-- Pilih --") {
@@ -1683,85 +1950,6 @@
       }
     }
 
-    function renderGuruCheckboxes(guruList) {
-      const container = document.getElementById('guruPembimbingCheckboxes');
-      container.innerHTML = '';
-      guruList.forEach(g => {
-        const label = document.createElement('label');
-        label.className = 'checkbox-item';
-        label.innerHTML = `<input type="checkbox" value="${g}"> ${g}`;
-        container.appendChild(label);
-      });
-    }
-
-    function populateKelasFilters(muridList) {
-      const kelasSet = new Set();
-      muridList.forEach(m => { if (m.kelas) kelasSet.add(m.kelas); });
-      const kelasArr = Array.from(kelasSet).sort();
-      populateSelect('pFilterKelas', kelasArr, "Semua Kelas");
-      populateSelect('pesertaFilterKelas', kelasArr, "Semua Kelas");
-      populateSelect('jwFilterKelas', kelasArr, "Semua Kelas");
-    }
-
-    // --- PROFIL & KAD DATA MURID ---
-    function filterProfileStudentDropdown() {
-      const thn = document.getElementById('pFilterTahun').value;
-      const kls = document.getElementById('pFilterKelas').value.toLowerCase();
-      const q = document.getElementById('pSearchNama').value.toLowerCase();
-      const sel = document.getElementById('profileMuridSelect');
-      sel.innerHTML = '<option value="">-- Pilih Murid --</option>';
-
-      if (!globalKokoData) return;
-
-      globalKokoData.keahlianMurid.forEach((m, idx) => {
-        const matchThn = !thn || (m.tahun || '').toString() === thn;
-        const matchKls = !kls || (m.kelas || '').toLowerCase() === kls;
-        const matchQ = !q || (m.nama || '').toLowerCase().includes(q);
-
-        if (matchThn && matchKls && matchQ) {
-          const opt = document.createElement('option');
-          opt.value = idx;
-          opt.innerText = `${m.nama} (${m.tahun} ${m.kelas})`;
-          sel.appendChild(opt);
-        }
-      });
-    }
-
-    function renderStudentProfileCard() {
-      const idx = document.getElementById('profileMuridSelect').value;
-      const box = document.getElementById('studentProfileCardContent');
-      if (idx === "" || !globalKokoData) {
-        box.style.display = 'none';
-        return;
-      }
-
-      const m = globalKokoData.keahlianMurid[idx];
-      const nama = m.nama.trim().toLowerCase();
-
-      const jwMurid = globalKokoData.jawatankuasa.filter(j => j.nama.trim().toLowerCase() === nama);
-      const jwString = jwMurid.length > 0 ? jwMurid.map(j => `${j.jawatan} (${j.unit})`).join(', ') : 'Tiada';
-
-      const pMurid = globalKokoData.laporanPencapaian.filter(p => (p.peserta || '').toLowerCase().includes(nama));
-      const pString = pMurid.length > 0 ? pMurid.map(p => `${p.pencapaian} - ${p.program} (${p.peringkat})`).join('<br>') : 'Tiada penyertaan direkodkan';
-
-      document.getElementById('pCardNama').innerText = m.nama;
-      document.getElementById('pCardKelas').innerText = `${m.tahun} ${m.kelas}`;
-      document.getElementById('pCardUniform').innerText = m.uniform || '-';
-      document.getElementById('pCardPersatuan').innerText = m.persatuan || '-';
-      document.getElementById('pCardSukan').innerText = m.sukan || '-';
-      document.getElementById('pCardRumah').innerText = m.rumahSukan || '-';
-      document.getElementById('pCardJw').innerText = jwString;
-      document.getElementById('pCardPencapaian').innerHTML = pString;
-
-      document.getElementById('pAttUni').innerText = m.attUniform || 0;
-      document.getElementById('pAttPer').innerText = m.attPersatuan || 0;
-      document.getElementById('pAttSuk').innerText = m.attSukan || 0;
-      document.getElementById('pAttRum').innerText = m.attRumahSukan || 0;
-      document.getElementById('pAttTotal').innerText = m.totalHadir || 0;
-
-      box.style.display = 'block';
-    }
-
     function printStudentCard() {
       const card = document.getElementById('studentProfileCardContent');
       if (!card || card.style.display === 'none') {
@@ -1791,7 +1979,6 @@
       }, 500);
     }
 
-    // --- TABEL FAIL KOKO & OPR ---
     function renderFailKOKOTable(list) {
       const tb = document.getElementById('failKokoTableBody');
       tb.innerHTML = '';
@@ -1871,7 +2058,6 @@
       renderOPRTable(filtered);
     }
 
-    // --- SUBMISSIONS FAIL KOKO & OPR ---
     async function handleFailKOKOSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitFailKOKO');
@@ -1982,7 +2168,6 @@
       }
     }
 
-    // --- TABEL KEHADIRAN GURU ---
     function renderGuruTable(list) {
       const tb = document.getElementById('guruTableBody');
       tb.innerHTML = '';
@@ -2009,19 +2194,6 @@
       });
     }
 
-    function filterGuruTable() {
-      if (!globalKokoData || !globalKokoData.kehadiranGuru) return;
-      const sGuru = document.getElementById('filterGuruNama').value;
-      const sStatus = document.getElementById('filterGuruStatus').value;
-
-      const filtered = globalKokoData.kehadiranGuru.filter(r => {
-        const matchG = !sGuru || r.namaGuru === sGuru;
-        const matchS = !sStatus || r.statusHadir === sStatus;
-        return matchG && matchS;
-      });
-      renderGuruTable(filtered);
-    }
-
     function renderMingguanTable(list) {
       const tb = document.getElementById('mingguanTableBody');
       tb.innerHTML = '';
@@ -2046,48 +2218,18 @@
       });
     }
 
-    function filterMingguanTable() {
-      const sSesi = document.getElementById('filterMingguanSesi').value;
-      const sKat = document.getElementById('filterMingguanKategori').value;
-      const sUnit = document.getElementById('filterMingguanUnit').value;
-
-      let filtered = globalKokoData.laporanMingguan;
-      if (sSesi) filtered = filtered.filter(r => r.sesi == sSesi);
-
-      if (sUnit) {
-        filtered = filtered.filter(r => r.unit == sUnit);
-      } else if (sKat) {
-        const unitsInKat = globalKokoData.options.kategoriKoko[sKat] || [];
-        filtered = filtered.filter(r => unitsInKat.includes(r.unit));
-      }
-
-      renderMingguanTable(filtered);
-    }
-
-    function handleFilterKategoriChange() {
-      const kat = document.getElementById('filterMingguanKategori').value;
-      if (!kat) {
-        const allUnits = [];
-        Object.values(globalKokoData.options.kategoriKoko).forEach(list => allUnits.push(...list));
-        populateSelect('filterMingguanUnit', [...new Set(allUnits)], "Semua Unit");
-      } else {
-        const units = globalKokoData.options.kategoriKoko[kat] || [];
-        populateSelect('filterMingguanUnit', units, "Semua Unit dalam Kategori");
-      }
-      filterMingguanTable();
-    }
-
     function renderKehadiranMasterTable(list) {
       const tb = document.getElementById('kehadiranMasterTableBody');
       tb.innerHTML = '';
       if (!list || list.length === 0) {
-        tb.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#94a3b8;">Tiada rekod data murid.</td></tr>';
+        tb.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#94a3b8;">Tiada rekod data murid.</td></tr>';
         return;
       }
       list.forEach(m => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td style="font-weight:700;">${m.nama}</td>
+          <td>${m.sesi || '-'}</td>
           <td>${m.tahun} ${m.kelas}</td>
           <td style="text-align:center;"><span class="profile-badge">${m.attUniform || 0} kali</span></td>
           <td style="text-align:center;"><span class="profile-badge">${m.attPersatuan || 0} kali</span></td>
@@ -2099,20 +2241,10 @@
       });
     }
 
-    function filterKehadiranMuridTable() {
-      const q = document.getElementById('searchKehadiranMurid').value.toLowerCase();
-      const thn = document.getElementById('filterKehadiranTahun').value;
-      let filtered = globalKokoData.keahlianMurid;
-
-      if (thn) filtered = filtered.filter(m => (m.tahun || '').toString().includes(thn));
-      if (q) filtered = filtered.filter(m => m.nama.toLowerCase().includes(q) || (m.kelas || '').toLowerCase().includes(q));
-      renderKehadiranMasterTable(filtered);
-    }
-
     function downloadAllAttendanceCSV() {
-      let csv = "Nama Murid,Tahun,Kelas,Kehadiran Uniform,Kehadiran Persatuan,Kehadiran Sukan,Kehadiran Rumah Sukan,Jumlah Kehadiran\n";
+      let csv = "Nama Murid,Sesi,Tahun,Kelas,Kehadiran Uniform,Kehadiran Persatuan,Kehadiran Sukan,Kehadiran Rumah Sukan,Jumlah Kehadiran\n";
       globalKokoData.keahlianMurid.forEach(m => {
-        csv += `"${m.nama}","${m.tahun}","${m.kelas}",${m.attUniform || 0},${m.attPersatuan || 0},${m.attSukan || 0},${m.attRumahSukan || 0},${m.totalHadir || 0}\n`;
+        csv += `"${m.nama}","${m.sesi || ''}","${m.tahun}","${m.kelas}",${m.attUniform || 0},${m.attPersatuan || 0},${m.attSukan || 0},${m.attRumahSukan || 0},${m.totalHadir || 0}\n`;
       });
       downloadCSV(csv, "Rekod_Jumlah_Kehadiran_Kokurikulum_Murid.csv");
     }
@@ -2708,12 +2840,16 @@
     function renderReportImages(imgs) {
       const imgBox = document.getElementById('rptImagesContainer');
       imgBox.innerHTML = '';
-      const valid = imgs.filter(g => g && g.startsWith('http'));
+      const valid = (imgs || []).filter(g => g && g.startsWith('http'));
       if (valid.length > 0) {
         document.getElementById('rptImagesWrap').style.display = 'block';
         valid.forEach(url => {
+          const directThumbnail = formatDriveThumbnail(url);
           const im = document.createElement('img');
-          im.src = url;
+          im.src = directThumbnail;
+          im.alt = "Foto Laporan Kokurikulum";
+          im.crossOrigin = "anonymous";
+          im.referrerPolicy = "no-referrer";
           imgBox.appendChild(im);
         });
       } else {
@@ -2729,7 +2865,6 @@
       link.click();
     }
 
-    // --- LOGIK PAPARAN E-FAIL MENGIKUT KATEGORI ---
     function setEFailCategoryFilter(cat, btn) {
       activeEFailCategory = cat;
       document.querySelectorAll('#efailCatPills .cat-pill-btn').forEach(b => b.classList.remove('active'));
@@ -2759,7 +2894,6 @@
         return;
       }
 
-      // Kumpulkan item mengikut AKTIVITI (Kategori)
       const grouped = {};
       list.forEach(item => {
         let cat = (item.aktiviti || 'LAIN-LAIN').trim().toUpperCase();
@@ -2768,7 +2902,6 @@
         grouped[cat].push(item);
       });
 
-      // Susunan kategori standard
       const order = [
         '1. INDUK',
         'BADAN BERUNIFORM',
