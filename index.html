@@ -8,18 +8,14 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Favicon & Home Screen Icons -->
+  
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-  <!-- iOS (Apple) -->
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="SeMaNeS">
-
-  <!-- Android / PWA -->
-  <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#10b981">
 
   <style>
@@ -39,7 +35,75 @@
     body { background-color: var(--bg-page); color: var(--text-main); padding: 30px 16px; min-height: 100vh; }
     .container { max-width: 1200px; margin: 0 auto; }
 
-    /* LOGO TANPA BINGKAI, NEON SHADOW */
+    /* TOP BAR */
+    .user-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding: 12px 18px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+
+    .btn-top-admin {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1.5px solid #38bdf8;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .btn-top-admin:hover {
+      background: #38bdf8;
+      color: #0f172a;
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .btn-top-murid {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #f0fdf4;
+      color: var(--neon-accent);
+      border: 1.5px solid var(--neon-green);
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-top-murid:hover {
+      background: var(--neon-green);
+      color: #ffffff;
+      box-shadow: 0 0 12px var(--neon-green-glow);
+    }
+
+    .btn-logout {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #ef4444;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { background: #fee2e2; border-color: #ef4444; }
+
+    /* HEADER */
     .header-section { text-align: center; margin-bottom: 35px; }
     .logo-container { display: inline-block; margin-bottom: 12px; transition: transform 0.3s ease; }
     .logo-container:hover { transform: scale(1.06); }
@@ -77,45 +141,18 @@
     .section-title { font-size: 1.3rem; font-weight: 800; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
     .section-title::before { content: ''; width: 5px; height: 22px; background: var(--neon-green); border-radius: 4px; box-shadow: 0 0 8px var(--neon-green); }
     .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 45px; }
-    .dash-card { background: #ffffff; border-radius: 16px; border: 1px solid var(--border-soft); padding: 26px 20px; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-soft); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .dash-card { background: #ffffff; border-radius: 16px; border: 1px solid var(--border-soft); padding: 26px 20px; text-decoration: none; color: inherit; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: var(--shadow-soft); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
     .dash-card:hover { transform: translateY(-6px); border-color: var(--neon-green); box-shadow: 0 12px 25px -4px rgba(16, 185, 129, 0.2), 0 0 15px rgba(16, 185, 129, 0.15); }
     
-    /* KOTAK IKON TETAP & KAWALAN SAIZ GAMBAR */
     .icon-wrapper {
-      width: 70px;
-      height: 70px;
-      border-radius: 18px;
-      background: #f0fdf4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
-      font-size: 1.8rem;
-      color: var(--neon-accent);
-      border: 1px solid rgba(16, 185, 129, 0.2);
-      overflow: hidden;
-      padding: 10px;
-      flex-shrink: 0;
+      width: 70px; height: 70px; border-radius: 18px; background: #f0fdf4;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px; font-size: 1.8rem; color: var(--neon-accent);
+      border: 1px solid rgba(16, 185, 129, 0.2); overflow: hidden; padding: 10px; flex-shrink: 0;
       transition: transform 0.35s ease, box-shadow 0.35s ease;
     }
-    .icon-wrapper img {
-      width: 100%;
-      height: 100%;
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: contain;
-      display: block;
-      transition: transform 0.3s ease;
-    }
-    .dash-card:hover .icon-wrapper {
-      transform: scale(1.18) rotate(4deg);
-      box-shadow: 0 0 16px var(--neon-green-glow);
-      background: #dcfce7;
-      color: #047857;
-    }
-    .dash-card:hover .icon-wrapper img {
-      transform: scale(1.15);
-    }
+    .icon-wrapper img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .dash-card:hover .icon-wrapper { transform: scale(1.18) rotate(4deg); box-shadow: 0 0 16px var(--neon-green-glow); background: #dcfce7; color: #047857; }
     .dash-card-title { font-size: 1.05rem; font-weight: 700; color: var(--text-main); margin-bottom: 6px; }
     .dash-card-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
 
@@ -150,13 +187,24 @@
     .booking-room-badge { display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 3px 8px; border-radius: 6px; background: #dcfce7; color: #065f46; margin-bottom: 4px; }
     .booking-meta { font-size: 0.8rem; color: var(--text-muted); }
 
-    /* MODAL FORM */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 16px; }
-    .modal-box { background: #ffffff; border-radius: 18px; width: 100%; max-width: 600px; border: 1px solid var(--neon-green); box-shadow: 0 0 30px var(--neon-green-glow); padding: 24px; animation: modalFadeIn 0.25s ease-out; max-height: 90vh; overflow-y: auto; }
-    @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    /* MODAL UMUM */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);
+      display: none; align-items: center; justify-content: center;
+      z-index: 1000; padding: 16px;
+    }
+    .modal-box {
+      background: #ffffff; border-radius: 18px; width: 100%; max-width: 600px;
+      border: 1px solid var(--neon-green); box-shadow: 0 0 30px var(--neon-green-glow);
+      padding: 24px; animation: modalFadeIn 0.25s ease-out; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-box-large { max-width: 1050px; }
+    @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: scale(1); } }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #f1f5f9; padding-bottom: 12px; margin-bottom: 16px; }
     .modal-title { font-size: 1.15rem; font-weight: 800; color: var(--text-main); }
     .close-modal-btn { background: none; border: none; font-size: 1.4rem; color: var(--text-muted); cursor: pointer; }
+
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
     @media (max-width: 550px) { .form-grid { grid-template-columns: 1fr; } }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
@@ -169,22 +217,57 @@
     .btn-submit { padding: 10px 22px; border-radius: 10px; background: var(--neon-green); color: #ffffff; border: none; font-weight: 700; cursor: pointer; box-shadow: 0 0 12px var(--neon-green-glow); display: inline-flex; align-items: center; gap: 8px; }
     .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
-    .toast-msg { position: fixed; bottom: 25px; right: 25px; padding: 14px 22px; border-radius: 12px; background: #0f172a; color: #ffffff; font-size: 0.9rem; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px var(--neon-green-glow); border-left: 4px solid var(--neon-green); display: none; z-index: 2000; animation: fadeIn 0.3s ease; }
+    /* JADUAL DATA MURID DALAM MODAL */
+    .murid-control-bar {
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
+      margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border-soft);
+    }
+    .murid-filters { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .table-scroll-wrap { overflow-x: auto; max-height: 480px; border: 1px solid var(--border-soft); border-radius: 12px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .data-table th { background: #0f172a; color: #ffffff; padding: 10px 12px; text-align: left; position: sticky; top: 0; z-index: 2; }
+    .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border-soft); }
+    .data-table tr:hover { background: #f0fdf4; }
+    .btn-action-sm { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: 1px solid transparent; }
+    .btn-edit-sm { background: #e0f2fe; color: #0284c7; border-color: #38bdf8; margin-right: 4px; }
+    .btn-del-sm { background: #fee2e2; color: #dc2626; border-color: #ef4444; }
+
+    .toast-msg {
+      position: fixed; bottom: 25px; right: 25px; padding: 14px 22px;
+      border-radius: 12px; background: #0f172a; color: #ffffff; font-size: 0.9rem;
+      font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2), 0 0 15px var(--neon-green-glow);
+      border-left: 4px solid var(--neon-green); display: none; z-index: 2000; animation: fadeIn 0.3s ease;
+    }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- BAR STATUS GURU LOG MASUK -->
-    <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin-bottom: 15px;">
-      <div style="font-size: 0.85rem; font-weight: 600; color: #475569;">
-        <i class="fas fa-user-circle" style="color: #10b981; font-size: 1rem; margin-right: 4px;"></i>
-        <span id="userNameLabel">Guru</span>
+    <!-- BAR NAVIGASI GURU & PINTASAN ADMIN / GURU KELAS -->
+    <div class="user-bar">
+      <div style="font-size: 0.9rem; font-weight: 700; color: #334155; display: flex; align-items: center; gap: 8px;">
+        <i class="fas fa-user-circle" style="color: #10b981; font-size: 1.2rem;"></i>
+        <span>Selamat Datang, <strong id="userNameLabel" style="color:#0f172a;">Guru</strong></span>
+        <span id="userRoleBadge" style="font-size:0.75rem; padding:3px 8px; border-radius:8px; background:#dcfce7; color:#065f46; font-weight:800;">Guru</span>
       </div>
-      <button onclick="handleLogout()" style="background: #ffffff; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; color: #ef4444; cursor: pointer; transition: all 0.2s;">
-        <i class="fas fa-sign-out-alt"></i> Log Keluar
-      </button>
+
+      <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <!-- BUTANG KHAS DATA MURID (HANYA ADMIN & GURU KELAS) -->
+        <button id="btnAksesDataMurid" class="btn-top-murid" onclick="openMuridManagerModal()" style="display:none;">
+          <i class="fas fa-user-graduate"></i> Pengurusan Data Murid
+        </button>
+
+        <!-- BUTANG KHAS ADMIN PAGE (HANYA ADMIN) -->
+        <a id="btnAksesAdmin" href="./admin.html" class="btn-top-admin" style="display:none;">
+          <i class="fas fa-tools"></i> Portal Admin Sistem
+        </a>
+
+        <!-- LOG KELUAR -->
+        <button onclick="handleLogout()" class="btn-logout">
+          <i class="fas fa-sign-out-alt"></i> Log Keluar
+        </button>
+      </div>
     </div>
 
     <!-- 1. LOGO SEKOLAH -->
@@ -219,7 +302,15 @@
     <section>
       <h2 class="section-title">Aplikasi & Modul Pengurusan</h2>
       <div class="dashboard-grid" id="dashboardContainer">
-        <div style="color:#94a3b8; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Memuatkan modul dashboard...</div>
+        <!-- Kad Data Murid (Hanya Admin / Guru Kelas) -->
+        <div id="cardAksesDataMurid" class="dash-card" onclick="openMuridManagerModal()" style="display:none; border:1.5px solid #10b981;">
+          <div class="icon-wrapper" style="background:#dcfce7; color:#047857;">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <div class="dash-card-title">Data Murid</div>
+          <div class="dash-card-desc">Pengurusan pendaftaran, maklumat kelas, tasmik & koko murid</div>
+        </div>
+        <div id="dashboardLoading" style="color:#94a3b8; font-size:0.85rem;"><i class="fas fa-spinner fa-spin"></i> Memuatkan modul dashboard...</div>
       </div>
     </section>
 
@@ -258,7 +349,7 @@
     </section>
   </div>
 
-  <!-- 5. BORANG MODAL TEMPAHAN -->
+  <!-- 5. BORANG MODAL TEMPAHAN BILIK KHAS -->
   <div class="modal-overlay" id="bookingModal">
     <div class="modal-box">
       <div class="modal-header">
@@ -320,18 +411,99 @@
     </div>
   </div>
 
+  <!-- 6. MODAL PENGURUSAN DATA MURID (KHAS ADMIN & GURU KELAS) -->
+  <div class="modal-overlay" id="muridManagerModal">
+    <div class="modal-box modal-box-large">
+      <div class="modal-header">
+        <div class="modal-title">
+          <i class="fas fa-users-cog" style="color:var(--neon-green); margin-right:8px;"></i>
+          Pengurusan Data Murid (DB Sekolah)
+        </div>
+        <button class="close-modal-btn" onclick="closeMuridManagerModal()">&times;</button>
+      </div>
+
+      <!-- BAR PENAPIS & TAMBAH MURID -->
+      <div class="murid-control-bar">
+        <div class="murid-filters">
+          <select id="filterMuridTahun" class="form-control" style="width:auto; padding:6px 10px;" onchange="filterMuridTable()">
+            <option value="">Semua Tahun</option>
+          </select>
+          <select id="filterMuridKelas" class="form-control" style="width:auto; padding:6px 10px;" onchange="filterMuridTable()">
+            <option value="">Semua Kelas</option>
+          </select>
+          <input type="text" id="filterMuridSearch" class="form-control" style="width:200px; padding:6px 10px;" placeholder="Cari nama murid..." oninput="filterMuridTable()">
+        </div>
+
+        <button type="button" class="btn-submit" style="padding:7px 14px; font-size:0.82rem;" onclick="openAddMuridForm()">
+          <i class="fas fa-plus"></i> Tambah Murid
+        </button>
+      </div>
+
+      <!-- JADUAL MURID -->
+      <div class="table-scroll-wrap">
+        <table class="data-table">
+          <thead id="muridTableHead"></thead>
+          <tbody id="muridTableBody">
+            <tr><td colspan="15" style="text-align:center; padding:30px; color:#94a3b8;"><i class="fas fa-spinner fa-spin"></i> Memuatkan data murid...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. SUB-MODAL FORM TAMBAH / EDIT DATA MURID -->
+  <div class="modal-overlay" id="muridFormModal" style="z-index: 1100;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="muridFormTitle">Tambah Murid Baharu</div>
+        <button class="close-modal-btn" onclick="closeMuridFormModal()">&times;</button>
+      </div>
+
+      <form id="formMuridCrud" onsubmit="handleMuridFormSubmit(event)">
+        <input type="hidden" id="editMuridRowIndex">
+        <div id="dynamicMuridFormFields" class="form-grid"></div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeMuridFormModal()">Batal</button>
+          <button type="submit" id="btnSaveMurid" class="btn-submit">Simpan Rekod</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // Sekat pengguna yang belum log masuk
+    // --------------------------------------------------------
+    // KAWALAN AKSES PENGGUNA
+    // --------------------------------------------------------
     const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
     if (!activeUser) {
       window.location.href = "./login.html";
     }
 
-    // Paparkan nama guru yang sedang log masuk
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
+
+    const userPeranan = (activeUser && activeUser.peranan) ? activeUser.peranan.toString().trim() : "";
+    const userJawatan = (activeUser && activeUser.jawatan) ? activeUser.jawatan.toString().trim() : "";
+    const isAdmin = userPeranan.toLowerCase() === "admin";
+    const isGuruKelas = userJawatan.toLowerCase().includes("guru kelas") || isAdmin;
+
+    // Paparan maklumat guru
     if (activeUser && activeUser.nama) {
       document.getElementById("userNameLabel").innerText = activeUser.nama;
+      document.getElementById("userRoleBadge").innerText = `${userPeranan || 'Guru'}${userJawatan ? ' | ' + userJawatan : ''}`;
+    }
+
+    // 1. Tunjuk butang admin jika peranan = Admin
+    if (isAdmin) {
+      document.getElementById("btnAksesAdmin").style.display = "inline-flex";
+    }
+
+    // 2. Tunjuk butang dan kad Data Murid jika Admin ATAU Guru Kelas
+    if (isGuruKelas) {
+      document.getElementById("btnAksesDataMurid").style.display = "inline-flex";
+      document.getElementById("cardAksesDataMurid").style.display = "flex";
     }
 
     function handleLogout() {
@@ -339,7 +511,6 @@
       window.location.href = "./login.html";
     }
 
-    // FUNGSI OPTIMASI GAMBAR THUMBNAIL GOOGLE DRIVE
     function formatIconUrl(url) {
       if (!url) return '';
       if (url.includes('drive.google.com')) {
@@ -347,14 +518,12 @@
       }
       return url;
     }
-    
-    // MASUKKAN WEB APP URL DARI APPS SCRIPT DI SINI:
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
     let allTempahanData = [];
     let currentCalDate = new Date();
     let selectedDateStr = formatDateKey(new Date());
 
+    // Jam
     function updateClock() {
       const now = new Date();
       const days = ['Ahad', 'Isnin', 'Selasa', 'Rabu', 'Khamis', 'Jumaat', 'Sabtu'];
@@ -381,8 +550,10 @@
       setTimeout(() => { toast.style.display = 'none'; }, 4000);
     }
 
+    // --------------------------------------------------------
+    // AMBIL DATA HOMEPAGE & TEMPAHAN
+    // --------------------------------------------------------
     const CACHE_KEY_LOCAL = "semanes_home_cache";
-
     window.addEventListener('load', fetchAllData);
 
     async function fetchAllData() {
@@ -407,10 +578,7 @@
           renderHomepage(freshData);
         }
       } catch (err) {
-        console.warn("Rangkaian lambat, memaparkan data cache peranti:", err);
-        if (!localSaved) {
-          showToast("Gagal memuatkan data dari pelayan.", true);
-        }
+        if (!localSaved) showToast("Gagal memuatkan data dari pelayan.", true);
       }
     }
 
@@ -437,12 +605,12 @@
         });
       }
 
-      // Dashboard Cards
+      // Dashboard
       const dContainer = document.getElementById('dashboardContainer');
-      dContainer.innerHTML = '';
-      if (!data.dashboards || data.dashboards.length === 0) {
-        dContainer.innerHTML = '<p style="color:#94a3b8;">Tiada dashboard tersedia.</p>';
-      } else {
+      const loadEl = document.getElementById('dashboardLoading');
+      if (loadEl) loadEl.remove();
+
+      if (data.dashboards) {
         data.dashboards.forEach(modul => {
           const a = document.createElement('a');
           a.className = 'dash-card';
@@ -466,7 +634,7 @@
         });
       }
 
-      // Dropdowns Borang
+      // Dropdowns
       if (data.dropdown) {
         populateSelect('formNamaGuru', data.dropdown.guru);
         populateSelect('formBilikKhas', data.dropdown.bilikKhas);
@@ -478,7 +646,6 @@
         }
       }
 
-      // Kalendar & Senarai Tempahan
       allTempahanData = data.tempahan || [];
       renderCalendar();
       filterBookingsByDate(selectedDateStr);
@@ -496,6 +663,9 @@
       });
     }
 
+    // --------------------------------------------------------
+    // BORANG TEMPAHAN BILIK KHAS & VALIDASI BERTINDIH
+    // --------------------------------------------------------
     function openBookingModal() {
       document.getElementById('formTarikh').value = selectedDateStr;
       document.getElementById('bookingModal').style.display = 'flex';
@@ -506,7 +676,6 @@
       document.getElementById('formTempahan').reset();
     }
 
-    // FUNGSI SUBMIT DENGAN LOGIK SEKATAN (BLOCK) PERTINDIHAN WAKTU
     async function handleFormSubmit(e) {
       e.preventDefault();
 
@@ -515,13 +684,12 @@
       const masaMasuk = document.getElementById('formMasaMasuk').value.trim();
       const masaKeluar = document.getElementById('formMasaKeluar').value.trim();
 
-      // 1. Semakan Masa Keluar > Masa Masuk
       if (masaMasuk >= masaKeluar) {
         showToast("Masa keluar mestilah lebih lewat daripada masa masuk.", true);
         return;
       }
 
-      const padTime = (t) => {
+      const padTime = function(t) {
         if (!t) return "";
         let str = t.toString().trim();
         if (str.length === 4 && str.indexOf(":") === 1) str = "0" + str;
@@ -531,8 +699,7 @@
       const newStart = padTime(masaMasuk);
       const newEnd = padTime(masaKeluar);
 
-      // 2. Semakan Pertindihan Tempahan di Frontend
-      const bertindih = allTempahanData.find(item => {
+      const bertindih = allTempahanData.find(function(item) {
         const itemRoom = (item.bilikKhas || "").trim().toLowerCase();
         const itemDate = (item.tarikh || "").trim();
         const itemStart = padTime(item.masaMasuk);
@@ -545,11 +712,10 @@
       });
 
       if (bertindih) {
-        showToast(`Waktu bertindih! ${bilikKhas} telah ditempah oleh ${bertindih.namaGuru || 'guru lain'} (${bertindih.masaMasuk} - ${bertindih.masaKeluar}).`, true);
+        showToast("Waktu bertindih! " + bilikKhas + " telah ditempah oleh " + (bertindih.namaGuru || "guru lain") + " (" + bertindih.masaMasuk + " - " + bertindih.masaKeluar + ").", true);
         return;
       }
 
-      // 3. Hantar borang ke backend
       const btn = document.getElementById('btnSubmitForm');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
@@ -575,7 +741,7 @@
           })
         });
         const result = await res.json();
-        
+
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-paper-plane"></i> Hantar Tempahan';
 
@@ -605,14 +771,11 @@
       const totalDays = new Date(year, month + 1, 0).getDate();
       const todayKey = formatDateKey(new Date());
 
-      for (let i = 0; i < firstDay; i++) {
-        calGrid.appendChild(document.createElement('div'));
-      }
+      for (let i = 0; i < firstDay; i++) calGrid.appendChild(document.createElement('div'));
 
       for (let day = 1; day <= totalDays; day++) {
         const dayDate = new Date(year, month, day);
         const dayKey = formatDateKey(dayDate);
-
         const dayEl = document.createElement('div');
         dayEl.className = 'cal-day';
         dayEl.innerText = day;
@@ -672,6 +835,276 @@
         `;
         container.appendChild(card);
       });
+    }
+
+    // ========================================================
+    // MODUL PENGURUSAN DATA MURID (MODAL, FILTER & CRUD)
+    // ========================================================
+    let muridHeaders = [];
+    let muridRows = [];
+    let muridDropdownOptions = {};
+    let isEditingMurid = false;
+
+    function openMuridManagerModal() {
+      if (!isGuruKelas) {
+        alert("Akses dinafikan. Hanya Admin dan Guru Kelas dibenarkan mengakses Data Murid.");
+        return;
+      }
+      document.getElementById('muridManagerModal').style.display = 'flex';
+      fetchMuridData();
+    }
+
+    function closeMuridManagerModal() {
+      document.getElementById('muridManagerModal').style.display = 'none';
+    }
+
+    function closeMuridFormModal() {
+      document.getElementById('muridFormModal').style.display = 'none';
+    }
+
+    async function fetchMuridData() {
+      const tb = document.getElementById('muridTableBody');
+      tb.innerHTML = '<tr><td colspan="15" style="text-align:center; padding:30px; color:#94a3b8;"><i class="fas fa-spinner fa-spin"></i> Memuatkan pangkalan Data Murid...</td></tr>';
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'admin_get_sheet_data',
+            dbKey: 'db_sekolah',
+            sheetName: 'Data Murid'
+          })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+          muridHeaders = data.headers || [];
+          muridRows = data.rows || [];
+          muridDropdownOptions = data.dropdownOptions || data.muridOptions || {};
+
+          // Isi Filter Dropdown Tahun & Kelas
+          const fTahun = document.getElementById('filterMuridTahun');
+          const fKelas = document.getElementById('filterMuridKelas');
+          fTahun.innerHTML = '<option value="">Semua Tahun</option>';
+          fKelas.innerHTML = '<option value="">Semua Kelas</option>';
+
+          (muridDropdownOptions.tahun || []).forEach(t => {
+            fTahun.innerHTML += `<option value="${t}">${t}</option>`;
+          });
+          (muridDropdownOptions.kelas || []).forEach(k => {
+            fKelas.innerHTML += `<option value="${k}">${k}</option>`;
+          });
+
+          filterMuridTable();
+        } else {
+          showToast(data.message || "Gagal membaca Data Murid.", true);
+        }
+      } catch (err) {
+        showToast("Ralat sambungan: " + err.toString(), true);
+      }
+    }
+
+    function filterMuridTable() {
+      const selTahun = document.getElementById('filterMuridTahun').value.trim().toLowerCase();
+      const selKelas = document.getElementById('filterMuridKelas').value.trim().toLowerCase();
+      const q = document.getElementById('filterMuridSearch').value.trim().toLowerCase();
+
+      const colTahunIdx = muridHeaders.findIndex(h => (h || '').toUpperCase().trim() === 'TAHUN');
+      const colKelasIdx = muridHeaders.findIndex(h => (h || '').toUpperCase().trim() === 'KELAS');
+
+      let filtered = muridRows;
+
+      if (selTahun && colTahunIdx !== -1) {
+        filtered = filtered.filter(r => (r.values[colTahunIdx] || '').toString().toLowerCase().trim() === selTahun);
+      }
+      if (selKelas && colKelasIdx !== -1) {
+        filtered = filtered.filter(r => (r.values[colKelasIdx] || '').toString().toLowerCase().trim() === selKelas);
+      }
+      if (q) {
+        filtered = filtered.filter(r => r.values.some(v => v.toString().toLowerCase().includes(q)));
+      }
+
+      renderMuridTable(muridHeaders, filtered);
+    }
+
+    function renderMuridTable(headers, rows) {
+      const th = document.getElementById('muridTableHead');
+      const tb = document.getElementById('muridTableBody');
+      th.innerHTML = '';
+      tb.innerHTML = '';
+
+      if (!headers || headers.length === 0) {
+        tb.innerHTML = '<tr><td style="text-align:center; padding:20px;">Helaian Data Murid kosong.</td></tr>';
+        return;
+      }
+
+      let trHead = '<tr>';
+      headers.forEach(h => trHead += `<th>${h}</th>`);
+      trHead += '<th style="text-align:center;">Tindakan</th></tr>';
+      th.innerHTML = trHead;
+
+      if (!rows || rows.length === 0) {
+        tb.innerHTML = `<tr><td colspan="${headers.length + 1}" style="text-align:center; padding:20px; color:#94a3b8;">Tiada rekod murid dijumpai.</td></tr>`;
+        return;
+      }
+
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        headers.forEach((h, idx) => {
+          const val = r.values[idx] !== undefined ? r.values[idx] : '';
+          tr.innerHTML += `<td>${val}</td>`;
+        });
+        tr.innerHTML += `
+          <td style="text-align:center; white-space:nowrap;">
+            <button class="btn-action-sm btn-edit-sm" onclick="openEditMuridForm(${r.rowIndex})"><i class="fas fa-edit"></i></button>
+            <button class="btn-action-sm btn-del-sm" onclick="handleDeleteMuridRow(${r.rowIndex})"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function openAddMuridForm() {
+      isEditingMurid = false;
+      document.getElementById('muridFormTitle').innerText = "Tambah Murid Baharu";
+      document.getElementById('editMuridRowIndex').value = "";
+      buildMuridFormFields();
+      document.getElementById('muridFormModal').style.display = 'flex';
+    }
+
+    function openEditMuridForm(rowIndex) {
+      isEditingMurid = true;
+      document.getElementById('muridFormTitle').innerText = `Kemas Kini Data Murid (Baris ${rowIndex})`;
+      document.getElementById('editMuridRowIndex').value = rowIndex;
+      const rowObj = muridRows.find(r => r.rowIndex === rowIndex);
+      buildMuridFormFields(rowObj ? rowObj.values : null);
+      document.getElementById('muridFormModal').style.display = 'flex';
+    }
+
+    function buildMuridFormFields(values = null) {
+      const container = document.getElementById('dynamicMuridFormFields');
+      container.innerHTML = '';
+
+      muridHeaders.forEach((h, idx) => {
+        const val = values ? (values[idx] || '') : '';
+        const hUpper = (h || "").toUpperCase().trim();
+        const div = document.createElement('div');
+        div.className = 'form-group';
+        if (hUpper.includes("NAMA MURID")) div.className = 'form-group full-width';
+
+        let isDropdown = false;
+        let optList = [];
+
+        if (hUpper === "TAHUN") {
+          isDropdown = true; optList = muridDropdownOptions.tahun || [];
+        } else if (hUpper === "KELAS") {
+          isDropdown = true; optList = muridDropdownOptions.kelas || [];
+        } else if (hUpper === "AGAMA") {
+          isDropdown = true; optList = muridDropdownOptions.agama || [];
+        } else if (hUpper === "BACAAN") {
+          isDropdown = true; optList = muridDropdownOptions.bacaan || [];
+        } else if (hUpper === "NAMA GURU TASMIK" || (hUpper.includes("GURU") && hUpper.includes("TASMIK"))) {
+          isDropdown = true; optList = muridDropdownOptions.guruTasmik || [];
+        } else if (hUpper.includes("UNIFORM")) {
+          isDropdown = true; optList = muridDropdownOptions.uniform || [];
+        } else if (hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) {
+          isDropdown = true; optList = muridDropdownOptions.persatuan || [];
+        } else if (hUpper.includes("SUKAN") && !hUpper.includes("RUMAH")) {
+          isDropdown = true; optList = muridDropdownOptions.sukan || [];
+        } else if (hUpper.includes("RUMAH")) {
+          isDropdown = true; optList = muridDropdownOptions.rumahSukan || [];
+        }
+
+        if (isDropdown && optList.length > 0) {
+          let optionsHtml = '<option value="">-- Pilih --</option>';
+          optList.forEach(opt => {
+            const isSel = (opt.trim().toLowerCase() === val.trim().toLowerCase()) ? 'selected' : '';
+            optionsHtml += `<option value="${opt}" ${isSel}>${opt}</option>`;
+          });
+
+          div.innerHTML = `
+            <label class="form-label">${h}</label>
+            <select class="form-control murid-crud-input" data-col="${idx}">
+              ${optionsHtml}
+            </select>
+          `;
+        } else {
+          div.innerHTML = `
+            <label class="form-label">${h}</label>
+            <input type="text" class="form-control murid-crud-input" data-col="${idx}" value="${val}">
+          `;
+        }
+
+        container.appendChild(div);
+      });
+    }
+
+    async function handleMuridFormSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btnSaveMurid');
+      const rowIndex = document.getElementById('editMuridRowIndex').value;
+      const inputs = document.querySelectorAll('.murid-crud-input');
+      const rowData = Array.from(inputs).map(inp => inp.value);
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+      const action = isEditingMurid ? 'admin_update_row' : 'admin_add_row';
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: action,
+            dbKey: 'db_sekolah',
+            sheetName: 'Data Murid',
+            rowIndex: rowIndex,
+            rowData: rowData
+          })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = 'Simpan Rekod';
+
+        if (result.success) {
+          showToast(isEditingMurid ? "Data murid berjaya dikemas kini!" : "Murid baharu berjaya didaftarkan!");
+          closeMuridFormModal();
+          fetchMuridData();
+        } else {
+          showToast("Ralat: " + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = 'Simpan Rekod';
+        showToast("Ralat sambungan: " + err.toString(), true);
+      }
+    }
+
+    async function handleDeleteMuridRow(rowIndex) {
+      if (!confirm(`Adakah anda pasti ingin memadam rekod murid pada baris ${rowIndex}?`)) return;
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'admin_delete_row',
+            dbKey: 'db_sekolah',
+            sheetName: 'Data Murid',
+            rowIndex: rowIndex
+          })
+        });
+        const result = await res.json();
+        if (result.success) {
+          showToast("Rekod murid berjaya dipadam!");
+          fetchMuridData();
+        } else {
+          showToast("Gagal memadam: " + result.message, true);
+        }
+      } catch (err) {
+        showToast("Ralat sambungan: " + err.toString(), true);
+      }
     }
   </script>
 </body>
