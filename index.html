@@ -429,7 +429,7 @@
       <div class="modal-header">
         <div class="modal-title">
           <i class="fas fa-users-cog" style="color:var(--neon-green); margin-right:8px;"></i>
-          Pengurusan Data Murid (DB Sekolah)
+          Pengurusan Data Murid
         </div>
         <button class="close-modal-btn" onclick="closeMuridManagerModal()">&times;</button>
       </div>
@@ -496,23 +496,22 @@
 
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
-    const userPeranan = (activeUser && activeUser.peranan) ? activeUser.peranan.toString().trim() : "";
-    const userJawatan = (activeUser && activeUser.jawatan) ? activeUser.jawatan.toString().trim() : "";
-    const isAdmin = userPeranan.toLowerCase() === "admin";
-    const isGuruKelas = userJawatan.toLowerCase().includes("guru kelas") || isAdmin;
+    // KOD USER
+const userPeranan = (activeUser && activeUser.peranan) ? activeUser.peranan.toString().trim() : "";
+const userJawatan = (activeUser && activeUser.jawatan) ? activeUser.jawatan.toString().trim() : "";
+const isAdmin = userPeranan.toLowerCase() === "admin";
 
-    if (activeUser && activeUser.nama) {
-      document.getElementById("userNameLabel").innerText = activeUser.nama;
-      document.getElementById("userRoleBadge").innerText = `${userPeranan || 'Guru'}${userJawatan ? ' | ' + userJawatan : ''}`;
-    }
+// 1. Butang Portal Admin (Kekal khas untuk Admin sahaja)
+if (isAdmin) {
+  const btnAdmin = document.getElementById("btnAksesAdmin");
+  if (btnAdmin) btnAdmin.style.display = "inline-flex";
+}
 
-    // Butang navigasi atas
-    if (isAdmin) {
-      document.getElementById("btnAksesAdmin").style.display = "inline-flex";
-    }
-    if (isGuruKelas) {
-      document.getElementById("btnAksesDataMurid").style.display = "inline-flex";
-    }
+// 2. Butang Pengurusan Data Murid (Kini DIBUKA KEPADA SEMUA GURU yang log masuk)
+const btnMurid = document.getElementById("btnAksesDataMurid");
+if (btnMurid) {
+  btnMurid.style.display = "inline-flex";
+}
 
     function handleLogout() {
       sessionStorage.removeItem("semanes_user");
@@ -855,13 +854,10 @@
     let cameraStream = null;
 
     function openMuridManagerModal() {
-      if (!isGuruKelas) {
-        alert("Akses dinafikan. Hanya Admin dan Guru Kelas dibenarkan mengakses Data Murid.");
-        return;
-      }
-      document.getElementById('muridManagerModal').style.display = 'flex';
-      fetchMuridData();
-    }
+  // Sekatan dibuang supaya semua guru yang log masuk boleh buka
+  document.getElementById('muridManagerModal').style.display = 'flex';
+  fetchMuridData();
+}
 
     function closeMuridManagerModal() {
       document.getElementById('muridManagerModal').style.display = 'none';
