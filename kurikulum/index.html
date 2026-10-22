@@ -267,7 +267,7 @@
     .btn-action-blue:hover { background: var(--neon-accent); transform: translateY(-2px); }
 
     .custom-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-    .custom-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; padding: 12px 14px; text-align: left; border-bottom: 2px solid var(--border-soft); }
+    .custom-table th { background: #f8fafc; color: var(--text-muted); font-weight: 700; padding: 12px 14px; text-align: left; border-bottom: 2px solid var(--border-soft); white-space: nowrap; }
     .custom-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: var(--text-main); }
     .custom-table tr:hover { background: #f0fdfa; }
 
@@ -446,7 +446,11 @@
             <select id="filterNamaPanitia" onchange="filterFailTable('panitia')">
               <option value="">Semua Panitia</option>
             </select>
-            <input type="text" id="searchFailPanitia" placeholder="Cari dokumen..." oninput="filterFailTable('panitia')">
+            <!-- FILTER NAMA FAIL BAHARU -->
+            <select id="filterNamaFailPanitia" onchange="filterFailTable('panitia')">
+              <option value="">Semua Nama Fail</option>
+            </select>
+            <input type="text" id="searchFailPanitia" placeholder="Cari dokumen / kandungan..." oninput="filterFailTable('panitia')">
           </div>
 
           <div style="overflow-x:auto;">
@@ -455,9 +459,9 @@
                 <tr>
                   <th>Sesi</th>
                   <th>Panitia</th>
-                  <th>No Fail</th>
-                  <th>Nama Fail / Dokumen</th>
-                  <th>Kategori</th>
+                  <th>Nama Fail</th>
+                  <th>Kandungan Fail</th>
+                  <th>Nama Dokumen</th>
                   <th>Dimuat Naik Oleh</th>
                   <th style="text-align:center;">Pautan Dokumen</th>
                 </tr>
@@ -490,7 +494,11 @@
             <select id="filterNamaUnit" onchange="filterFailTable('unit')">
               <option value="">Semua Unit</option>
             </select>
-            <input type="text" id="searchFailUnit" placeholder="Cari dokumen..." oninput="filterFailTable('unit')">
+            <!-- FILTER NAMA FAIL BAHARU -->
+            <select id="filterNamaFailUnit" onchange="filterFailTable('unit')">
+              <option value="">Semua Nama Fail</option>
+            </select>
+            <input type="text" id="searchFailUnit" placeholder="Cari dokumen / kandungan..." oninput="filterFailTable('unit')">
           </div>
 
           <div style="overflow-x:auto;">
@@ -499,9 +507,9 @@
                 <tr>
                   <th>Sesi</th>
                   <th>Unit Kurikulum</th>
-                  <th>No Fail</th>
-                  <th>Nama Fail / Dokumen</th>
-                  <th>Kategori</th>
+                  <th>Nama Fail</th>
+                  <th>Kandungan Fail</th>
+                  <th>Nama Dokumen</th>
                   <th>Dimuat Naik Oleh</th>
                   <th style="text-align:center;">Pautan Dokumen</th>
                 </tr>
@@ -514,7 +522,7 @@
         </div>
       </div>
 
-      <!-- TAB 3: FAIL OPR (ONE PAGE REPORT) -->
+      <!-- TAB 3: FAIL OPR -->
       <div id="tabOPR" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -703,7 +711,7 @@
     </div>
   </div>
 
-  <!-- MODAL MUAT NAIK FAIL PARTITION (PANITIA & UNIT KURIKULUM) -->
+  <!-- MODAL MUAT NAIK FAIL PARTITION (SUSUNAN: NAMA FAIL -> KANDUNGAN FAIL -> NAMA DOKUMEN) -->
   <div class="modal-overlay" id="failPartitionModal">
     <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
@@ -724,21 +732,25 @@
             <select id="partEntityName" class="form-control" required></select>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">No Fail (Partition) *</label>
-            <input type="text" id="partNoFail" class="form-control" list="listNoFail" placeholder="Pilih atau taip (cth: Fail 01)" required>
+          <!-- 1. NAMA FAIL (DULU NO FAIL) -->
+          <div class="form-group full-width">
+            <label class="form-label">Nama Fail *</label>
+            <input type="text" id="partNoFail" class="form-control" list="listNoFail" placeholder="Pilih atau taip Nama Fail (cth: 1. FAIL INDUK)" required onchange="handleNamaFailChange(this.value)">
             <datalist id="listNoFail"></datalist>
           </div>
 
-          <div class="form-group">
-            <label class="form-label">Kategori / Keterangan</label>
-            <input type="text" id="partKategori" class="form-control" list="listKategori" placeholder="cth: DSKP, Takwim, Minit">
+          <!-- 2. KANDUNGAN FAIL (DULU KATEGORI / SUB-FAIL DINAMIK) -->
+          <div class="form-group full-width">
+            <label class="form-label">Kandungan Fail</label>
+            <input type="text" id="partKategori" class="form-control" list="listKategori" placeholder="Pilih sub-fail berkaitan atau taip sendiri">
             <datalist id="listKategori"></datalist>
+            <small style="color:var(--neon-accent); font-size:0.75rem;" id="subFailHintText">Pilihan sub-fail akan ditapis automatik mengikut Nama Fail di atas.</small>
           </div>
 
+          <!-- 3. NAMA DOKUMEN -->
           <div class="form-group full-width">
-            <label class="form-label">Nama Fail / Dokumen *</label>
-            <input type="text" id="partNamaDokumen" class="form-control" list="listNamaDokumen" placeholder="Contoh: DSKP Sains Tahun 4 2026" required>
+            <label class="form-label">Nama Dokumen *</label>
+            <input type="text" id="partNamaDokumen" class="form-control" list="listNamaDokumen" placeholder="Contoh: Surat Panggilan Mesyuarat 1/2026" required>
             <datalist id="listNamaDokumen"></datalist>
           </div>
 
@@ -1040,11 +1052,10 @@
         const reader = new FileReader();
         reader.onload = () => {
           const raw = reader.result;
-          const base64 = raw.split(',')[1];
           resolve({
             name: file.name,
             type: file.type,
-            base64: base64
+            base64: raw.split(',')[1]
           });
         };
         reader.onerror = error => reject(error);
@@ -1090,7 +1101,7 @@
       // 1. Menu Grid Utama
       const menuContainer = document.getElementById('menuGridContainer');
       menuContainer.innerHTML = '';
-      data.menu.forEach(item => {
+      (data.menu || []).forEach(item => {
         const div = document.createElement('div');
         div.className = 'menu-card';
 
@@ -1133,7 +1144,7 @@
       // 2. Sub-Modal Panitia & Unit Cards
       const panitiaBox = document.getElementById('panitiaCardsContainer');
       panitiaBox.innerHTML = '';
-      data.panitia.forEach(p => {
+      (data.panitia || []).forEach(p => {
         const a = document.createElement('a');
         a.className = 'sub-card';
         a.href = p.link || '#';
@@ -1144,7 +1155,7 @@
 
       const unitBox = document.getElementById('unitCardsContainer');
       unitBox.innerHTML = '';
-      data.unitKurikulum.forEach(u => {
+      (data.unitKurikulum || []).forEach(u => {
         const a = document.createElement('a');
         a.className = 'sub-card';
         a.href = u.link || '#';
@@ -1176,20 +1187,25 @@
       // 5. Fail OPR Table
       renderOPRTable(data.opr || []);
 
-      // Filter Options
+      // Filter Options Panitia & Unit (Termasuk Nama Fail)
       populateSelect('filterSesiPanitia', data.options.sesi, 'Semua Sesi');
       populateSelect('filterSesiUnit', data.options.sesi, 'Semua Sesi');
       populateSelect('filterNamaPanitia', data.options.panitiaNames, 'Semua Panitia');
       populateSelect('filterNamaUnit', data.options.unitNames, 'Semua Unit');
+
+      // Ambil senarai Nama Fail (No Fail) unik dari data kurikulum
+      const listNamaFail = data.options.namaFailList || data.options.noFailList || [];
+      populateSelect('filterNamaFailPanitia', listNamaFail, 'Semua Nama Fail');
+      populateSelect('filterNamaFailUnit', listNamaFail, 'Semua Nama Fail');
 
       populateSelect('filterSesiOPR', data.options.sesi, 'Semua Sesi');
       const allPanitiaUnit = [...(data.options.unitNames || []), ...(data.options.panitiaNames || [])];
       populateSelect('filterUnitOPR', [...new Set(allPanitiaUnit)], 'Semua Panitia / Unit');
 
       // Datalists untuk modal muat naik fail
-      populateDatalist('listNoFail', data.options.noFailList || []);
+      populateDatalist('listNoFail', listNamaFail);
+      populateDatalist('listKategori', data.options.kandunganFailList || data.options.kategoriList || []);
       populateDatalist('listNamaDokumen', data.options.namaDokumenList || []);
-      populateDatalist('listKategori', data.options.kategoriList || []);
 
       // 6. Jadual Dokumen Induk (Pelan Strategik, Carta Organisasi, Minit Mesyuarat)
       renderTable('pelanTableBody', data.pelanStrategik, ['no', 'tahun', 'url']);
@@ -1200,7 +1216,6 @@
       renderLaporanTable(data.laporan);
 
       // 8. Muatkan Pilihan Dropdown Sesi/Tahun & Borang
-      // Pilihan Sesi Persekolahan untuk Laporan, OPR, Fail Partition & Dokumen Induk (Pelan/Carta/Minit)
       populateSelect('formSesi', data.options.sesi);
       populateSelect('formPeringkat', data.options.peringkat);
       populateSelect('formPelapor', data.options.guru);
@@ -1209,15 +1224,13 @@
 
       populateSelect('oprSesi', data.options.sesi);
       populateSelect('oprPelapor', data.options.guru);
-
-      // Pilihan Sesi/Tahun untuk Dokumen Induk (Pelan Strategik, Carta Organisasi, Minit Mesyuarat)
       populateSelect('uploadTahun', data.options.sesi, '-- Pilih Sesi / Tahun --');
 
       const optUnit = document.getElementById('optUnitGroup');
       const oprOptUnit = document.getElementById('oprOptUnit');
       optUnit.innerHTML = '';
       oprOptUnit.innerHTML = '';
-      data.options.unitNames.forEach(u => {
+      (data.options.unitNames || []).forEach(u => {
         const opt1 = document.createElement('option');
         opt1.value = u; opt1.innerText = u;
         optUnit.appendChild(opt1);
@@ -1231,7 +1244,7 @@
       const oprOptPanitia = document.getElementById('oprOptPanitia');
       optPanitia.innerHTML = '';
       oprOptPanitia.innerHTML = '';
-      data.options.panitiaNames.forEach(p => {
+      (data.options.panitiaNames || []).forEach(p => {
         const opt1 = document.createElement('option');
         opt1.value = p; opt1.innerText = p;
         optPanitia.appendChild(opt1);
@@ -1246,6 +1259,42 @@
         document.getElementById('partPelapor').value = activeUser.nama;
         document.getElementById('oprPelapor').value = activeUser.nama;
       }
+    }
+
+    // --- LOGIK PENAPISAN SUB-FAIL (KANDUNGAN FAIL) MENGIKUT NAMA FAIL ---
+    function handleNamaFailChange(val) {
+      if (!globalKurikulumData || !globalKurikulumData.options) return;
+      const allKandungan = globalKurikulumData.options.kandunganFailList || globalKurikulumData.options.kategoriList || [];
+      const hint = document.getElementById('subFailHintText');
+
+      if (!val || !val.trim()) {
+        populateDatalist('listKategori', allKandungan);
+        if (hint) hint.innerText = "Pilihan sub-fail akan ditapis automatik mengikut Nama Fail di atas.";
+        return;
+      }
+
+      const cleanVal = val.trim();
+      // Ekstrak nombor awalan fail secara dinamik (cth: "1. FAIL INDUK" -> "1", "10. PERANCANGAN" -> "10")
+      const numMatch = cleanVal.match(/^(\d+)/);
+
+      let filteredKandungan = allKandungan;
+      if (numMatch) {
+        const prefixNum = numMatch[1] + "."; // Cth: "1." atau "10."
+        filteredKandungan = allKandungan.filter(item => {
+          const str = item.toString().trim();
+          // Padankan jika sub-fail bermula dengan prefix nombor tersebut (cth: 1.1, 1.2, 10.1)
+          return str.startsWith(prefixNum);
+        });
+
+        if (hint) {
+          hint.innerText = filteredKandungan.length > 0 
+            ? `Memaparkan sub-fail bagi Fail ${numMatch[1]} (${filteredKandungan.length} item).`
+            : `Tiada sub-fail standard berangka ${numMatch[1]}. Anda boleh menaip secara manual.`;
+        }
+      }
+
+      // Muatkan senarai yang telah ditapis ke datalist
+      populateDatalist('listKategori', filteredKandungan.length > 0 ? filteredKandungan : allKandungan);
     }
 
     // Paparan Jadual OPR
@@ -1352,6 +1401,7 @@
       }
     }
 
+    // Paparan Jadual Fail Partition (Nama Fail, Kandungan Fail, Nama Dokumen)
     function renderFailPartitionTable(type, list) {
       const containerId = type === 'panitia' ? 'failPanitiaTableBody' : 'failUnitTableBody';
       const tb = document.getElementById(containerId);
@@ -1369,8 +1419,8 @@
           <td>${r.sesi || '-'}</td>
           <td><strong>${entityVal}</strong></td>
           <td><span class="badge-no-fail">${r.noFail || '-'}</span></td>
+          <td>${r.kategori ? `<span style="font-weight:600; color:var(--text-main);">${r.kategori}</span>` : '-'}</td>
           <td>${r.namaDokumen || '-'}</td>
-          <td>${r.kategori ? `<span style="font-size:0.8rem; color:var(--text-muted);">${r.kategori}</span>` : '-'}</td>
           <td>${r.dimuatNaikOleh || '-'}</td>
           <td style="text-align:center;">
             ${r.url ? `<a href="${r.url}" target="_blank" class="btn-link-file"><i class="fas fa-external-link-alt"></i> Buka Fail</a>` : '<span style="color:#94a3b8;">-</span>'}
@@ -1380,6 +1430,7 @@
       });
     }
 
+    // Fungsi Penapis Fail Panitia / Unit (Termasuk Nama Fail)
     function filterFailTable(type) {
       if (!globalKurikulumData) return;
       const isPanitia = type === 'panitia';
@@ -1388,23 +1439,27 @@
 
       const sesiFilter = document.getElementById(isPanitia ? 'filterSesiPanitia' : 'filterSesiUnit').value;
       const entityFilter = document.getElementById(isPanitia ? 'filterNamaPanitia' : 'filterNamaUnit').value;
+      const namaFailFilter = document.getElementById(isPanitia ? 'filterNamaFailPanitia' : 'filterNamaFailUnit').value;
       const searchTxt = document.getElementById(isPanitia ? 'searchFailPanitia' : 'searchFailUnit').value.toLowerCase();
 
       const filtered = rawList.filter(item => {
         const itemEntity = isPanitia ? item.panitia : item.unit;
         const matchSesi = !sesiFilter || item.sesi === sesiFilter;
         const matchEntity = !entityFilter || itemEntity === entityFilter;
+        const matchNamaFail = !namaFailFilter || (item.noFail && item.noFail === namaFailFilter);
+
         const matchSearch = !searchTxt || 
           (item.namaDokumen && item.namaDokumen.toLowerCase().includes(searchTxt)) ||
           (item.noFail && item.noFail.toLowerCase().includes(searchTxt)) ||
           (item.kategori && item.kategori.toLowerCase().includes(searchTxt));
 
-        return matchSesi && matchEntity && matchSearch;
+        return matchSesi && matchEntity && matchNamaFail && matchSearch;
       });
 
       renderFailPartitionTable(type, filtered);
     }
 
+    // Modal Muat Naik Dokumen Partition
     function openFailPartitionModal(type) {
       document.getElementById('partTargetType').value = type;
       const isPanitia = type === 'panitia';
@@ -1423,6 +1478,12 @@
         opt.value = item; opt.innerText = item;
         entitySelect.appendChild(opt);
       });
+
+      // Reset pilihan nama fail dan cadangan sub-fail
+      document.getElementById('partNoFail').value = '';
+      document.getElementById('partKategori').value = '';
+      document.getElementById('partNamaDokumen').value = '';
+      handleNamaFailChange('');
 
       openModal('failPartitionModal');
     }
@@ -1457,8 +1518,8 @@
             sesi: document.getElementById('partSesi').value,
             entityName: document.getElementById('partEntityName').value,
             noFail: document.getElementById('partNoFail').value,
-            namaDokumen: document.getElementById('partNamaDokumen').value,
             kategori: document.getElementById('partKategori').value,
+            namaDokumen: document.getElementById('partNamaDokumen').value,
             file: fileData,
             urlManual: urlManual,
             dimuatNaikOleh: document.getElementById('partPelapor').value
@@ -1630,13 +1691,12 @@
       }
     }
 
-    // Modal Muat Naik Dokumen PDF & Gambar Induk (Pelan, Carta, Minit)
+    // Modal Muat Naik Dokumen PDF & Gambar Induk
     function openUploadModal(sheetName) {
       document.getElementById('uploadTargetSheet').value = sheetName;
       document.getElementById('uploadModalTitle').innerText = `Muat Naik Fail: ${sheetName}`;
       document.getElementById('groupPerkaraMinit').style.display = (sheetName === 'Minit Mesyuarat') ? 'block' : 'none';
       
-      // Pastikan pilihan sesi terkini dimuatkan ke dropdown
       if (globalKurikulumData && globalKurikulumData.options && globalKurikulumData.options.sesi) {
         populateSelect('uploadTahun', globalKurikulumData.options.sesi, '-- Pilih Sesi / Tahun --');
       }
@@ -1703,7 +1763,7 @@
 
     // Paparan Laporan dan Gambar (Dengan format Thumbnail Google Drive)
     function viewReportDetails(id) {
-      const item = globalKurikulumData.laporan.find(l => l.id === id);
+      const item = (globalKurikulumData.laporan || []).find(l => l.id === id);
       if (!item) return;
 
       document.getElementById('rptHeaderSub').innerText = `Sesi Persekolahan: ${item.sesi || 'Semasa'}`;
