@@ -273,12 +273,12 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <!-- BUTANG KHAS DATA MURID (DIBUKA KEPADA SEMUA GURU YANG LOG MASUK) -->
+        <!-- BUTANG KHAS DATA MURID -->
         <button id="btnAksesDataMurid" class="btn-top-murid" onclick="openMuridManagerModal()" style="display:none;">
           <i class="fas fa-user-graduate"></i> Pengurusan Data Murid
         </button>
 
-        <!-- BUTANG KHAS ADMIN PAGE (HANYA ADMIN) -->
+        <!-- BUTANG KHAS ADMIN PAGE -->
         <a id="btnAksesAdmin" href="./admin.html" class="btn-top-admin" style="display:none;">
           <i class="fas fa-tools"></i> Portal Admin Sistem
         </a>
@@ -318,7 +318,7 @@
       </div>
     </section>
 
-    <!-- 3. DASHBOARDS (MODUL PENGURUSAN ASAL) -->
+    <!-- 3. DASHBOARDS -->
     <section>
       <h2 class="section-title">Aplikasi & Modul Pengurusan</h2>
       <div class="dashboard-grid" id="dashboardContainer">
@@ -496,18 +496,15 @@
 
     const activeUser = JSON.parse(rawSession || "{}");
 
-    // Ambil nilai secara tahan ralat (case-insensitive fallback)
     const namaGuru = activeUser.nama || activeUser.Nama || activeUser.NAMA || "Guru SK Mantin";
     const perananGuru = activeUser.peranan || activeUser.Peranan || activeUser.PERANAN || "Guru";
     const jawatanGuru = activeUser.jawatan || activeUser.Jawatan || activeUser.JAWATAN || "";
 
-    // 1. Paparkan Nama Guru pada Top Bar
     const elNama = document.getElementById("userNameLabel");
     if (elNama) {
       elNama.innerText = namaGuru;
     }
 
-    // 2. Paparkan Peranan & Jawatan pada Badge
     const elBadge = document.getElementById("userRoleBadge");
     if (elBadge) {
       elBadge.innerText = (jawatanGuru && jawatanGuru !== "-") 
@@ -517,16 +514,13 @@
 
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
-    // 3. Kawalan Butang Akses
     const isAdmin = perananGuru.toLowerCase() === "admin";
 
-    // Butang Portal Admin (Khas untuk peranan Admin sahaja)
     const btnAdmin = document.getElementById("btnAksesAdmin");
     if (btnAdmin) {
       btnAdmin.style.display = isAdmin ? "inline-flex" : "none";
     }
 
-    // Butang Pengurusan Data Murid (DIBUKA KEPADA SEMUA GURU YANG TELAH LOG MASUK)
     const btnMurid = document.getElementById("btnAksesDataMurid");
     if (btnMurid) {
       btnMurid.style.display = "inline-flex";
@@ -613,7 +607,6 @@
         return;
       }
 
-      // Pengumuman
       const pContainer = document.getElementById('pengumumanContainer');
       pContainer.innerHTML = '';
       if (!data.pengumuman || data.pengumuman.length === 0) {
@@ -630,7 +623,6 @@
         });
       }
 
-      // Dashboard Cards
       const dContainer = document.getElementById('dashboardContainer');
       dContainer.innerHTML = '';
 
@@ -660,7 +652,6 @@
         });
       }
 
-      // Dropdowns
       if (data.dropdown) {
         populateSelect('formNamaGuru', data.dropdown.guru);
         populateSelect('formBilikKhas', data.dropdown.bilikKhas);
@@ -872,8 +863,22 @@
     let isEditingMurid = false;
     let cameraStream = null;
 
+    // FUNGSI PENAPIS: Semak lajur yang perlu disembunyikan (khusus untuk eTasmik)
+    function isHiddenMuridField(headerName) {
+      if (!headerName) return false;
+      const h = headerName.toString().toUpperCase().trim();
+      return (
+        h === "BACAAN" ||
+        h === "MUKA SURAT" ||
+        h === "MUKASURAT" ||
+        h.includes("TASMIK") ||
+        h === "CATATAN" ||
+        h.includes("TARIKH KEMASKINI") ||
+        h.includes("TARIKH KEMAS KINI")
+      );
+    }
+
     function openMuridManagerModal() {
-      // Dibuka untuk semua guru yang log masuk
       document.getElementById('muridManagerModal').style.display = 'flex';
       fetchMuridData();
     }
@@ -964,8 +969,13 @@
         return;
       }
 
+      // Sembunyikan kolum eTasmik daripada thead
       let trHead = '<tr>';
-      headers.forEach(h => trHead += `<th>${h}</th>`);
+      headers.forEach(h => {
+        if (!isHiddenMuridField(h)) {
+          trHead += `<th>${h}</th>`;
+        }
+      });
       trHead += '<th style="text-align:center;">Tindakan</th></tr>';
       th.innerHTML = trHead;
 
@@ -979,6 +989,9 @@
       rows.forEach(r => {
         const tr = document.createElement('tr');
         headers.forEach((h, idx) => {
+          // Abaikan cell bagi ruangan eTasmik
+          if (isHiddenMuridField(h)) return;
+
           let val = r.values[idx] !== undefined ? r.values[idx] : '';
           
           if (idx === colGambarIdx) {
@@ -1027,6 +1040,18 @@
       muridHeaders.forEach((h, idx) => {
         const val = values ? (values[idx] || '') : '';
         const hUpper = (h || "").toUpperCase().trim();
+
+        // JIKA MEDAN eTASMIK: Jadikan input tersembunyi (hidden) untuk pelihara nilai asal sheet
+        if (isHiddenMuridField(h)) {
+          const hiddenInput = document.createElement('input');
+          hiddenInput.type = 'hidden';
+          hiddenInput.className = 'murid-crud-input';
+          hiddenInput.dataset.col = idx;
+          hiddenInput.value = val;
+          container.appendChild(hiddenInput);
+          return;
+        }
+
         const div = document.createElement('div');
         div.className = 'form-group';
         if (hUpper.includes("NAMA MURID")) div.className = 'form-group full-width';
@@ -1081,10 +1106,6 @@
           isDropdown = true; optList = muridDropdownOptions.kelas || [];
         } else if (hUpper === "AGAMA") {
           isDropdown = true; optList = muridDropdownOptions.agama || [];
-        } else if (hUpper === "BACAAN") {
-          isDropdown = true; optList = muridDropdownOptions.bacaan || [];
-        } else if (hUpper === "NAMA GURU TASMIK" || (hUpper.includes("GURU") && hUpper.includes("TASMIK"))) {
-          isDropdown = true; optList = muridDropdownOptions.guruTasmik || [];
         } else if (hUpper.includes("UNIFORM")) {
           isDropdown = true; optList = muridDropdownOptions.uniform || [];
         } else if (hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) {
