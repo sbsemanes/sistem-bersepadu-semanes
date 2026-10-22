@@ -273,7 +273,7 @@
       </div>
 
       <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-        <!-- BUTANG KHAS DATA MURID (HANYA ADMIN & GURU KELAS) -->
+        <!-- BUTANG KHAS DATA MURID (DIBUKA KEPADA SEMUA GURU YANG LOG MASUK) -->
         <button id="btnAksesDataMurid" class="btn-top-murid" onclick="openMuridManagerModal()" style="display:none;">
           <i class="fas fa-user-graduate"></i> Pengurusan Data Murid
         </button>
@@ -423,7 +423,7 @@
     </div>
   </div>
 
-  <!-- 6. MODAL PENGURUSAN DATA MURID (KHAS ADMIN & GURU KELAS) -->
+  <!-- 6. MODAL PENGURUSAN DATA MURID -->
   <div class="modal-overlay" id="muridManagerModal">
     <div class="modal-box modal-box-large">
       <div class="modal-header">
@@ -487,31 +487,50 @@
 
   <script>
     // --------------------------------------------------------
-    // KAWALAN AKSES PENGGUNA
+    // KAWALAN AKSES & MAKLUMAT SESI PENGGUNA
     // --------------------------------------------------------
-    const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
-    if (!activeUser) {
+    const rawSession = sessionStorage.getItem("semanes_user");
+    if (!rawSession) {
       window.location.href = "./login.html";
+    }
+
+    const activeUser = JSON.parse(rawSession || "{}");
+
+    // Ambil nilai secara tahan ralat (case-insensitive fallback)
+    const namaGuru = activeUser.nama || activeUser.Nama || activeUser.NAMA || "Guru SK Mantin";
+    const perananGuru = activeUser.peranan || activeUser.Peranan || activeUser.PERANAN || "Guru";
+    const jawatanGuru = activeUser.jawatan || activeUser.Jawatan || activeUser.JAWATAN || "";
+
+    // 1. Paparkan Nama Guru pada Top Bar
+    const elNama = document.getElementById("userNameLabel");
+    if (elNama) {
+      elNama.innerText = namaGuru;
+    }
+
+    // 2. Paparkan Peranan & Jawatan pada Badge
+    const elBadge = document.getElementById("userRoleBadge");
+    if (elBadge) {
+      elBadge.innerText = (jawatanGuru && jawatanGuru !== "-") 
+        ? `${perananGuru} | ${jawatanGuru}` 
+        : perananGuru;
     }
 
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
 
-    // KOD USER
-const userPeranan = (activeUser && activeUser.peranan) ? activeUser.peranan.toString().trim() : "";
-const userJawatan = (activeUser && activeUser.jawatan) ? activeUser.jawatan.toString().trim() : "";
-const isAdmin = userPeranan.toLowerCase() === "admin";
+    // 3. Kawalan Butang Akses
+    const isAdmin = perananGuru.toLowerCase() === "admin";
 
-// 1. Butang Portal Admin (Kekal khas untuk Admin sahaja)
-if (isAdmin) {
-  const btnAdmin = document.getElementById("btnAksesAdmin");
-  if (btnAdmin) btnAdmin.style.display = "inline-flex";
-}
+    // Butang Portal Admin (Khas untuk peranan Admin sahaja)
+    const btnAdmin = document.getElementById("btnAksesAdmin");
+    if (btnAdmin) {
+      btnAdmin.style.display = isAdmin ? "inline-flex" : "none";
+    }
 
-// 2. Butang Pengurusan Data Murid (Kini DIBUKA KEPADA SEMUA GURU yang log masuk)
-const btnMurid = document.getElementById("btnAksesDataMurid");
-if (btnMurid) {
-  btnMurid.style.display = "inline-flex";
-}
+    // Butang Pengurusan Data Murid (DIBUKA KEPADA SEMUA GURU YANG TELAH LOG MASUK)
+    const btnMurid = document.getElementById("btnAksesDataMurid");
+    if (btnMurid) {
+      btnMurid.style.display = "inline-flex";
+    }
 
     function handleLogout() {
       sessionStorage.removeItem("semanes_user");
@@ -611,7 +630,7 @@ if (btnMurid) {
         });
       }
 
-      // Dashboard Cards (KOSONGKAN DAHULU SUPAYA TIDAK JADI DOUBLE)
+      // Dashboard Cards
       const dContainer = document.getElementById('dashboardContainer');
       dContainer.innerHTML = '';
 
@@ -648,8 +667,8 @@ if (btnMurid) {
         populateSelect('formTahun', data.dropdown.tahun);
         populateSelect('formKelas', data.dropdown.kelas);
         
-        if (activeUser && activeUser.nama) {
-          document.getElementById('formNamaGuru').value = activeUser.nama;
+        if (namaGuru) {
+          document.getElementById('formNamaGuru').value = namaGuru;
         }
       }
 
@@ -854,10 +873,10 @@ if (btnMurid) {
     let cameraStream = null;
 
     function openMuridManagerModal() {
-  // Sekatan dibuang supaya semua guru yang log masuk boleh buka
-  document.getElementById('muridManagerModal').style.display = 'flex';
-  fetchMuridData();
-}
+      // Dibuka untuk semua guru yang log masuk
+      document.getElementById('muridManagerModal').style.display = 'flex';
+      fetchMuridData();
+    }
 
     function closeMuridManagerModal() {
       document.getElementById('muridManagerModal').style.display = 'none';
@@ -962,7 +981,6 @@ if (btnMurid) {
         headers.forEach((h, idx) => {
           let val = r.values[idx] !== undefined ? r.values[idx] : '';
           
-          // Paparan visual jika kolum Gambar
           if (idx === colGambarIdx) {
             if (val && (val.startsWith('http') || val.startsWith('data:image'))) {
               tr.innerHTML += `<td><img src="${val}" class="murid-thumb" alt="Foto Murid"></td>`;
@@ -1013,7 +1031,6 @@ if (btnMurid) {
         div.className = 'form-group';
         if (hUpper.includes("NAMA MURID")) div.className = 'form-group full-width';
 
-        // 1. Khas untuk Kolum GAMBAR: Muat Naik Fail & Tangkap Kamera Langsung
         if (hUpper === "GAMBAR") {
           div.className = 'form-group full-width';
           div.innerHTML = `
@@ -1039,7 +1056,6 @@ if (btnMurid) {
                 <span style="font-size:0.75rem; color:var(--text-muted);">Format imej: JPEG/PNG atau tangkap terus kamera peranti.</span>
               </div>
             </div>
-            <!-- Paparan Live Kamera -->
             <div class="camera-live-box" id="cameraBox">
               <video id="cameraVideo" autoplay playsinline></video>
               <div style="padding:8px; background:#0f172a; display:flex; justify-content:center; gap:10px;">
@@ -1056,7 +1072,6 @@ if (btnMurid) {
           return;
         }
 
-        // 2. Dropdown bagi data rujukan
         let isDropdown = false;
         let optList = [];
 
@@ -1104,7 +1119,6 @@ if (btnMurid) {
       });
     }
 
-    // Pemprosesan Gambar: Muat Naik Fail & Pemampatan (Compress ke Base64)
     function handlePhotoUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -1118,7 +1132,6 @@ if (btnMurid) {
       reader.readAsDataURL(file);
     }
 
-    // Pemprosesan Gambar: Kamera Peranti
     async function startCamera() {
       const box = document.getElementById('cameraBox');
       const video = document.getElementById('cameraVideo');
@@ -1143,7 +1156,6 @@ if (btnMurid) {
       canvas.height = 320;
       const ctx = canvas.getContext('2d');
 
-      // Ambil keratan tengah segi empat sama
       const minDim = Math.min(video.videoWidth, video.videoHeight);
       const startX = (video.videoWidth - minDim) / 2;
       const startY = (video.videoHeight - minDim) / 2;
@@ -1201,7 +1213,6 @@ if (btnMurid) {
       };
     }
 
-    // Simpan Borang Murid (Add / Update)
     async function handleMuridFormSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSaveMurid');
@@ -1243,7 +1254,6 @@ if (btnMurid) {
       }
     }
 
-    // Padam Murid
     async function handleDeleteMuridRow(rowIndex) {
       if (!confirm(`Adakah anda pasti ingin memadam rekod murid pada baris ${rowIndex}?`)) return;
 
