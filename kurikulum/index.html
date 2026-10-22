@@ -446,11 +446,11 @@
             <select id="filterNamaPanitia" onchange="filterFailTable('panitia')">
               <option value="">Semua Panitia</option>
             </select>
-            <!-- FILTER NAMA FAIL BAHARU -->
+            <!-- FILTER NAMA FAIL (INDEX INDUK) -->
             <select id="filterNamaFailPanitia" onchange="filterFailTable('panitia')">
               <option value="">Semua Nama Fail</option>
             </select>
-            <input type="text" id="searchFailPanitia" placeholder="Cari dokumen / kandungan..." oninput="filterFailTable('panitia')">
+            <input type="text" id="searchFailPanitia" placeholder="Cari nama fail / kandungan / dokumen..." oninput="filterFailTable('panitia')">
           </div>
 
           <div style="overflow-x:auto;">
@@ -494,11 +494,11 @@
             <select id="filterNamaUnit" onchange="filterFailTable('unit')">
               <option value="">Semua Unit</option>
             </select>
-            <!-- FILTER NAMA FAIL BAHARU -->
+            <!-- FILTER NAMA FAIL (INDEX INDUK) -->
             <select id="filterNamaFailUnit" onchange="filterFailTable('unit')">
               <option value="">Semua Nama Fail</option>
             </select>
-            <input type="text" id="searchFailUnit" placeholder="Cari dokumen / kandungan..." oninput="filterFailTable('unit')">
+            <input type="text" id="searchFailUnit" placeholder="Cari nama fail / kandungan / dokumen..." oninput="filterFailTable('unit')">
           </div>
 
           <div style="overflow-x:auto;">
@@ -711,7 +711,7 @@
     </div>
   </div>
 
-  <!-- MODAL MUAT NAIK FAIL PARTITION (SUSUNAN: NAMA FAIL -> KANDUNGAN FAIL -> NAMA DOKUMEN) -->
+  <!-- MODAL MUAT NAIK FAIL PARTITION: SUSUNAN TEPAT: NAMA FAIL (C) -> KANDUNGAN FAIL (D) -> NAMA DOKUMEN (E) -->
   <div class="modal-overlay" id="failPartitionModal">
     <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
@@ -732,26 +732,26 @@
             <select id="partEntityName" class="form-control" required></select>
           </div>
 
-          <!-- 1. NAMA FAIL (DULU NO FAIL) -->
+          <!-- 1. NAMA FAIL (KOLUM C - INDEKS INDUK: CTH 1. FAIL INDUK) -->
           <div class="form-group full-width">
-            <label class="form-label">Nama Fail *</label>
-            <input type="text" id="partNoFail" class="form-control" list="listNoFail" placeholder="Pilih atau taip Nama Fail (cth: 1. FAIL INDUK)" required onchange="handleNamaFailChange(this.value)">
-            <datalist id="listNoFail"></datalist>
+            <label class="form-label">Nama Fail (Lajur C) *</label>
+            <input type="text" id="partNamaFail" class="form-control" list="listNamaFailDatalist" placeholder="Pilih atau taip Nama Fail (cth: 1. FAIL INDUK)" required onchange="handleNamaFailSelect(this.value)">
+            <datalist id="listNamaFailDatalist"></datalist>
           </div>
 
-          <!-- 2. KANDUNGAN FAIL (DULU KATEGORI / SUB-FAIL DINAMIK) -->
+          <!-- 2. KANDUNGAN FAIL (KOLUM D - SUB INDEX: CTH 1.1 SURAT PERHUBUNGAN) -->
           <div class="form-group full-width">
-            <label class="form-label">Kandungan Fail</label>
-            <input type="text" id="partKategori" class="form-control" list="listKategori" placeholder="Pilih sub-fail berkaitan atau taip sendiri">
-            <datalist id="listKategori"></datalist>
-            <small style="color:var(--neon-accent); font-size:0.75rem;" id="subFailHintText">Pilihan sub-fail akan ditapis automatik mengikut Nama Fail di atas.</small>
+            <label class="form-label">Kandungan Fail (Sub-Indeks Lajur D)</label>
+            <input type="text" id="partKandunganFail" class="form-control" list="listKandunganFailDatalist" placeholder="Pilih sub-kandungan fail atau taip sendiri">
+            <datalist id="listKandunganFailDatalist"></datalist>
+            <small style="color:var(--neon-accent); font-size:0.75rem;" id="subFailHintText">Sub-indeks akan ditapis secara automatik mengikut nombor Nama Fail di atas.</small>
           </div>
 
-          <!-- 3. NAMA DOKUMEN -->
+          <!-- 3. NAMA DOKUMEN (KOLUM E - TAJUK DOKUMEN SEBENAR) -->
           <div class="form-group full-width">
-            <label class="form-label">Nama Dokumen *</label>
-            <input type="text" id="partNamaDokumen" class="form-control" list="listNamaDokumen" placeholder="Contoh: Surat Panggilan Mesyuarat 1/2026" required>
-            <datalist id="listNamaDokumen"></datalist>
+            <label class="form-label">Nama Dokumen (Lajur E) *</label>
+            <input type="text" id="partNamaDokumen" class="form-control" list="listNamaDokumenDatalist" placeholder="Contoh: Surat Panggilan Mesyuarat Panitia Bil 1/2026" required>
+            <datalist id="listNamaDokumenDatalist"></datalist>
           </div>
 
           <div class="form-group full-width">
@@ -1187,27 +1187,31 @@
       // 5. Fail OPR Table
       renderOPRTable(data.opr || []);
 
-      // Filter Options Panitia & Unit (Termasuk Nama Fail)
+      // Filter Options Panitia & Unit (Termasuk Nama Fail Lajur C)
       populateSelect('filterSesiPanitia', data.options.sesi, 'Semua Sesi');
       populateSelect('filterSesiUnit', data.options.sesi, 'Semua Sesi');
       populateSelect('filterNamaPanitia', data.options.panitiaNames, 'Semua Panitia');
       populateSelect('filterNamaUnit', data.options.unitNames, 'Semua Unit');
 
-      // Ambil senarai Nama Fail (No Fail) unik dari data kurikulum
-      const listNamaFail = data.options.namaFailList || data.options.noFailList || [];
-      populateSelect('filterNamaFailPanitia', listNamaFail, 'Semua Nama Fail');
-      populateSelect('filterNamaFailUnit', listNamaFail, 'Semua Nama Fail');
+      // Ambil senarai Nama Fail unik (Lajur C)
+      const listNamaFailC = data.options.namaFailList || data.options.noFailList || [];
+      populateSelect('filterNamaFailPanitia', listNamaFailC, 'Semua Nama Fail');
+      populateSelect('filterNamaFailUnit', listNamaFailC, 'Semua Nama Fail');
 
       populateSelect('filterSesiOPR', data.options.sesi, 'Semua Sesi');
       const allPanitiaUnit = [...(data.options.unitNames || []), ...(data.options.panitiaNames || [])];
       populateSelect('filterUnitOPR', [...new Set(allPanitiaUnit)], 'Semua Panitia / Unit');
 
-      // Datalists untuk modal muat naik fail
-      populateDatalist('listNoFail', listNamaFail);
-      populateDatalist('listKategori', data.options.kandunganFailList || data.options.kategoriList || []);
-      populateDatalist('listNamaDokumen', data.options.namaDokumenList || []);
+      // Isi Datalist untuk Modal:
+      // Lajur C: Nama Fail
+      populateDatalist('listNamaFailDatalist', listNamaFailC);
+      // Lajur D: Kandungan Fail (Sub-Indeks)
+      const listKandunganD = data.options.kandunganFailList || data.options.kategoriList || [];
+      populateDatalist('listKandunganFailDatalist', listKandunganD);
+      // Lajur E: Nama Dokumen
+      populateDatalist('listNamaDokumenDatalist', data.options.namaDokumenList || []);
 
-      // 6. Jadual Dokumen Induk (Pelan Strategik, Carta Organisasi, Minit Mesyuarat)
+      // 6. Jadual Dokumen Induk
       renderTable('pelanTableBody', data.pelanStrategik, ['no', 'tahun', 'url']);
       renderTable('cartaTableBody', data.cartaOrganisasi, ['no', 'tahun', 'url']);
       renderTable('minitTableBody', data.minitMesyuarat, ['bil', 'tahun', 'perkara', 'url']);
@@ -1261,20 +1265,20 @@
       }
     }
 
-    // --- LOGIK PENAPISAN SUB-FAIL (KANDUNGAN FAIL) MENGIKUT NAMA FAIL ---
-    function handleNamaFailChange(val) {
+    // --- LOGIK PENAPISAN DINAMIK SUB-INDEX KANDUNGAN FAIL (D) BERDASARKAN NAMA FAIL (C) ---
+    function handleNamaFailSelect(val) {
       if (!globalKurikulumData || !globalKurikulumData.options) return;
       const allKandungan = globalKurikulumData.options.kandunganFailList || globalKurikulumData.options.kategoriList || [];
       const hint = document.getElementById('subFailHintText');
 
       if (!val || !val.trim()) {
-        populateDatalist('listKategori', allKandungan);
-        if (hint) hint.innerText = "Pilihan sub-fail akan ditapis automatik mengikut Nama Fail di atas.";
+        populateDatalist('listKandunganFailDatalist', allKandungan);
+        if (hint) hint.innerText = "Sub-indeks akan ditapis secara automatik mengikut nombor Nama Fail di atas.";
         return;
       }
 
       const cleanVal = val.trim();
-      // Ekstrak nombor awalan fail secara dinamik (cth: "1. FAIL INDUK" -> "1", "10. PERANCANGAN" -> "10")
+      // Ekstrak angka indeks (cth: "1. FAIL INDUK" -> "1", "10. PERANCANGAN" -> "10")
       const numMatch = cleanVal.match(/^(\d+)/);
 
       let filteredKandungan = allKandungan;
@@ -1282,19 +1286,19 @@
         const prefixNum = numMatch[1] + "."; // Cth: "1." atau "10."
         filteredKandungan = allKandungan.filter(item => {
           const str = item.toString().trim();
-          // Padankan jika sub-fail bermula dengan prefix nombor tersebut (cth: 1.1, 1.2, 10.1)
+          // Sub-fail yang sepadan dengan nombor induk (cth: 1.1, 1.2, 10.1)
           return str.startsWith(prefixNum);
         });
 
         if (hint) {
           hint.innerText = filteredKandungan.length > 0 
-            ? `Memaparkan sub-fail bagi Fail ${numMatch[1]} (${filteredKandungan.length} item).`
-            : `Tiada sub-fail standard berangka ${numMatch[1]}. Anda boleh menaip secara manual.`;
+            ? `Memaparkan sub-indeks bagi Fail ${numMatch[1]} (${filteredKandungan.length} item ditemui).`
+            : `Tiada sub-indeks pratetap berangka ${numMatch[1]}. Anda boleh menaip secara manual.`;
         }
       }
 
-      // Muatkan senarai yang telah ditapis ke datalist
-      populateDatalist('listKategori', filteredKandungan.length > 0 ? filteredKandungan : allKandungan);
+      // Masukkan senarai tertapis ke datalist pilihan
+      populateDatalist('listKandunganFailDatalist', filteredKandungan.length > 0 ? filteredKandungan : allKandungan);
     }
 
     // Paparan Jadual OPR
@@ -1430,7 +1434,7 @@
       });
     }
 
-    // Fungsi Penapis Fail Panitia / Unit (Termasuk Nama Fail)
+    // Fungsi Penapis Fail Panitia / Unit (Termasuk Nama Fail Lajur C)
     function filterFailTable(type) {
       if (!globalKurikulumData) return;
       const isPanitia = type === 'panitia';
@@ -1479,11 +1483,11 @@
         entitySelect.appendChild(opt);
       });
 
-      // Reset pilihan nama fail dan cadangan sub-fail
-      document.getElementById('partNoFail').value = '';
-      document.getElementById('partKategori').value = '';
+      // Kosongkan medan input dan setel semula pilihan sub-indeks
+      document.getElementById('partNamaFail').value = '';
+      document.getElementById('partKandunganFail').value = '';
       document.getElementById('partNamaDokumen').value = '';
-      handleNamaFailChange('');
+      handleNamaFailSelect('');
 
       openModal('failPartitionModal');
     }
@@ -1511,14 +1515,15 @@
           fileData = await fileToBase64(fileInput);
         }
 
+        // data.noFail mewakili Nama Fail (Lajur C), data.kategori mewakili Kandungan Fail (Lajur D), data.namaDokumen mewakili Nama Dokumen (Lajur E)
         const payload = {
           action: 'simpan_fail_partition',
           targetType: targetType,
           data: {
             sesi: document.getElementById('partSesi').value,
             entityName: document.getElementById('partEntityName').value,
-            noFail: document.getElementById('partNoFail').value,
-            kategori: document.getElementById('partKategori').value,
+            noFail: document.getElementById('partNamaFail').value,
+            kategori: document.getElementById('partKandunganFail').value,
             namaDokumen: document.getElementById('partNamaDokumen').value,
             file: fileData,
             urlManual: urlManual,
