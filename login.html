@@ -8,19 +8,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Favicon & Home Screen Icons -->
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
 
-<!-- iOS (Apple) -->
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="SeMaNeS">
+  <!-- Favicon & Mobile Icons -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#10b981">
 
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#10b981">
+  <!-- Supabase CDN Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     :root {
@@ -29,7 +26,6 @@
       --neon-green: #10b981;
       --neon-green-glow: rgba(16, 185, 129, 0.45);
       --neon-accent: #059669;
-      --neon-cyan: #0284c7;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-soft: #e2e8f0;
@@ -130,7 +126,6 @@
       box-shadow: 0 0 12px var(--neon-green-glow);
     }
 
-    /* REMEMBER ME */
     .remember-wrapper {
       display: flex;
       align-items: center;
@@ -210,7 +205,7 @@
       color: #15803d;
     }
 
-    /* KOTAK PILIHAN LALUAN ADMIN (KEKAL DI SKRIN) */
+    /* KOTAK PILIHAN LALUAN ADMIN */
     .admin-choice-box {
       display: none;
       animation: fadeIn 0.3s ease;
@@ -226,14 +221,14 @@
       width: 55px;
       height: 55px;
       border-radius: 16px;
-      background: #e0f2fe;
-      color: #0284c7;
+      background: #ecfdf5;
+      color: var(--neon-accent);
       display: inline-flex;
       align-items: center;
       justify-content: center;
       font-size: 1.6rem;
       margin-bottom: 12px;
-      border: 1px solid rgba(2, 132, 199, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.25);
     }
 
     .admin-user-title {
@@ -360,7 +355,7 @@
       </form>
     </div>
 
-    <!-- 2. PILIHAN LALUAN KHAS ADMIN (KEKAL DI SKRIN JIKA ADMIN) -->
+    <!-- 2. PILIHAN LALUAN KHAS ADMIN -->
     <div id="adminChoiceSection" class="admin-choice-box">
       <div class="admin-badge-icon">
         <i class="fas fa-user-shield"></i>
@@ -384,12 +379,15 @@
   </div>
 
   <script>
-    // MASUKKAN URL APPS SCRIPT ANDA DI SINI
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx8zXrm-gkbNTmWF4Td_jvNmwGDDyINJz6Ub0KeqpLXw8blt5-lL1idBe5DdOOAB81s6w/exec";
+    // ========================================================
+    // KONFIGURASI SUPABASE (GANTIKAN DENGAN KUNCI ANDA)
+    // ========================================================
+    const SUPABASE_URL = "https://MASUKKAN_PROJECT_URL_ANDA.supabase.co";
+    const SUPABASE_ANON_KEY = "MASUKKAN_ANON_PUBLIC_KEY_ANDA";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // 1. Semakan awal semasa laman dibuka
     window.addEventListener('load', () => {
-      // Auto-isi jika pengguna pernah klik 'Remember Me'
+      // Semak Remember Me
       const savedUser = JSON.parse(localStorage.getItem("semanes_remembered_user"));
       if (savedUser) {
         document.getElementById("usernameInput").value = savedUser.username || "";
@@ -397,7 +395,7 @@
         document.getElementById("rememberMe").checked = true;
       }
 
-      // Semak jika pengguna sudah mempunyai sesi aktif di pelayar
+      // Semak jika sesi aktif sudah ada
       const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
       if (activeUser) {
         if (activeUser.peranan && activeUser.peranan.toLowerCase() === "admin") {
@@ -408,14 +406,12 @@
       }
     });
 
-    // Paparkan kotak pilihan Admin dan sembunyikan form login
     function showAdminChoice(namaGuru) {
       document.getElementById("loginFormSection").style.display = "none";
       document.getElementById("adminChoiceSection").style.display = "block";
       document.getElementById("adminUserGreeting").innerText = `Selamat Datang, ${namaGuru}`;
     }
 
-    // Kembali ke form login jika ingin tukar akaun
     function resetToLoginForm() {
       sessionStorage.removeItem("semanes_user");
       document.getElementById("adminChoiceSection").style.display = "none";
@@ -436,54 +432,54 @@
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mengesahkan...';
 
       try {
-        const response = await fetch(APPS_SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({
-            action: "login",
-            username: u,
-            password: p
-          })
-        });
+        // Query terus ke jadual guru Supabase (~100ms - 250ms)
+        const { data: users, error } = await supabaseClient
+          .from('guru')
+          .select('nama, jawatan, username, peranan')
+          .eq('username', u)
+          .eq('password', p);
 
-        const result = await response.json();
+        if (error) throw error;
 
-        if (result.success) {
-          // Simpan sesi log masuk aktif
-          sessionStorage.setItem("semanes_user", JSON.stringify(result.user));
+        if (users && users.length > 0) {
+          const user = users[0];
 
-          // Logik Remember Me
+          // Simpan format sesi yang sama persis untuk digunakan oleh index.html & TRec
+          sessionStorage.setItem("semanes_user", JSON.stringify({
+            nama: user.nama,
+            jawatan: user.jawatan,
+            username: user.username,
+            peranan: user.peranan
+          }));
+
           if (isRemember) {
             localStorage.setItem("semanes_remembered_user", JSON.stringify({ username: u, password: p }));
           } else {
             localStorage.removeItem("semanes_remembered_user");
           }
 
-          // Semak sama ada peranan Admin
-          if (result.user.peranan && result.user.peranan.toLowerCase() === "admin") {
-            // JIKA ADMIN: Paparkan pilihan dan JANGAN redirect secara automatik
-            showAdminChoice(result.user.nama);
+          if (user.peranan && user.peranan.toLowerCase() === "admin") {
+            showAdminChoice(user.nama);
           } else {
-            // JIKA GURU BIASA: Terus bawa masuk ke portal
             alertBox.className = "alert-box alert-success";
             alertBox.innerText = "Log masuk berjaya! Membuka portal...";
             alertBox.style.display = "block";
             setTimeout(() => {
               window.location.href = "./index.html";
-            }, 800);
+            }, 600);
           }
         } else {
           btn.disabled = false;
           btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log Masuk';
           alertBox.className = "alert-box alert-error";
-          alertBox.innerText = result.message || "Username atau Password salah.";
+          alertBox.innerText = "Username atau Password salah.";
           alertBox.style.display = "block";
         }
       } catch (err) {
         btn.disabled = false;
         btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Log Masuk';
         alertBox.className = "alert-box alert-error";
-        alertBox.innerText = "Ralat sambungan ke pelayan pangkalan data.";
+        alertBox.innerText = "Ralat capaian ke pangkalan data Supabase.";
         alertBox.style.display = "block";
       }
     }
