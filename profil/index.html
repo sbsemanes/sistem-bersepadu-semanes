@@ -512,6 +512,42 @@
       padding-bottom: 10px;
       margin-bottom: 14px;
     }
+
+    /* FRAME GAMBAR TENGAH MODAL LIHAT / CETAK */
+    .print-photo-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 14px auto 16px auto;
+    }
+    .print-photo-box {
+      width: 105px;
+      height: 105px;
+      border: 2px solid #000000;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #f8fafc;
+      text-align: center;
+    }
+    .print-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .print-photo-placeholder {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      padding: 6px;
+    }
+
     .print-table {
       width: 100%;
       border-collapse: collapse;
@@ -534,6 +570,7 @@
       #printableArea, #printableArea * { visibility: visible !important; }
       #printableArea { position: absolute; left: 0; top: 0; width: 100%; color: #000; }
       .no-print { display: none !important; }
+      .print-photo-box img { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     }
 
     .toast-msg {
@@ -646,7 +683,7 @@
         <div class="modal-title"><i class="fas fa-id-badge" style="color:var(--neon-yellow);"></i> Profil Murid SK Mantin</div>
         <div style="display:flex; gap:8px;">
           <button class="btn-action-yellow" onclick="window.print()"><i class="fas fa-print"></i> Cetak Kad</button>
-          <button class="close-modal-btn" onclick="closeModal('profilModal')">&times;</button>
+          <button class="close-modal-btn" onclick="closeModal('profilModal')">×</button>
         </div>
       </div>
 
@@ -658,6 +695,11 @@
           <p style="font-size:0.8rem; color:#64748b; margin-top:2px;">Sesi Persekolahan Semasa: <span id="mSesiSemasa">Semasa</span></p>
         </div>
 
+        <!-- GAMBAR MURID ATAS TENGAH -->
+        <div class="print-photo-wrapper">
+          <div class="print-photo-box" id="mPhotoContainer"></div>
+        </div>
+
         <table class="print-table">
           <tr><th>NAMA MURID</th><td id="mNama" style="font-weight:800;">-</td></tr>
           <tr><th>TAHUN / KELAS</th><td id="mKelas">-</td></tr>
@@ -665,8 +707,8 @@
           <tr><th>KELAB & PERSATUAN</th><td id="mPersatuan">-</td></tr>
           <tr><th>SUKAN & PERMAINAN</th><td id="mSukan">-</td></tr>
           <tr><th>RUMAH SUKAN</th><td id="mRumah">-</td></tr>
-          <!-- BAHAGIAN TAMBAHAN DI ATAS BACAAN TASMIK -->
-          <tr><th>JAWATANKUASA KELAS</th><td id="mJkKelas" style="font-weight:700;">-</td></tr>
+          <!-- JAWATAN MURID (GABUNGAN JAWATAN KELAS & PENGAWAS) -->
+          <tr><th>JAWATAN MURID</th><td id="mJawatanMurid" style="font-weight:700;">-</td></tr>
           <tr><th>JAWATANKUASA KOKURIKULUM</th><td id="mJkKoko" style="font-weight:700;">-</td></tr>
           <tr><th>REKOD PENCAPAIAN</th><td id="mPencapaian">-</td></tr>
           <tr><th>STATUS BACAAN TASMIK</th><td id="mBacaan" style="font-weight:800; color:#b45309;">-</td></tr>
@@ -679,12 +721,9 @@
   <div id="toastNotification" class="toast-msg"></div>
 
   <script>
-    // =========================================================================
-    // MASUKKAN URL WEB APP APPS SCRIPT DARI Code.gs DI SINI
-    // =========================================================================
     const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwy0W5NuWBb_dXmBWB4wb5zQ8o-mBz0uvlSNDe7Lz5pVQSbBKaol8IP9e1qjgwrpVztlA/exec";
 
-    // 1. KAWALAN KESELAMATAN: WAJIB LOG MASUK SEBELUM BUKA
+    // KAWALAN KESELAMATAN: WAJIB LOG MASUK SEBELUM BUKA
     const activeUser = JSON.parse(sessionStorage.getItem("semanes_user"));
     if (!activeUser) {
       window.location.href = "../login.html";
@@ -812,7 +851,7 @@
           avatarHtml = `<div class="avatar-initials">${initials}</div>`;
         }
 
-        const jkKelasStr = m.jawatankuasaKelas || 'Tiada';
+        const jawatanMuridStr = m.jawatanMurid || 'Tiada';
         const jkKokoStr = m.jawatankuasaKoko || 'Tiada';
         const pencapaianStr = m.laporanPencapaian || 'Tiada penyertaan direkodkan';
 
@@ -845,12 +884,12 @@
             </div>
           </div>
 
-          <!-- BAHAGIAN KHAS JAWATANKUASA & PENCAPAIAN TAHUN SEMASA (DI ATAS STATUS TASMIK) -->
+          <!-- BAHAGIAN KHAS JAWATAN MURID & PENCAPAIAN TAHUN SEMASA -->
           <div class="card-section-label"><i class="fas fa-trophy"></i> Kepimpinan & Pencapaian (${currentTahunSemasa})</div>
           <div class="jk-achieve-box">
             <div class="jk-row">
-              <span class="jk-label"><i class="fas fa-users-cog" style="color:var(--neon-yellow); margin-right:4px;"></i>JK Kelas:</span>
-              <span class="jk-val">${jkKelasStr}</span>
+              <span class="jk-label"><i class="fas fa-user-shield" style="color:var(--neon-yellow); margin-right:4px;"></i>Jawatan Murid:</span>
+              <span class="jk-val">${jawatanMuridStr}</span>
             </div>
             <div class="jk-row">
               <span class="jk-label"><i class="fas fa-medal" style="color:#a855f7; margin-right:4px;"></i>JK Koko:</span>
@@ -902,8 +941,16 @@
       document.getElementById('mSukan').innerText = m.sukan;
       document.getElementById('mRumah').innerText = m.rumahSukan;
 
-      // Bahagian Tambahan di atas Bacaan Tasmik
-      document.getElementById('mJkKelas').innerText = m.jawatankuasaKelas || 'Tiada';
+      // Paparan Gambar Murid di Tengah Atas
+      const photoBox = document.getElementById('mPhotoContainer');
+      if (m.gambar && m.gambar.startsWith('http')) {
+        photoBox.innerHTML = `<img src="${m.gambar}" alt="${m.nama}">`;
+      } else {
+        photoBox.innerHTML = `<div class="print-photo-placeholder">Tiada Gambar</div>`;
+      }
+
+      // Bahagian Jawatan Murid (Gabungan Jawatan Kelas & Pengawas)
+      document.getElementById('mJawatanMurid').innerText = m.jawatanMurid || 'Tiada';
       document.getElementById('mJkKoko').innerText = m.jawatankuasaKoko || 'Tiada';
       document.getElementById('mPencapaian').innerHTML = m.laporanPencapaian || 'Tiada penyertaan direkodkan';
 
@@ -920,10 +967,10 @@
         return;
       }
 
-      let csv = "Nama Murid,Tahun,Kelas,Badan Beruniform,Kelab Persatuan,Sukan Permainan,Rumah Sukan,Jawatankuasa Kelas,Jawatankuasa Kokurikulum,Rekod Pencapaian,Status Bacaan,Muka Surat\n";
+      let csv = "Nama Murid,Tahun,Kelas,Badan Beruniform,Kelab Persatuan,Sukan Permainan,Rumah Sukan,Jawatan Murid,Jawatankuasa Kokurikulum,Rekod Pencapaian,Status Bacaan,Muka Surat\n";
       globalMuridData.forEach(m => {
         const cleanPencapaian = (m.laporanPencapaian || '').replace(/<br>/g, '; ');
-        csv += `"${m.nama}","${m.tahun}","${m.kelas}","${m.uniform}","${m.persatuan}","${m.sukan}","${m.rumahSukan}","${m.jawatankuasaKelas || 'Tiada'}","${m.jawatankuasaKoko || 'Tiada'}","${cleanPencapaian}","${m.bacaan}","${m.mukaSurat}"\n`;
+        csv += `"${m.nama}","${m.tahun}","${m.kelas}","${m.uniform}","${m.persatuan}","${m.sukan}","${m.rumahSukan}","${m.jawatanMurid || 'Tiada'}","${m.jawatankuasaKoko || 'Tiada'}","${cleanPencapaian}","${m.bacaan}","${m.mukaSurat}"\n`;
       });
 
       const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
