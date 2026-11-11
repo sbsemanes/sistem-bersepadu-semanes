@@ -15,6 +15,8 @@
       --card-bg: #1e293b;
       --neon-cyan: #38bdf8;
       --neon-glow: rgba(56, 189, 248, 0.4);
+      --neon-green: #10b981;
+      --neon-amber: #f59e0b;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --border-soft: #334155;
@@ -108,6 +110,38 @@
       transition: all 0.2s;
     }
     .btn-action-primary:hover { transform: translateY(-2px); box-shadow: 0 0 12px var(--neon-glow); }
+
+    .btn-action-green {
+      background: var(--neon-green);
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action-green:hover { transform: translateY(-2px); box-shadow: 0 0 12px rgba(16, 185, 129, 0.5); }
+
+    .btn-action-amber {
+      background: var(--neon-amber);
+      color: #0f172a;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+    .btn-action-amber:hover { transform: translateY(-2px); box-shadow: 0 0 12px rgba(245, 158, 11, 0.5); }
 
     .mode-indicator {
       display: inline-flex;
@@ -381,10 +415,20 @@
         </div>
       </div>
 
-      <div style="display:flex; align-items:center; gap:10px;">
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
         <div id="modeIndicator" class="mode-indicator">
           <i class="fas fa-table"></i> Mod Baris
         </div>
+
+        <!-- BUTANG KHAS DATA MURID: NAIK TAHUN & MUAT NAIK CSV -->
+        <button id="btnNaikTahun" class="btn-action-amber" style="display:none;" onclick="handleNaikTahun()">
+          <i class="fas fa-level-up-alt"></i> Naik Tahun Hadapan
+        </button>
+
+        <button id="btnUploadCSVMurid" class="btn-action-green" style="display:none;" onclick="openCSVUploadModal()">
+          <i class="fas fa-file-csv"></i> Muat Naik CSV Murid
+        </button>
+
         <button id="btnAddRowBtn" class="btn-action-primary" onclick="openAddModal()">
           <i class="fas fa-plus"></i> Tambah Rekod
         </button>
@@ -410,7 +454,7 @@
     <div class="modal-box">
       <div class="modal-header">
         <div class="modal-title" id="crudModalTitle">Ubah Data Baris</div>
-        <button class="close-modal-btn" onclick="closeModal('crudModal')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('crudModal')">×</button>
       </div>
       <form id="crudForm" onsubmit="handleCrudSubmit(event)">
         <input type="hidden" id="editRowIndex">
@@ -428,7 +472,7 @@
     <div class="modal-box" style="max-width:450px;">
       <div class="modal-header">
         <div class="modal-title" id="colModalTitle">Edit Item Kolum</div>
-        <button class="close-modal-btn" onclick="closeModal('colItemModal')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('colItemModal')">×</button>
       </div>
       <form id="colItemForm" onsubmit="handleSaveColItem(event)">
         <input type="hidden" id="editColIdx">
@@ -442,6 +486,28 @@
           <button type="submit" class="btn-action-primary">Simpan Item</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL MUAT NAIK CSV DATA MURID (SMART MERGE) -->
+  <div class="modal-overlay" id="csvMuridModal">
+    <div class="modal-box" style="max-width:550px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-file-csv" style="color:var(--neon-green); margin-right:8px;"></i>Muat Naik CSV Data Murid</div>
+        <button class="close-modal-btn" onclick="closeModal('csvMuridModal')">×</button>
+      </div>
+      <div style="font-size:0.83rem; color:var(--text-muted); margin-bottom:14px; line-height:1.5;">
+        Pilih fail CSV. Jika murid sudah wujud dalam database, sistem hanya akan <b>menambah kolum yang kosong</b> (seperti Uniform, Persatuan, Sukan, Agama, dll.) dan mengemaskini Tahun/Kelas sekiranya ada perubahan. Kolum yang sudah berisi data <b>tidak akan dipadam atau ditindih</b>.
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pilih Fail CSV:</label>
+        <input type="file" id="csvFileInput" class="form-control" accept=".csv" required>
+      </div>
+      <div id="csvFileInfo" style="display:none; margin-top:10px; font-size:0.82rem; color:var(--neon-cyan);"></div>
+      <div class="form-actions" style="margin-top:20px;">
+        <button type="button" class="btn-secondary" onclick="closeModal('csvMuridModal')">Batal</button>
+        <button type="button" id="btnProsesCSV" class="btn-action-green" onclick="handleProcessCSV()"><i class="fas fa-upload"></i> Proses & Muat Naik</button>
+      </div>
     </div>
   </div>
 
@@ -533,10 +599,20 @@
 
           const modeIndicator = document.getElementById('modeIndicator');
           const btnAddRow = document.getElementById('btnAddRowBtn');
+          const btnNaikTahun = document.getElementById('btnNaikTahun');
+          const btnUploadCSVMurid = document.getElementById('btnUploadCSVMurid');
 
-          // Kawal paparan Filter Khas Data Murid (Tahun & Kelas)
+          // Kawal paparan Filter Khas Data Murid & Butang Khas
           const isDataMurid = (dbKey === "db_sekolah" && cleanSheetName === "data murid");
           setupMuridFilters(isDataMurid);
+
+          if (isDataMurid) {
+            btnNaikTahun.style.display = 'inline-flex';
+            btnUploadCSVMurid.style.display = 'inline-flex';
+          } else {
+            btnNaikTahun.style.display = 'none';
+            btnUploadCSVMurid.style.display = 'none';
+          }
 
           if (isColumnWise) {
             modeIndicator.innerHTML = '<i class="fas fa-columns"></i> Mod Kolum (Column-wise)';
@@ -583,13 +659,11 @@
       fTahunWrap.style.display = 'block';
       fKelasWrap.style.display = 'block';
 
-      // Isi pilihan Tahun
       fTahun.innerHTML = '<option value="">Semua Tahun</option>';
       (globalDropdownOptions.tahun || []).forEach(t => {
         fTahun.innerHTML += `<option value="${t}">${t}</option>`;
       });
 
-      // Isi pilihan Kelas
       fKelas.innerHTML = '<option value="">Semua Kelas</option>';
       (globalDropdownOptions.kelas || []).forEach(k => {
         fKelas.innerHTML += `<option value="${k}">${k}</option>`;
@@ -801,7 +875,6 @@
 
         let filtered = currentRows;
 
-        // Penapis Tahun & Kelas untuk Data Murid
         if (isDataMurid) {
           const selTahun = document.getElementById('filterTahun').value.trim().toLowerCase();
           const selKelas = document.getElementById('filterKelas').value.trim().toLowerCase();
@@ -816,7 +889,6 @@
           }
         }
 
-        // Carian teks umum
         if (q) {
           filtered = filtered.filter(r => r.values.some(v => v.toString().toLowerCase().includes(q)));
         }
@@ -843,7 +915,7 @@
     }
 
     // ========================================================
-    // PEMBINA BORANG DINAMIK (DATA GURU, DATA MURID & HEM)
+    // PEMBINA BORANG DINAMIK
     // ========================================================
     function buildDynamicForm(values = null) {
       const container = document.getElementById('dynamicFormFields');
@@ -866,7 +938,6 @@
         let optList = [];
         let sourceLabel = '';
 
-        // A. Pengendalian Borang Data Murid
         if (isDataMurid) {
           if (hUpper === "TAHUN") {
             isDropdown = true; optList = globalDropdownOptions.tahun || []; sourceLabel = '(Data Sekolah)';
@@ -887,10 +958,7 @@
           } else if (hUpper.includes("RUMAH")) {
             isDropdown = true; optList = globalDropdownOptions.rumahSukan || []; sourceLabel = '(Data KOKO)';
           }
-        }
-
-        // B. Pengendalian Borang Data Guru (Kekalkan asal + Dropdown tambahan KOKO)
-        else if (isDataGuru) {
+        } else if (isDataGuru) {
           if (hUpper.includes("PERANAN")) {
             isDropdown = true; optList = globalDropdownOptions.peranan || ["Guru", "Admin"]; sourceLabel = '(Sistem)';
           } else if (hUpper.includes("UNIFORM")) {
@@ -902,10 +970,7 @@
           } else if (hUpper.includes("RUMAH")) {
             isDropdown = true; optList = globalDropdownOptions.rumahSukan || []; sourceLabel = '(Data KOKO)';
           }
-        }
-
-        // C. Pengendalian Sheet Jawatankuasa Kelas (DB HEM)
-        else if (isJawatankuasaKelas) {
+        } else if (isJawatankuasaKelas) {
           if (hUpper === "JAWATAN" || hUpper.includes("JAWATANKUASA")) {
             isDropdown = true; optList = globalDropdownOptions.jawatankuasaKelas || []; sourceLabel = '(Data HEM)';
           } else if (hUpper === "TAHUN") {
@@ -913,10 +978,7 @@
           } else if (hUpper === "KELAS") {
             isDropdown = true; optList = globalDropdownOptions.kelas || []; sourceLabel = '(Data Sekolah)';
           }
-        }
-
-        // D. Dropdown Umum Berdasarkan Tajuk Kolum Lain
-        else {
+        } else {
           if (hUpper.includes("UNIFORM") && globalDropdownOptions.uniform.length > 0) {
             isDropdown = true; optList = globalDropdownOptions.uniform; sourceLabel = '(Data KOKO)';
           } else if ((hUpper.includes("PERSATUAN") || hUpper.includes("KELAB")) && globalDropdownOptions.persatuan.length > 0) {
@@ -930,7 +992,6 @@
           }
         }
 
-        // Jana Elemen Borang: Dropdown atau Input Teks
         if (isDropdown && optList.length > 0) {
           let optionsHtml = '<option value="">-- Pilih --</option>';
           optList.forEach(opt => {
@@ -1016,6 +1077,152 @@
       } catch (err) {
         showToast("Ralat: " + err.toString(), true);
       }
+    }
+
+    // ========================================================
+    // LOGIK OPERASI BAHARU: NAIK TAHUN HADAPAN
+    // ========================================================
+    async function handleNaikTahun() {
+      const pengesahan = confirm(
+        "PERINGATAN: Adakah anda pasti untuk menjalankan 'Naik Tahun Hadapan'?\n\n" +
+        "1. Murid Tahun 1 hingga 5 akan dinaikkan tahun sebanyak +1 dengan mengekalkan nama kelas.\n" +
+        "2. Murid Tahun 6 akan dialihkan ke sheet 'Arkib Murid Tahun 6'.\n\n" +
+        "Tindakan ini tidak boleh diundur. Teruskan?"
+      );
+
+      if (!pengesahan) return;
+
+      const btn = document.getElementById('btnNaikTahun');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'admin_naik_tahun_murid' })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-level-up-alt"></i> Naik Tahun Hadapan';
+
+        if (result.success) {
+          alert(result.message);
+          fetchCurrentSheetData("Data Murid");
+        } else {
+          showToast("Ralat: " + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-level-up-alt"></i> Naik Tahun Hadapan';
+        showToast("Ralat sambungan: " + err.toString(), true);
+      }
+    }
+
+    // ========================================================
+    // LOGIK OPERASI BAHARU: MUAT NAIK CSV DATA MURID (SMART MERGE)
+    // ========================================================
+    function openCSVUploadModal() {
+      document.getElementById('csvFileInput').value = '';
+      document.getElementById('csvFileInfo').style.display = 'none';
+      openModal('csvMuridModal');
+    }
+
+    // Helper Parser CSV yang menyokong tanda petik dan koma dalam teks
+    function parseCSV(text) {
+      const lines = [];
+      let row = [""];
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const c = text[i];
+        const next = text[i + 1];
+
+        if (c === '"') {
+          if (inQuotes && next === '"') {
+            row[row.length - 1] += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (c === ',' && !inQuotes) {
+          row.push("");
+        } else if ((c === '\r' || c === '\n') && !inQuotes) {
+          if (c === '\r' && next === '\n') i++;
+          lines.push(row);
+          row = [""];
+        } else {
+          row[row.length - 1] += c;
+        }
+      }
+      if (row.length > 1 || row[0] !== "") {
+        lines.push(row);
+      }
+      return lines;
+    }
+
+    async function handleProcessCSV() {
+      const fileInput = document.getElementById('csvFileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        showToast("Sila pilih fail CSV terlebih dahulu.", true);
+        return;
+      }
+
+      const btn = document.getElementById('btnProsesCSV');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Membaca Fail...';
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const csvText = e.target.result;
+          const parsedRows = parseCSV(csvText);
+
+          if (!parsedRows || parsedRows.length <= 1) {
+            showToast("Fail CSV kosong atau format tidak sah.", true);
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-upload"></i> Proses & Muat Naik';
+            return;
+          }
+
+          btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Menyegerakkan ${parsedRows.length - 1} rekod...`;
+
+          const res = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'admin_upload_csv_murid',
+              csvRows: parsedRows
+            })
+          });
+
+          const result = await res.json();
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-upload"></i> Proses & Muat Naik';
+
+          if (result.success) {
+            alert(result.message);
+            closeModal('csvMuridModal');
+            fetchCurrentSheetData("Data Murid");
+          } else {
+            showToast("Ralat muat naik CSV: " + result.message, true);
+          }
+        } catch (err) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-upload"></i> Proses & Muat Naik';
+          showToast("Ralat pemprosesan: " + err.toString(), true);
+        }
+      };
+
+      reader.onerror = function() {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-upload"></i> Proses & Muat Naik';
+        showToast("Gagal membaca fail CSV.", true);
+      };
+
+      reader.readAsText(file);
     }
   </script>
 </body>
