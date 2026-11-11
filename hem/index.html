@@ -107,7 +107,7 @@
       box-shadow: 0 0 8px var(--neon-red);
     }
 
-    /* KAD MENU UTAMA (eFail HEM) */
+    /* KAD MENU UTAMA */
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -353,7 +353,7 @@
     .form-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
     .btn-secondary { padding: 9px 16px; border-radius: 10px; background: #f1f5f9; color: var(--text-muted); border: none; font-weight: 600; cursor: pointer; }
 
-    /* PILIHAN BERGANDA MURID (SALAH LAKU) */
+    /* PILIHAN BERGANDA MURID */
     .selected-tags-box {
       display: flex;
       flex-wrap: wrap;
@@ -465,7 +465,7 @@
       <p class="header-subtext">Sekolah Kebangsaan Mantin — Sahsiah Terpuji, Disiplin Cemerlang</p>
     </header>
 
-    <!-- KAD MENU UTAMA: eFail HEM -->
+    <!-- KAD MENU UTAMA: eFail HEM & Pengawas -->
     <section>
       <h2 class="section-title">Dokumen & Fail Pengurusan</h2>
       <div class="menu-grid">
@@ -473,6 +473,13 @@
           <div class="icon-box"><i class="fas fa-folder-open"></i></div>
           <div class="menu-card-title">eFail HEM</div>
           <div class="menu-card-desc">Arkib 19 fail pengurusan & unit hal ehwal murid</div>
+        </div>
+
+        <!-- KAD PENGAWAS (BAHARU) -->
+        <div class="menu-card" onclick="switchTab('tabPengawas')">
+          <div class="icon-box"><i class="fas fa-user-shield"></i></div>
+          <div class="menu-card-title">Pengawas (Sekolah, PSS, SPBT, ICT, Surau)</div>
+          <div class="menu-card-desc">Pengurusan pelantikan & senarai pengawas sekolah</div>
         </div>
       </div>
     </section>
@@ -485,8 +492,9 @@
         <button class="tab-btn" onclick="switchTab('tabFailHEM')"><i class="fas fa-folder"></i> Fail HEM</button>
         <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
         <button class="tab-btn" onclick="switchTab('tabSalahLaku')"><i class="fas fa-user-slash"></i> Laporan Salah Laku</button>
-        <!-- TAB BARU JAWATANKUASA KELAS SELEPAS SALAH LAKU -->
         <button class="tab-btn" onclick="switchTab('tabJKKelas')"><i class="fas fa-users-cog"></i> Jawatankuasa Kelas</button>
+        <!-- TAB BARU PENGAWAS -->
+        <button class="tab-btn" onclick="switchTab('tabPengawas')"><i class="fas fa-shield-alt"></i> Pengawas</button>
         <button class="tab-btn" onclick="switchTab('tabUnit')"><i class="fas fa-file-alt"></i> Laporan Unit HEM</button>
       </div>
 
@@ -689,7 +697,7 @@
         </div>
       </div>
 
-      <!-- TAB 6: JAWATANKUASA KELAS (BAHARU) -->
+      <!-- TAB 6: JAWATANKUASA KELAS -->
       <div id="tabJKKelas" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -702,7 +710,6 @@
             </button>
           </div>
 
-          <!-- FILTERS JAWATANKUASA KELAS -->
           <div class="filter-wrapper" style="margin-bottom:14px;">
             <select id="filterJKSesi" class="filter-select" onchange="filterJKKelasTable()">
               <option value="">Semua Sesi</option>
@@ -739,7 +746,52 @@
         </div>
       </div>
 
-      <!-- TAB 7: LAPORAN UNIT HEM -->
+      <!-- TAB 7: PENGAWAS (BAHARU) -->
+      <div id="tabPengawas" class="tab-content">
+        <div class="table-card">
+          <div class="table-top-bar">
+            <div>
+              <h3 style="font-size:1.1rem; font-weight:800;">Pengurusan Pengawas Sekolah & Khas</h3>
+              <p style="font-size:0.82rem; color:var(--text-muted);">Pengawas Sekolah, PSS, SPBT, ICT dan Surau SK Mantin.</p>
+            </div>
+            <button class="btn-action-red" onclick="openModal('modalPengawas')">
+              <i class="fas fa-user-plus"></i> Tambah Pengawas
+            </button>
+          </div>
+
+          <div class="filter-wrapper" style="margin-bottom:14px;">
+            <select id="filterPengawasTahun" class="filter-select" onchange="filterPengawasTable()">
+              <option value="">Semua Tahun</option>
+            </select>
+            <select id="filterPengawasKelas" class="filter-select" onchange="filterPengawasTable()">
+              <option value="">Semua Kelas</option>
+            </select>
+            <select id="filterPengawasJawatan" class="filter-select" onchange="filterPengawasTable()">
+              <option value="">Semua Jawatan</option>
+            </select>
+            <input type="text" id="searchPengawasNama" class="filter-input" placeholder="Cari nama murid..." oninput="filterPengawasTable()">
+          </div>
+
+          <div class="table-scroll-container">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Bil</th>
+                  <th>Nama Murid</th>
+                  <th>Tahun</th>
+                  <th>Kelas</th>
+                  <th>Jawatan Pengawas</th>
+                </tr>
+              </thead>
+              <tbody id="pengawasTableBody">
+                <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod pengawas...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 8: LAPORAN UNIT HEM -->
       <div id="tabUnit" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -785,10 +837,77 @@
     <div class="modal-box">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-folder-open" style="color:var(--neon-red); margin-right:8px;"></i>Senarai eFail HEM SK Mantin</div>
-        <button class="close-modal-btn" onclick="closeModal('efailModal')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('efailModal')">×</button>
       </div>
       <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:16px;">Klik pada mana-mana fail unit untuk membuka Google Drive yang berkenaan.</p>
       <div class="submodal-grid" id="efailCardsContainer"></div>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: PENGAWAS (BAHARU) -->
+  <div class="modal-overlay" id="modalPengawas">
+    <div class="modal-box" style="max-width:700px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-user-shield" style="color:var(--neon-red); margin-right:8px;"></i>Borang Pelantikan Pengawas</div>
+        <button class="close-modal-btn" onclick="closeModal('modalPengawas')">×</button>
+      </div>
+      <form id="formPengawas" onsubmit="handlePengawasSubmit(event)">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label class="form-label">Pilihan Jawatan (Data Sekolah) *</label>
+            <select id="pgJawatan" class="form-control" required></select>
+          </div>
+
+          <!-- PILIH MURID DENGAN FILTER TAHUN, KELAS & SEARCH NAMA -->
+          <div class="form-group full-width">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+              <label class="form-label">Murid Yang Dilantik (Boleh Pilih Pelbagai) *</label>
+              <button type="button" class="btn-action-red" onclick="openPengawasPickerModal()" style="padding:6px 14px; font-size:0.8rem;">
+                <i class="fas fa-user-plus"></i> Pilih Murid
+              </button>
+            </div>
+            <div id="pgSelectedContainer" class="selected-tags-box">
+              <span id="pgPlaceholderTag" style="color:#94a3b8; font-size:0.82rem;">Belum ada murid dipilih. Sila klik butang di atas.</span>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary" onclick="closeModal('modalPengawas')">Batal</button>
+          <button type="submit" id="btnSubmitPengawas" class="btn-action-red"><i class="fas fa-save"></i> Simpan Pelantikan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL KHAS: PICKER MULTIPLE MURID PENGAWAS -->
+  <div class="modal-overlay" id="modalPickerPengawas" style="z-index: 1060;">
+    <div class="modal-box" style="max-width:620px;">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fas fa-users" style="color:var(--neon-red); margin-right:8px;"></i>Pilih Murid (DB Sekolah)</div>
+        <button class="close-modal-btn" onclick="closeModal('modalPickerPengawas')">×</button>
+      </div>
+
+      <div class="filter-wrapper" style="margin-bottom:10px;">
+        <select id="pgPickerFilterTahun" class="filter-select" onchange="renderPengawasPickerList()">
+          <option value="">Semua Tahun</option>
+        </select>
+        <select id="pgPickerFilterKelas" class="filter-select" onchange="renderPengawasPickerList()">
+          <option value="">Semua Kelas</option>
+        </select>
+        <input type="text" id="pgPickerSearchInput" class="filter-input" style="flex:1;" placeholder="Cari nama murid..." oninput="renderPengawasPickerList()">
+      </div>
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
+        <span style="font-size:0.8rem; font-weight:700; color:var(--text-muted);" id="pgPickerSelectedCount">0 murid dipilih</span>
+        <button type="button" class="btn-secondary" style="padding:4px 10px; font-size:0.75rem;" onclick="selectAllFilteredPengawas()">Pilih Semua Yang Ditapis</button>
+      </div>
+
+      <div class="murid-picker-list" id="pgPickerContainerList"></div>
+
+      <div class="form-actions" style="margin-top:16px;">
+        <button type="button" class="btn-secondary" onclick="closeModal('modalPickerPengawas')">Batal</button>
+        <button type="button" class="btn-action-red" onclick="applySelectedPengawas()"><i class="fas fa-check-double"></i> Sahkan Pilihan</button>
+      </div>
     </div>
   </div>
 
@@ -797,7 +916,7 @@
     <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-folder-plus" style="color:var(--neon-red); margin-right:8px;"></i>Muat Naik Dokumen Fail HEM</div>
-        <button class="close-modal-btn" onclick="closeModal('modalFailHEM')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalFailHEM')">×</button>
       </div>
       <form id="formFailHEM" onsubmit="handleFailHEMSubmit(event)">
         <div class="form-grid">
@@ -851,7 +970,7 @@
     <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-file-invoice" style="color:var(--neon-red); margin-right:8px;"></i>Muat Naik Fail OPR HEM</div>
-        <button class="close-modal-btn" onclick="closeModal('modalOPR')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalOPR')">×</button>
       </div>
       <form id="formOPRHEM" onsubmit="handleOPRHEMSubmit(event)">
         <div class="form-grid">
@@ -894,7 +1013,7 @@
     <div class="modal-box" style="max-width:900px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-clipboard-check" style="color:var(--neon-red); margin-right:8px;"></i>Borang Laporan Guru Bertugas Harian</div>
-        <button class="close-modal-btn" onclick="closeModal('modalBertugas')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalBertugas')">×</button>
       </div>
       <form id="formBertugas" onsubmit="handleBertugasSubmit(event)">
         <div class="form-grid">
@@ -991,7 +1110,7 @@
     <div class="modal-box" style="max-width:500px;">
       <div class="modal-header">
         <div class="modal-title">Muat Naik Jadual Bertugas</div>
-        <button class="close-modal-btn" onclick="closeModal('modalUploadJadual')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalUploadJadual')">×</button>
       </div>
       <form id="formJadual" onsubmit="handleJadualSubmit(event)">
         <div class="form-group" style="margin-bottom:12px;">
@@ -1029,7 +1148,7 @@
     <div class="modal-box" style="max-width:650px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-user-slash" style="color:var(--neon-red); margin-right:8px;"></i>Borang Laporan Salah Laku Murid</div>
-        <button class="close-modal-btn" onclick="closeModal('modalSalahLaku')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalSalahLaku')">×</button>
       </div>
       <form id="formSalahLaku" onsubmit="handleSalahLakuSubmit(event)">
         <div class="form-grid">
@@ -1090,12 +1209,12 @@
     </div>
   </div>
 
-  <!-- MODAL KHAS: PILIH BEBERAPA ORANG MURID DARI DB SEKOLAH -->
+  <!-- MODAL KHAS: PILIH BEBERAPA ORANG MURID DARI DB SEKOLAH (SALAH LAKU) -->
   <div class="modal-overlay" id="modalPilihMurid" style="z-index: 1050;">
     <div class="modal-box" style="max-width:560px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-users" style="color:var(--neon-red); margin-right:8px;"></i>Pilih Murid (DB Sekolah)</div>
-        <button class="close-modal-btn" onclick="closeModal('modalPilihMurid')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalPilihMurid')">×</button>
       </div>
 
       <div>
@@ -1117,12 +1236,12 @@
     </div>
   </div>
 
-  <!-- MODAL BORANG: JAWATANKUASA KELAS (BAHARU) -->
+  <!-- MODAL BORANG: JAWATANKUASA KELAS -->
   <div class="modal-overlay" id="modalJKKelas">
     <div class="modal-box" style="max-width:600px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-users-cog" style="color:var(--neon-red); margin-right:8px;"></i>Borang Jawatankuasa Kelas</div>
-        <button class="close-modal-btn" onclick="closeModal('modalJKKelas')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalJKKelas')">×</button>
       </div>
       <form id="formJKKelas" onsubmit="handleJKKelasSubmit(event)">
         <div class="form-grid">
@@ -1163,7 +1282,7 @@
     <div class="modal-box">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-edit" style="color:var(--neon-red); margin-right:8px;"></i>Borang Laporan Program Unit HEM</div>
-        <button class="close-modal-btn" onclick="closeModal('modalLaporanUnit')">&times;</button>
+        <button class="close-modal-btn" onclick="closeModal('modalLaporanUnit')">×</button>
       </div>
       <form id="formLaporanUnit" onsubmit="handleLaporanUnitSubmit(event)">
         <div class="form-grid">
@@ -1220,7 +1339,6 @@
             <input type="url" id="uBahan" class="form-control" placeholder="https://drive.google.com/...">
           </div>
 
-          <!-- INPUT GAMBAR (MENYOKONG PILIHAN KAMERA TELEFON) -->
           <div class="form-group">
             <label class="form-label">Muat Naik Gambar 1 (Kamera / Fail)</label>
             <input type="file" id="uG1" class="form-control" accept="image/*" capture="environment">
@@ -1256,7 +1374,7 @@
         <div class="modal-title" id="rptModalTitle"><i class="fas fa-file-invoice"></i> Paparan Laporan</div>
         <div style="display:flex; gap:8px;">
           <button class="btn-action-red" onclick="window.print()"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
-          <button class="close-modal-btn" onclick="closeModal('viewReportModal')">&times;</button>
+          <button class="close-modal-btn" onclick="closeModal('viewReportModal')">×</button>
         </div>
       </div>
 
@@ -1308,7 +1426,10 @@
     let selectedMuridIndexes = new Set();
     let tempPickerSelection = new Set();
 
-    // Helper format URL Google Drive kepada Thumbnail Resolusi Tinggi (Supaya keluar bila Print)
+    // Set untuk Picker Pengawas
+    let selectedPengawasIndexes = new Set();
+    let tempPengawasPickerSelection = new Set();
+
     function formatDriveThumbnail(url) {
       if (!url) return '';
       if (url.includes('drive.google.com') || url.includes('docs.google.com')) {
@@ -1332,9 +1453,10 @@
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
       
-      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(tabId));
+      const activeBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(tabId));
       if (activeBtn) activeBtn.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
+      const targetTab = document.getElementById(tabId);
+      if (targetTab) targetTab.classList.add('active');
     }
 
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
@@ -1447,7 +1569,7 @@
           tag.className = 'murid-tag';
           tag.innerHTML = `
             ${m.nama} (${m.tahun} ${m.kelas})
-            <span class="murid-tag-remove" onclick="removeSelectedMurid(${idx})">&times;</span>
+            <span class="murid-tag-remove" onclick="removeSelectedMurid(${idx})">×</span>
           `;
           box.appendChild(tag);
         }
@@ -1455,6 +1577,221 @@
 
       document.getElementById('slTahun').value = Array.from(tahunSet).sort().join(', ');
       document.getElementById('slKelas').value = Array.from(kelasSet).sort().join(', ');
+    }
+
+    // --- PENGENDALIAN PICKER MULTIPLE PENGAWAS (FILTER TAHUN, KELAS, SEARCH) ---
+    function openPengawasPickerModal() {
+      tempPengawasPickerSelection = new Set(selectedPengawasIndexes);
+      document.getElementById('pgPickerSearchInput').value = '';
+      document.getElementById('pgPickerFilterTahun').value = '';
+      document.getElementById('pgPickerFilterKelas').value = '';
+      renderPengawasPickerList();
+      openModal('modalPickerPengawas');
+    }
+
+    function togglePengawasCheck(idx) {
+      if (tempPengawasPickerSelection.has(idx)) {
+        tempPengawasPickerSelection.delete(idx);
+      } else {
+        tempPengawasPickerSelection.add(idx);
+      }
+      renderPengawasPickerList();
+    }
+
+    function selectAllFilteredPengawas() {
+      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) return;
+      const fTahun = document.getElementById('pgPickerFilterTahun').value;
+      const fKelas = document.getElementById('pgPickerFilterKelas').value.toLowerCase();
+      const q = (document.getElementById('pgPickerSearchInput')?.value || '').toLowerCase().trim();
+
+      globalHemData.options.murid.forEach((m, idx) => {
+        const matchTahun = !fTahun || m.tahun == fTahun;
+        const matchKelas = !fKelas || (m.kelas && m.kelas.toLowerCase() == fKelas);
+        const matchNama = !q || (m.nama && m.nama.toLowerCase().includes(q));
+        if (matchTahun && matchKelas && matchNama) {
+          tempPengawasPickerSelection.add(idx);
+        }
+      });
+      renderPengawasPickerList();
+    }
+
+    function renderPengawasPickerList() {
+      const container = document.getElementById('pgPickerContainerList');
+      if (!container) return;
+
+      document.getElementById('pgPickerSelectedCount').innerText = `${tempPengawasPickerSelection.size} murid dipilih`;
+
+      if (!globalHemData || !globalHemData.options || !globalHemData.options.murid) {
+        container.innerHTML = '<div style="padding:16px; text-align:center; color:#94a3b8;">Tiada data murid dimuatkan.</div>';
+        return;
+      }
+
+      const fTahun = document.getElementById('pgPickerFilterTahun').value;
+      const fKelas = document.getElementById('pgPickerFilterKelas').value.toLowerCase();
+      const q = (document.getElementById('pgPickerSearchInput')?.value || '').toLowerCase().trim();
+      const list = globalHemData.options.murid;
+
+      let html = '';
+      let matchCount = 0;
+
+      list.forEach((m, idx) => {
+        const matchTahun = !fTahun || m.tahun == fTahun;
+        const matchKelas = !fKelas || (m.kelas && m.kelas.toLowerCase() == fKelas);
+        const matchNama = !q || (m.nama && m.nama.toLowerCase().includes(q));
+
+        if (matchTahun && matchKelas && matchNama) {
+          matchCount++;
+          const isChecked = tempPengawasPickerSelection.has(idx);
+          html += `
+            <div class="murid-picker-item ${isChecked ? 'checked' : ''}" onclick="togglePengawasCheck(${idx})">
+              <span class="murid-picker-name">
+                <input type="checkbox" ${isChecked ? 'checked' : ''} style="cursor:pointer; accent-color:var(--neon-red);" onclick="event.stopPropagation(); togglePengawasCheck(${idx});">
+                ${m.nama}
+              </span>
+              <span class="murid-picker-meta">${m.tahun} ${m.kelas}</span>
+            </div>
+          `;
+        }
+      });
+
+      if (matchCount === 0) {
+        html = '<div style="padding:16px; text-align:center; color:#94a3b8;">Tiada rekod murid yang sepadan dengan tapisan.</div>';
+      }
+
+      container.innerHTML = html;
+    }
+
+    function applySelectedPengawas() {
+      selectedPengawasIndexes = new Set(tempPengawasPickerSelection);
+      updateSelectedPengawasTags();
+      closeModal('modalPickerPengawas');
+    }
+
+    function removeSelectedPengawas(idx) {
+      selectedPengawasIndexes.delete(idx);
+      updateSelectedPengawasTags();
+    }
+
+    function updateSelectedPengawasTags() {
+      const box = document.getElementById('pgSelectedContainer');
+      box.innerHTML = '';
+
+      if (selectedPengawasIndexes.size === 0) {
+        box.innerHTML = '<span id="pgPlaceholderTag" style="color:#94a3b8; font-size:0.82rem;">Belum ada murid dipilih. Sila klik butang di atas.</span>';
+        return;
+      }
+
+      selectedPengawasIndexes.forEach(idx => {
+        const m = globalHemData.options.murid[idx];
+        if (m) {
+          const tag = document.createElement('span');
+          tag.className = 'murid-tag';
+          tag.innerHTML = `
+            ${m.nama} (${m.tahun} ${m.kelas})
+            <span class="murid-tag-remove" onclick="removeSelectedPengawas(${idx})">×</span>
+          `;
+          box.appendChild(tag);
+        }
+      });
+    }
+
+    // --- PENGENDALIAN BORANG PENGAWAS ---
+    async function handlePengawasSubmit(e) {
+      e.preventDefault();
+
+      if (selectedPengawasIndexes.size === 0) {
+        showToast("Sila pilih sekurang-kurangnya seorang murid.", true);
+        return;
+      }
+
+      const jawatan = document.getElementById('pgJawatan').value;
+      if (!jawatan) {
+        showToast("Sila pilih jawatan pengawas.", true);
+        return;
+      }
+
+      const btn = document.getElementById('btnSubmitPengawas');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+      const senaraiNama = [];
+      selectedPengawasIndexes.forEach(idx => {
+        const m = globalHemData.options.murid[idx];
+        if (m) senaraiNama.push(m.nama);
+      });
+
+      const formData = {
+        jawatan: jawatan,
+        senaraiNama: senaraiNama
+      };
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'simpan_pengawas', formData })
+        });
+        const result = await res.json();
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pelantikan';
+
+        if (result.success) {
+          showToast(`Berjaya mengemaskini jawatan untuk ${result.count || senaraiNama.length} orang murid!`);
+          closeModal('modalPengawas');
+          document.getElementById('formPengawas').reset();
+          selectedPengawasIndexes.clear();
+          tempPengawasPickerSelection.clear();
+          updateSelectedPengawasTags();
+          fetchHemData();
+        } else {
+          showToast('Ralat: ' + result.message, true);
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Simpan Pelantikan';
+        showToast('Ralat sambungan: ' + err.toString(), true);
+      }
+    }
+
+    function renderPengawasTable(list) {
+      const tb = document.getElementById('pengawasTableBody');
+      tb.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod pengawas dijumpai.</td></tr>`;
+        return;
+      }
+
+      list.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="font-weight:700;">${r.nama || '-'}</td>
+          <td>${r.tahun || '-'}</td>
+          <td>${r.kelas || '-'}</td>
+          <td><strong style="color:var(--neon-accent);">${r.jawatan || '-'}</strong></td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function filterPengawasTable() {
+      if (!globalHemData || !globalHemData.pengawas) return;
+
+      const sTahun = document.getElementById('filterPengawasTahun').value;
+      const sKelas = document.getElementById('filterPengawasKelas').value.toLowerCase();
+      const sJawatan = document.getElementById('filterPengawasJawatan').value.toLowerCase();
+      const q = document.getElementById('searchPengawasNama').value.toLowerCase().trim();
+
+      const filtered = globalHemData.pengawas.filter(r => {
+        const matchTahun = !sTahun || r.tahun == sTahun;
+        const matchKelas = !sKelas || (r.kelas && r.kelas.toLowerCase() == sKelas);
+        const matchJawatan = !sJawatan || (r.jawatan && r.jawatan.toLowerCase() == sJawatan);
+        const matchNama = !q || (r.nama && r.nama.toLowerCase().includes(q));
+        return matchTahun && matchKelas && matchJawatan && matchNama;
+      });
+
+      renderPengawasTable(filtered);
     }
 
     function fileToBase64(file) {
@@ -1603,14 +1940,12 @@
       populateSelect('jMinggu', data.options.minggu);
       populateSelect('jKumpulan', data.options.kumpulan);
 
-      // Tetapkan Guru Pelapor
       populateSelect('slPelapor', data.options.guru);
 
-      // 5. Persediaan Dropdown Jawatankuasa Kelas (Data dari DB Sekolah & Data HEM)
+      // 5. Persediaan Dropdown Jawatankuasa Kelas
       populateSelect('jkSesi', data.options.sesiPersekolahan);
       populateSelect('filterJKSesi', data.options.sesiPersekolahan, 'Semua Sesi');
 
-      // Ambil senarai unik Tahun & Kelas dari senarai murid DB Sekolah
       const allMurid = data.options.murid || [];
       const tahunList = [...new Set(allMurid.map(m => m.tahun).filter(v => v))].sort();
       const kelasList = [...new Set(allMurid.map(m => m.kelas).filter(v => v))].sort();
@@ -1620,9 +1955,17 @@
       populateSelect('filterJKTahun', tahunList, 'Semua Tahun');
       populateSelect('filterJKKelas', kelasList, 'Semua Kelas');
 
-      // Pilihan Jawatan dari sheet Data HEM (DB HEM)
       populateSelect('jkJawatan', data.options.jawatanKelas || []);
       populateSelect('filterJKJawatan', data.options.jawatanKelas || [], 'Semua Jawatan');
+
+      // 6. Persediaan Dropdown Pengawas (Data dari DB Sekolah: Data Sekolah -> Jawatan Murid)
+      const jawatanMuridList = data.options.jawatanMurid || [];
+      populateSelect('pgJawatan', jawatanMuridList, '-- Pilih Jawatan Pengawas --');
+      populateSelect('filterPengawasJawatan', jawatanMuridList, 'Semua Jawatan');
+      populateSelect('filterPengawasTahun', tahunList, 'Semua Tahun');
+      populateSelect('filterPengawasKelas', kelasList, 'Semua Kelas');
+      populateSelect('pgPickerFilterTahun', tahunList, 'Semua Tahun');
+      populateSelect('pgPickerFilterKelas', kelasList, 'Semua Kelas');
 
       if (activeUser && activeUser.nama) {
         document.getElementById('bPelapor').value = activeUser.nama;
@@ -1632,12 +1975,13 @@
         document.getElementById('oprPelapor').value = activeUser.nama;
       }
 
-      // 6. Render Jadual
+      // 7. Render Jadual
       renderBertugasTable(data.laporanBertugas);
       renderUnitTable(data.laporanUnit);
       renderJadualTable(data.jadualBertugas);
       renderSalahLakuTable(data.salahLaku);
       renderJKKelasTable(data.jawatankuasaKelas || []);
+      renderPengawasTable(data.pengawas || []);
     }
 
     function populateSelect(id, items, defaultText = "-- Pilih --") {
@@ -1768,7 +2112,7 @@
       }
     }
 
-    // --- RENDERING & FILTERS JADUAL FAIL HEM & OPR ---
+    // --- RENDERING & FILTERS JADUAL LAIN ---
     function renderFailHEMTable(list) {
       const tb = document.getElementById('failHemTableBody');
       tb.innerHTML = '';
@@ -1964,7 +2308,7 @@
       });
     }
 
-    // --- PENGHANTARAN BORANG ---
+    // --- SUBMITS BORANG ASAL ---
     async function handleFailHEMSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById('btnSubmitFailHEM');
@@ -2280,7 +2624,7 @@
       }
     }
 
-    // --- CETAK LAPORAN (ONE PAGE REPORT) DENGAN PENGESAHAN FORMAT THUMBNAIL GAMBAR ---
+    // --- CETAK LAPORAN ---
     function viewBertugasDetails(id) {
       const item = globalHemData.laporanBertugas.find(b => b.id === id);
       if (!item) return;
