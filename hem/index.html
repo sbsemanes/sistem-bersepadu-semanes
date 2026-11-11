@@ -465,7 +465,7 @@
       <p class="header-subtext">Sekolah Kebangsaan Mantin — Sahsiah Terpuji, Disiplin Cemerlang</p>
     </header>
 
-    <!-- KAD MENU UTAMA: eFail HEM & Pengawas -->
+    <!-- KAD MENU UTAMA -->
     <section>
       <h2 class="section-title">Dokumen & Fail Pengurusan</h2>
       <div class="menu-grid">
@@ -475,11 +475,11 @@
           <div class="menu-card-desc">Arkib 19 fail pengurusan & unit hal ehwal murid</div>
         </div>
 
-        <!-- KAD PENGAWAS (BAHARU) -->
-        <div class="menu-card" onclick="switchTab('tabPengawas')">
+        <!-- KAD PENGAWAS: Terus Buka Modal Senarai Jadual Pengawas -->
+        <div class="menu-card" onclick="openModalPengawasTable()">
           <div class="icon-box"><i class="fas fa-user-shield"></i></div>
           <div class="menu-card-title">Pengawas (Sekolah, PSS, SPBT, ICT, Surau)</div>
-          <div class="menu-card-desc">Pengurusan pelantikan & senarai pengawas sekolah</div>
+          <div class="menu-card-desc">Lihat senarai dan lantik pengawas sekolah</div>
         </div>
       </div>
     </section>
@@ -493,7 +493,6 @@
         <button class="tab-btn" onclick="switchTab('tabOPR')"><i class="fas fa-file-invoice"></i> Fail OPR</button>
         <button class="tab-btn" onclick="switchTab('tabSalahLaku')"><i class="fas fa-user-slash"></i> Laporan Salah Laku</button>
         <button class="tab-btn" onclick="switchTab('tabJKKelas')"><i class="fas fa-users-cog"></i> Jawatankuasa Kelas</button>
-        <!-- TAB BARU PENGAWAS -->
         <button class="tab-btn" onclick="switchTab('tabPengawas')"><i class="fas fa-shield-alt"></i> Pengawas</button>
         <button class="tab-btn" onclick="switchTab('tabUnit')"><i class="fas fa-file-alt"></i> Laporan Unit HEM</button>
       </div>
@@ -746,7 +745,7 @@
         </div>
       </div>
 
-      <!-- TAB 7: PENGAWAS (BAHARU) -->
+      <!-- TAB 7: PENGAWAS -->
       <div id="tabPengawas" class="tab-content">
         <div class="table-card">
           <div class="table-top-bar">
@@ -844,8 +843,56 @@
     </div>
   </div>
 
-  <!-- MODAL BORANG: PENGAWAS (BAHARU) -->
-  <div class="modal-overlay" id="modalPengawas">
+  <!-- MODAL KHAS: SENARAI JADUAL PENGAWAS (DIBUKA APABILA KAD DITEKAN) -->
+  <div class="modal-overlay" id="modalPengawasTable">
+    <div class="modal-box" style="max-width:950px;">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title"><i class="fas fa-user-shield" style="color:var(--neon-red); margin-right:8px;"></i>Senarai Pengawas Sekolah & Khas</div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-top:2px;">Senarai pelantikan Pengawas Sekolah, PSS, SPBT, ICT dan Surau.</p>
+        </div>
+        <button class="close-modal-btn" onclick="closeModal('modalPengawasTable')">×</button>
+      </div>
+
+      <div class="table-top-bar" style="margin-bottom: 12px;">
+        <div class="filter-wrapper" style="flex:1;">
+          <select id="modalFilterPengawasTahun" class="filter-select" onchange="filterModalPengawasTable()">
+            <option value="">Semua Tahun</option>
+          </select>
+          <select id="modalFilterPengawasKelas" class="filter-select" onchange="filterModalPengawasTable()">
+            <option value="">Semua Kelas</option>
+          </select>
+          <select id="modalFilterPengawasJawatan" class="filter-select" onchange="filterModalPengawasTable()">
+            <option value="">Semua Jawatan</option>
+          </select>
+          <input type="text" id="modalSearchPengawasNama" class="filter-input" style="flex:1; min-width:180px;" placeholder="Cari nama murid..." oninput="filterModalPengawasTable()">
+        </div>
+        <button class="btn-action-red" onclick="openModal('modalPengawas')">
+          <i class="fas fa-user-plus"></i> Tambah Pengawas
+        </button>
+      </div>
+
+      <div class="table-scroll-container" style="max-height: 480px;">
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th style="width: 50px;">Bil</th>
+              <th>Nama Murid</th>
+              <th>Tahun</th>
+              <th>Kelas</th>
+              <th>Jawatan Pengawas</th>
+            </tr>
+          </thead>
+          <tbody id="modalPengawasTableBody">
+            <tr><td colspan="5" style="text-align:center; color:#94a3b8;">Memuatkan rekod pengawas...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL BORANG: TAMBAH / LANTIK PENGAWAS -->
+  <div class="modal-overlay" id="modalPengawas" style="z-index: 1050;">
     <div class="modal-box" style="max-width:700px;">
       <div class="modal-header">
         <div class="modal-title"><i class="fas fa-user-shield" style="color:var(--neon-red); margin-right:8px;"></i>Borang Pelantikan Pengawas</div>
@@ -1463,6 +1510,14 @@
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function openEFailModal() { openModal('efailModal'); }
 
+    // --- BUKA MODAL JADUAL PENGAWAS TERUS DARI KAD MENU ---
+    function openModalPengawasTable() {
+      if (globalHemData && globalHemData.pengawas) {
+        renderModalPengawasTable(globalHemData.pengawas);
+      }
+      openModal('modalPengawasTable');
+    }
+
     // --- PENGENDALIAN PILIHAN BERGANDA MURID (SALAH LAKU) ---
     function openPilihMuridModal() {
       tempPickerSelection = new Set(selectedMuridIndexes);
@@ -1753,8 +1808,33 @@
       }
     }
 
+    // --- RENDERING JADUAL PENGAWAS (DALAM TAB & DALAM MODAL) ---
     function renderPengawasTable(list) {
       const tb = document.getElementById('pengawasTableBody');
+      if (!tb) return;
+      tb.innerHTML = '';
+
+      if (!list || list.length === 0) {
+        tb.innerHTML = `<tr><td colspan="5" style="text-align:center; color:#94a3b8;">Tiada rekod pengawas dijumpai.</td></tr>`;
+        return;
+      }
+
+      list.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td style="font-weight:700;">${r.nama || '-'}</td>
+          <td>${r.tahun || '-'}</td>
+          <td>${r.kelas || '-'}</td>
+          <td><strong style="color:var(--neon-accent);">${r.jawatan || '-'}</strong></td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function renderModalPengawasTable(list) {
+      const tb = document.getElementById('modalPengawasTableBody');
+      if (!tb) return;
       tb.innerHTML = '';
 
       if (!list || list.length === 0) {
@@ -1792,6 +1872,25 @@
       });
 
       renderPengawasTable(filtered);
+    }
+
+    function filterModalPengawasTable() {
+      if (!globalHemData || !globalHemData.pengawas) return;
+
+      const sTahun = document.getElementById('modalFilterPengawasTahun').value;
+      const sKelas = document.getElementById('modalFilterPengawasKelas').value.toLowerCase();
+      const sJawatan = document.getElementById('modalFilterPengawasJawatan').value.toLowerCase();
+      const q = document.getElementById('modalSearchPengawasNama').value.toLowerCase().trim();
+
+      const filtered = globalHemData.pengawas.filter(r => {
+        const matchTahun = !sTahun || r.tahun == sTahun;
+        const matchKelas = !sKelas || (r.kelas && r.kelas.toLowerCase() == sKelas);
+        const matchJawatan = !sJawatan || (r.jawatan && r.jawatan.toLowerCase() == sJawatan);
+        const matchNama = !q || (r.nama && r.nama.toLowerCase().includes(q));
+        return matchTahun && matchKelas && matchJawatan && matchNama;
+      });
+
+      renderModalPengawasTable(filtered);
     }
 
     function fileToBase64(file) {
@@ -1961,9 +2060,18 @@
       // 6. Persediaan Dropdown Pengawas (Data dari DB Sekolah: Data Sekolah -> Jawatan Murid)
       const jawatanMuridList = data.options.jawatanMurid || [];
       populateSelect('pgJawatan', jawatanMuridList, '-- Pilih Jawatan Pengawas --');
+      
+      // Filter untuk Tab Pengawas
       populateSelect('filterPengawasJawatan', jawatanMuridList, 'Semua Jawatan');
       populateSelect('filterPengawasTahun', tahunList, 'Semua Tahun');
       populateSelect('filterPengawasKelas', kelasList, 'Semua Kelas');
+
+      // Filter untuk Modal Pengawas Table
+      populateSelect('modalFilterPengawasJawatan', jawatanMuridList, 'Semua Jawatan');
+      populateSelect('modalFilterPengawasTahun', tahunList, 'Semua Tahun');
+      populateSelect('modalFilterPengawasKelas', kelasList, 'Semua Kelas');
+
+      // Filter untuk Modal Picker Pemilihan Murid
       populateSelect('pgPickerFilterTahun', tahunList, 'Semua Tahun');
       populateSelect('pgPickerFilterKelas', kelasList, 'Semua Kelas');
 
@@ -1982,6 +2090,7 @@
       renderSalahLakuTable(data.salahLaku);
       renderJKKelasTable(data.jawatankuasaKelas || []);
       renderPengawasTable(data.pengawas || []);
+      renderModalPengawasTable(data.pengawas || []);
     }
 
     function populateSelect(id, items, defaultText = "-- Pilih --") {
